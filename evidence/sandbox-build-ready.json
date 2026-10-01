@@ -1,7 +1,7 @@
 {
   "status": "ready-offline-v012",
   "version": "0.1.2",
-  "at": "2026-10-01T18:50:00.692155+00:00",
+  "at": "2026-10-01T19:08:39.371919+00:00",
   "scope": "Sandbox only: selective recovery of46 proven identity fields then manager-only build update; no fixture creation/archive move/UI/focus",
   "vault": "Sandbox",
   "basePath": "/Users/eme/Obsidian/Sandbox",
@@ -21,7 +21,7 @@
     }
   },
   "sourceCommit": "b7f6472",
-  "checkSha256": "b44762c07c87e6c634265b2cd7384f93c371c6c2eb359b4ad19373dcad49d091",
+  "checkSha256": "e1b7bcce33038af64052f0c0da74babd7dbc95d5697ba9217593f6d256dc42b7",
   "recoveryCheckSha256": "67c50c97db945d4d225c8a458bc283960d11eb8897142e5c8cf4f8e4c601eecb",
   "command": "AIGILITY_SANDBOX_RUN_AUTHORIZED=1 node checks/sandbox-build.check.mjs",
   "durationSeconds": 120,
@@ -40,5 +40,14 @@
   "ipadChanges": false,
   "tests": "287PASS full suite including12deploy+6recovery helpers; compile0.1.2exit0; no native write or deploy this unit yet",
   "helperCommit": "cc33dc1",
-  "manifestReload": "Only loadManifest(.obsidian/plugins/aigility-plugin-manager); host1.14.3 source verified at asaroffset3634889, never rebuild foreign manifest catalog"
+  "manifestReload": "Only loadManifest(.obsidian/plugins/aigility-plugin-manager); host1.14.3 source verified at asaroffset3634889, never rebuild foreign manifest catalog",
+  "oldRuntimeProof": {
+    "receipt": "evidence/old-runtime-persist.json",
+    "status": "passed-offline-old-binary",
+    "binarySha256": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada",
+    "patchCount": 46,
+    "originalOnloadBugReproduced": true,
+    "queuedRefreshSaveProtectionPauseUnloadPreserveRepair": true,
+    "onReloadOldBug": "Rollback restores only own matching corrupt preimages before loading the old binary; it does not feed repaired metadata into the old redactor"
+  }
 }

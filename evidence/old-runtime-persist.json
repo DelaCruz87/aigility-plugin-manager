@@ -1,0 +1,14 @@
+{
+  "status": "passed-offline-old-binary",
+  "at": "2026-10-01T19:06:53.432Z",
+  "binarySha256": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada",
+  "version": "0.1.0",
+  "patchCount": 46,
+  "oldOnloadBugReproduced": true,
+  "oldQueuedRefreshRemovesRedactor": true,
+  "subsequentProtectionSavePreservesRepair": true,
+  "pauseDoesNotRewriteState": true,
+  "unloadDoesNotRewriteState": true,
+  "targetDesiredTruePreserved": true,
+  "nativeHostMutations": false
+}

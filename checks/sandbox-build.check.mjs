@@ -97,7 +97,8 @@ export async function run(){
   assert.equal(baseline.loaded,true);assert.equal(baseline.native,true);
   const ready=await read(`value=JSON.parse(await app.vault.adapter.read(P.manifest.dir+'/data.json')).schemaVersion===1;`);
   assert.equal(ready,true,'Filesystem read must finish before update');
-  for(const file of files){old[file]=await readFile(path.join(dir,file));next[file]=await readFile(path.join(ROOT,file));receipt.before[file]=hash(old[file]);receipt.source[file]=hash(next[file]);assert.equal(receipt.source[file],readiness.files[file].source,'Source build changed after readiness: '+file);}
+  for(const file of files){old[file]=await readFile(path.join(dir,file));next[file]=await readFile(path.join(ROOT,file));receipt.before[file]=hash(old[file]);receipt.source[file]=hash(next[file]);assert.equal(receipt.source[file],readiness.files[file].source,'Source build changed after readiness: '+file);assert.equal(receipt.before[file],readiness.files[file].installed,'Installed build changed after readiness: '+file);}
+  const oldProof=JSON.parse(await readFile(path.join(ROOT,'evidence/old-runtime-persist.json'),'utf8'));assert.equal(oldProof.status,'passed-offline-old-binary');assert.equal(oldProof.binarySha256,receipt.before['main.js'],'Persist proof must exercise the installed binary');assert.equal(oldProof.patchCount,46);assert.equal(oldProof.oldQueuedRefreshRemovesRedactor,true);assert.equal(oldProof.subsequentProtectionSavePreservesRepair,true);assert.equal(oldProof.unloadDoesNotRewriteState,true);
   const manifest=JSON.parse(next['manifest.json']);assert.equal(manifest.id,MANAGER_ID);assert.equal(manifest.version,'0.1.2');
   const repairReceipt=JSON.parse(await readFile(path.join(ROOT,'evidence/redaction-recovery.json'),'utf8'));
   repairPacket=JSON.parse(await readFile(path.join(ROOT,repairReceipt.proposal),'utf8'));
