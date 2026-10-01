@@ -1,0 +1,32 @@
+{
+  "status": "ready-offline",
+  "scope": "Sandbox manager-only build update; no fixture creation in this unit",
+  "vault": "Sandbox",
+  "basePath": "/Users/eme/Obsidian/Sandbox",
+  "appId": "d137282e82167d84",
+  "version": "0.1.1",
+  "files": {
+    "main.js": {
+      "source": "191f8c24329698fd99756e891383930f0dc11f6e6b47ea2a31b00e6a03e49337",
+      "installed": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada"
+    },
+    "manifest.json": {
+      "source": "071dad04f950c83e28a4867b94be41eef0d32d26f74f917b277584ef616a2db1",
+      "installed": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa"
+    },
+    "styles.css": {
+      "source": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e",
+      "installed": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+    }
+  },
+  "command": "AIGILITY_SANDBOX_RUN_AUTHORIZED=1 node checks/sandbox-build.check.mjs",
+  "durationSeconds": 120,
+  "backup": "evidence/local-backups/sandbox-build-<timestamp>",
+  "touches": "only manager artifacts and temporary protections in manager state, reload only manager",
+  "foreignEnablementPreserved": true,
+  "settingsOrFocusChanges": false,
+  "syncChanges": false,
+  "ipadChanges": false,
+  "rollback": "restore only matching written artifacts and reload old manager if own operation settled; never repeat pending enable",
+  "sourceCommit": "6fd3c7e"
+}

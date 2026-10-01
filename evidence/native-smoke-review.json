@@ -1,0 +1,14 @@
+{
+  "runId": "aigility-plugin-manager-20261001T171828Z-p84723",
+  "ringerCheckVerdict": "PASS",
+  "reviewVerdict": "REJECTED_FOR_NATIVE_EXECUTION",
+  "nativeExecuted": false,
+  "sourceProductChanged": false,
+  "reason": [
+    "Unsupported runtime and transaction methods",
+    "Missing owned state compare-and-swap restoration",
+    "Only one fixture generated instead of three",
+    "Identity snapshot and CLI response contract invalid"
+  ],
+  "action": "Remove only two own untracked rejected harness artifacts; preserve Ringer logs. Manager-only deployment check remains separate."
+}
