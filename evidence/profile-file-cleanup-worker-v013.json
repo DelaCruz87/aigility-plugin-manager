@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-01T21:36:57.909328+00:00",
+  "runId": "aigility-plugin-manager-20261001T213203Z-p61938",
+  "ringerVerdict": "TIMEOUT",
+  "elapsedSeconds": 120.4,
+  "originalWorkerDeliverables": 0,
+  "warning": "unrecognized_model for generate_session_title only; not evidence that main inference/model was rejected",
+  "usage": "unavailable",
+  "parentLane": "Root authored acceptance checks after worker settled, no production implementation changes",
+  "parentProof": "9 offline actual adapter semantic/fault tests PASS, no native calls or fixture creation",
+  "contract": "Exact two fixture IDs/four files, postimage checks before each remove, no unexpected contents, planned/settled phase callback, nonrecursive rmdir(false), exact manifest-slot object and native/loaded OFF. Adapter operations are checked immediately; not an OS-atomic compare-and-delete guarantee.",
+  "files": {
+    "checks/profile-file-cleanup-v013.mjs": "4dc19203e3095e6c75b2dc7685153fecc04486ab716d6ed7ac3e82247db634ff",
+    "tests/profile-file-cleanup-v013.test.mjs": "dd3fe1757d44fff8846c7e1034922bf3127aa77df3d3ee504a4216be340ffa5a"
+  }
+}

@@ -1,0 +1,17 @@
+✔ exact two fixture folders removed nonrecursively while foreign file survives (2.078667ms)
+✔ extra file or subfolder refuses namespace before any deletion (0.419917ms)
+✔ manual file edit in planned await is preserved before file deletion (0.295958ms)
+✔ late foreign file before rmdir survives with no recursive deletion (0.284792ms)
+✔ expiry during held read prevents every subsequent remove (0.136875ms)
+✔ partial removal followed by drift preserves remaining owned and foreign files (0.156208ms)
+✔ malformed or duplicate namespace rejected before adapter calls (0.259167ms)
+✔ manifest slot removal requires exact object identity and both native and loaded OFF (0.218542ms)
+✔ serialized helpers compile without module closure dependencies (0.2035ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 115.501042
