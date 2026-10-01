@@ -47,6 +47,8 @@ export default class AIgilityPluginManager extends Plugin {
     managerUI!: ManagerUI;
     private removeGuards?: () => void;
     private disposed = false;
+    private dynamicCommands = new Map<string, { descriptor: { name: string; type: string; id: string }; command: any }>();
+    private restoreEnqueue?: () => void;
 
     async onload(): Promise<void> {
         // Capture this before the first await: late plugin loads must never run startup automation.
@@ -113,6 +115,8 @@ export default class AIgilityPluginManager extends Plugin {
         await this.establishBaseline(migratedFromLegacy);
         if (this.disposed) return;
         await this.runtime.start(wasLayoutReady);
+        this.installDynamicCommandSync();
+        this.syncDynamicCommands();
         if (this.debug.session?.interrupted) {
             new Notice('AIgility Plugin Manager: sesión de debugging interrumpida; la recuperación requiere acción manual.');
         }
@@ -126,6 +130,9 @@ export default class AIgilityPluginManager extends Plugin {
     private disposeSynchronously(): void {
         if (this.disposed) return;
         this.disposed = true;
+        this.restoreEnqueue?.();
+        this.restoreEnqueue = undefined;
+        this.removeOwnedDynamicCommands();
         // Restore host wrappers before disposing services that may still own diagnostics.
         this.managerUI?.dispose();
         this.debug?.dispose();
@@ -211,18 +218,98 @@ export default class AIgilityPluginManager extends Plugin {
         this.addCommand({ id: 'manager-undo', name: 'Undo last manager profile', callback: () => void this.runtime.undoProfile().catch((error) => this.showError(error)) });
         this.addCommand({ id: 'restore-previous-command-state', name: 'Restore previous command state', callback: () => void this.runtime.undoProfile().catch((error) => this.showError(error)) });
         this.addCommand({ id: 'manager-resume', name: 'Resume manager recovery', callback: () => void this.runtime.resume().catch((error) => this.showError(error)) });
-        for (const profile of this.runtime.state.deviceProfiles) {
-            this.addCommand({
-                id: `manager-profile-${this.safeCommandPart(profile.id)}-apply`, name: `Apply manager profile: ${profile.name}`,
+    }
+
+    private installDynamicCommandSync(): void {
+        const runtime = this.runtime as any;
+        const original = runtime.enqueue;
+        if (typeof original !== 'function') return;
+        const plugin = this;
+        const wrapper = async function(this: unknown, ...args: unknown[]): Promise<unknown> {
+            const result = await original.apply(this, args);
+            if (!plugin.disposed) {
+                try { plugin.syncDynamicCommands(); }
+                catch (error) { plugin.showError(error); }
+            }
+            return result;
+        };
+        runtime.enqueue = wrapper;
+        this.restoreEnqueue = () => {
+            if (runtime.enqueue === wrapper) runtime.enqueue = original;
+        };
+    }
+
+    private syncDynamicCommands(): void {
+        if (this.disposed || !this.runtime) return;
+        const desired = new Map<string, { descriptor: { name: string; type: string; id: string }; callback: () => void }>();
+        for (const profile of this.runtime.state.deviceProfiles ?? []) {
+            const id = `manager-profile-${this.safeCommandPart(profile.id)}-apply`;
+            desired.set(id, {
+                descriptor: { name: `Apply manager profile: ${profile.name}`, type: 'device-profile', id },
                 callback: () => void this.previewManualProfile(profile.id).catch((error) => this.showError(error)),
             });
         }
-        for (const fixture of this.runtime.state.fixtureProfiles) {
-            this.addCommand({
-                id: `manager-profile-${fixture.id}-apply`, name: `Apply manager fixture: ${fixture.name}`,
+        for (const fixture of this.runtime.state.fixtureProfiles ?? []) {
+            const id = `manager-profile-${this.safeCommandPart(fixture.id)}-apply`;
+            if (desired.has(id)) continue;
+            desired.set(id, {
+                descriptor: { name: `Apply manager fixture: ${fixture.name}`, type: 'fixture-profile', id },
                 callback: () => void this.runtime.applyFixture(fixture.id).catch((error) => this.showError(error)),
             });
         }
+
+        const protectedKeys = new Set(this.runtime.state.protected ?? []);
+        for (const item of this.runtime.list()) {
+            const { kind, id: pluginId } = item.ref;
+            if (!item.installed || (kind !== 'community' && kind !== 'core') ||
+                pluginId === this.manifest.id || pluginId === LEGACY_BPM_ID || pluginId === LEGACY_COMPANION_ID ||
+                item.reason === 'protected' || protectedKeys.has(`${kind}:${pluginId}`) || protectedKeys.has(pluginId)) continue;
+            const commandId = kind === 'community'
+                ? `manager-${this.safeCommandPart(pluginId)}`
+                : `manager-core-${this.safeCommandPart(pluginId)}`;
+            const id = commandId;
+            desired.set(id, {
+                descriptor: { name: `Toggle ${item.name || pluginId}`, type: kind, id },
+                callback: () => void this.toggleInstalledPlugin(kind, pluginId).catch((error) => this.showError(error)),
+            });
+        }
+
+        for (const [fullId, owned] of this.dynamicCommands) {
+            const next = desired.get(owned.descriptor.id);
+            if (next && JSON.stringify(next.descriptor) === JSON.stringify(owned.descriptor)) continue;
+            this.removeOwnedCommand(fullId, owned.command);
+            this.dynamicCommands.delete(fullId);
+        }
+        for (const [id, entry] of desired) {
+            if ([...this.dynamicCommands.values()].some((owned) => owned.descriptor.id === id)) continue;
+            const fullId = `${this.manifest.id}:${id}`;
+            const commands = (this.app as any).commands?.commands ?? {};
+            if (Object.prototype.hasOwnProperty.call(commands, fullId) || Object.prototype.hasOwnProperty.call(commands, id)) continue;
+            const returned = this.addCommand({ id, name: entry.descriptor.name, callback: entry.callback });
+            const command = (this.app as any).commands?.commands?.[fullId] ?? returned;
+            if (command) this.dynamicCommands.set(fullId, { descriptor: entry.descriptor, command });
+        }
+    }
+
+    private async toggleInstalledPlugin(kind: 'community' | 'core', id: string): Promise<void> {
+        await this.runtime.refresh();
+        const current = this.runtime.list().find((item) => item.installed && item.ref.kind === kind && item.ref.id === id);
+        if (!current) {
+            this.showError(new Error(`Installed ${kind} plugin "${id}" is no longer available.`));
+            return;
+        }
+        await this.runtime.setEnabled(current.ref, !current.desired);
+    }
+
+    private removeOwnedCommand(fullId: string, owned: any): void {
+        const commands = (this.app as any).commands?.commands;
+        if (commands?.[fullId] !== owned) return;
+        (this.app as any).commands.removeCommand?.(fullId);
+    }
+
+    private removeOwnedDynamicCommands(): void {
+        for (const [fullId, entry] of this.dynamicCommands) this.removeOwnedCommand(fullId, entry.command);
+        this.dynamicCommands.clear();
     }
 
     private async previewManualProfile(id: string): Promise<void> {

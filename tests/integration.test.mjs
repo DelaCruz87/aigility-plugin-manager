@@ -18,7 +18,8 @@ globalThis.localStorage = {
 const STUB = `
     export class Plugin {
       constructor(app, manifest) { this.app = app; this.manifest = manifest; this.commands = []; this.cleanups = []; }
-      addCommand(command) { this.commands.push(command); }
+      addCommand(command) { this.commands.push(command); const fullId = this.manifest.id + ':' + command.id; this.app.commands.commands[fullId] = command; return this.app.commands.commands[fullId]; }
+      removeCommand(fullId) { delete this.app.commands.commands[fullId]; this.commands = this.commands.filter((command) => this.manifest.id + ':' + command.id !== fullId); }
       addSettingTab(tab) { this.settingTab = tab; }
       register(fn) { this.cleanups.push(fn); }
       registerEvent() {}
@@ -97,7 +98,7 @@ function makeHost({ layoutReady = false, initial = null, legacy = false, loading
     workspace: { layoutReady, onLayoutReady(callback) { layoutCallbacks.push(callback); } },
     plugins,
     internalPlugins: { plugins: {} },
-    commands: { commands: {} },
+    commands: { commands: {}, removeCommand(id) { delete this.commands[id]; } },
   };
   const manifest = { id: 'aigility-plugin-manager', version: '0.1.0', dir: '.obsidian/plugins/aigility-plugin-manager' };
   if (initial !== null) files.set(`${manifest.dir}/data.json`, JSON.stringify(initial));
@@ -355,4 +356,102 @@ test('unload synchronously disposes UI, debug, guards, then runtime without lega
     assert.equal(plugin.runtime.disposed, true);
     assert.equal(host.app.plugins.plugins['better-plugins-manager']._loaded, true);
   } finally { await cleanup(); }
+});
+
+test('dynamic device profile commands follow queued create, rename, and delete operations', async () => {
+  globalThis.__notices = [];
+  const host = makeHost({ initial: makeState() });
+  const { plugin, cleanup } = await start(host);
+  const fullId = 'aigility-plugin-manager:manager-profile-dynamic-profile-apply';
+  try {
+    await plugin.runtime.enqueue('integration-create-profile', async (tx) => {
+      const state = await tx.refresh();
+      state.deviceProfiles.push({ id: 'dynamic profile', name: 'First name', tagIds: [] });
+      await tx.save();
+    });
+    const first = host.app.commands.commands[fullId];
+    assert.equal(first.name, 'Apply manager profile: First name');
+
+    await plugin.runtime.enqueue('integration-rename-profile', async (tx) => {
+      const state = await tx.refresh();
+      state.deviceProfiles.find((profile) => profile.id === 'dynamic profile').name = 'Renamed';
+      await tx.save();
+    });
+    const renamed = host.app.commands.commands[fullId];
+    assert.equal(renamed.name, 'Apply manager profile: Renamed');
+    assert.notEqual(renamed, first, 'changed descriptor replaces the owned command and callback');
+
+    await plugin.runtime.enqueue('integration-delete-profile', async (tx) => {
+      const state = await tx.refresh();
+      state.deviceProfiles = state.deviceProfiles.filter((profile) => profile.id !== 'dynamic profile');
+      await tx.save();
+    });
+    assert.equal(host.app.commands.commands[fullId], undefined, 'delete removes the owned command');
+  } finally { plugin.onunload(); await cleanup(); }
+});
+
+test('dynamic command cleanup preserves foreign replacements and later enqueue wrappers', async () => {
+  globalThis.__notices = [];
+  const host = makeHost({ initial: makeState() });
+  const { plugin, cleanup } = await start(host);
+  const fullId = 'aigility-plugin-manager:manager-profile-owned-apply';
+  try {
+    await plugin.runtime.enqueue('integration-create-owned-profile', async (tx) => {
+      const state = await tx.refresh();
+      state.deviceProfiles.push({ id: 'owned', name: 'Owned', tagIds: [] });
+      await tx.save();
+    });
+    const owned = host.app.commands.commands[fullId];
+    const foreign = { id: 'manager-profile-owned-apply', name: 'Foreign replacement', callback() {} };
+    host.app.commands.commands[fullId] = foreign;
+
+    const ownedWrapper = plugin.runtime.enqueue;
+    const laterWrapper = function(...args) { return ownedWrapper.apply(this, args); };
+    plugin.runtime.enqueue = laterWrapper;
+    plugin.onunload();
+    assert.equal(host.app.commands.commands[fullId], foreign, 'unload leaves a foreign replacement at an owned ID');
+    assert.equal(plugin.runtime.enqueue, laterWrapper, 'unload preserves a wrapper installed after the manager wrapper');
+  } finally { plugin.onunload(); await cleanup(); }
+});
+
+test('installed community and core aliases use fresh runtime state and exclude protected and manager plugins', async () => {
+  globalThis.__notices = [];
+  const host = makeHost({ initial: makeState({ protected: ['community:protected'] }) });
+  const { plugin, cleanup } = await start(host);
+  try {
+    let fresh = [
+      { ref: { kind: 'community', id: 'community-one' }, installed: true, desired: true, name: 'Community One' },
+      { ref: { kind: 'core', id: 'search' }, installed: true, desired: false, name: 'Search' },
+      { ref: { kind: 'community', id: 'protected' }, installed: true, desired: false, name: 'Protected' },
+      { ref: { kind: 'community', id: host.manifest.id }, installed: true, desired: true, name: 'Manager' },
+      { ref: { kind: 'community', id: 'gone' }, installed: false, desired: false, name: 'Gone' },
+    ];
+    const lookedUp = [];
+    const toggled = [];
+    plugin.runtime.list = () => fresh;
+    plugin.runtime.refresh = async () => { lookedUp.push('refresh'); };
+    plugin.runtime.setEnabled = async (ref, enabled) => { toggled.push([ref.kind, ref.id, enabled]); };
+    await plugin.runtime.enqueue('integration-install-aliases', async () => undefined);
+
+    const communityId = 'aigility-plugin-manager:manager-community-one';
+    const coreId = 'aigility-plugin-manager:manager-core-search';
+    const community = host.app.commands.commands[communityId];
+    const core = host.app.commands.commands[coreId];
+    assert.ok(community && core, 'community and core aliases are registered in the manager namespace');
+    assert.equal(host.app.commands.commands['aigility-plugin-manager:manager-protected'], undefined);
+    assert.equal(host.app.commands.commands[`aigility-plugin-manager:manager-${host.manifest.id}`], undefined);
+
+    community.callback();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    core.callback();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert.deepEqual(lookedUp, ['refresh', 'refresh']);
+    assert.deepEqual(toggled, [['community', 'community-one', false], ['core', 'search', true]]);
+
+    fresh = fresh.filter((item) => item.ref.id !== 'community-one');
+    community.callback();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert.deepEqual(toggled, [['community', 'community-one', false], ['core', 'search', true]], 'deleted refs are never applied from stale command data');
+    assert.ok(globalThis.__notices.some((message) => message.includes('no longer available')));
+  } finally { plugin.onunload(); await cleanup(); }
 });
