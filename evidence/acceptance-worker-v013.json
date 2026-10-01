@@ -28,5 +28,5 @@
       "exactRoleInFirstFiveSteps": true
     }
   ],
-  "parentAdjudication": "UIpartial9checksPASS but rejectfocuspostimage/tokenreplacement defects; rootchecks lane corrected,23purefault/semantic checksPASS acrossUI17/profile6. No nativeexecution, no sourceproduct change"
+  "parentAdjudication": "UI partial output rejected for focus/token defects. Root checks lane corrected these and supervisor-requested durable exclusive receipts, primary document/window identity, and post-capture/filter-cleanup ownership. 27 pure fault/semantic checks PASS across UI21/profile6. No native execution and no product source change."
 }

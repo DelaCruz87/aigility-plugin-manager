@@ -1,11 +1,11 @@
 {
   "status": "ready-offline-ui-v013",
-  "at": "2026-10-01T20:32:48.980167+00:00",
+  "at": "2026-10-01T20:52:40.412673+00:00",
   "vault": "Sandbox",
   "basePath": "/Users/eme/Obsidian/Sandbox",
   "appId": "d137282e82167d84",
   "version": "0.1.3",
-  "checkSha256": "d0293ffc00d1eb75d588f3b4f154a012fc27807e3c25efe8a3baa831969f2e05",
+  "checkSha256": "fd6ddaab004e6ae4ea827d417b83fac77f9adb388452da0cc8edc1d00984c3df",
   "files": {
     "main.js": "bb45ba99633a121255a3a25a46619e2b0119bedcc97c5f0ca068280e11ae4b2a",
     "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
@@ -16,10 +16,11 @@
   "command": "AIGILITY_SANDBOX_UI_AUTHORIZED=1 node checks/sandbox-ui-v013.check.mjs",
   "scope": "Native Settings initiallyclosed, direct Community render/tab-switch, daily kind/name/tag/group andsidebar filtering, Options7sections/Descargados paginated safety, two own background Electron screenshots",
   "never": "No toggles/profileApply/resume/updates/archive moves/fixtures/Sync/ENSO/iPad/Git/source during lease",
-  "restoration": "ExactuniqueSettingswindow/mainID/doc/tab/modal CAS; asyncownmodal+Settingsclosewait; ownfocuspostimageCAS Electron+OS withsameappreadback; manualchangespreserved/reportconflict, no falsepass",
+  "restoration": "Exact Settings document/modal/tab ownership asserted after capture await and before filter cleanup; exact unique Settings window/main ID. Async own modal/Settings close waits. Focus postimage CAS for Electron/OS; preserve manual edits and report conflicts.",
   "capture": "Native Electron capturePage only, exactuniqueSettings+mainID; requiredownmodalcropformain, physicaldesktop notobservedbyprocedure",
-  "tests": "23offlinefault/semanticchecks17UI+6profilePASS independently; unchangedsourceproduct previous299suite/build0 no repeatedfullcompile",
-  "phaseGuarantee": "Durable fsyncreceipt key/lease/deadlines BEFOREfirstCLI; hosttoken no replacement/managerinstance+identity checks afterawait; samejobreadonly polling onlyonunknown; finalstatusaftercleanup",
+  "tests": "27 offline fault/semantic checks: 21 UI + 6 profile PASS independently. Product source unchanged; previous 299 suite/build0, no repeated full compile.",
+  "phaseGuarantee": "Exclusive per-lease receipt created with wx; fsync file and parent directory BEFORE first CLI. Preserve/refuse pending predecessor receipts. Never replace host token; same-manager-instance and primary workspace document/window gates. Read-only polling of same job after unknown result. Final status only after cleanup.",
   "leaseInputs": "Mandatory AIGILITY_UI_LEASE_ID, AIGILITY_UI_ACK_UTC, AIGILITY_UI_START_BY epochmilliseconds; total120seconds beginsatACK includingpreflight; actiondeadlineACK+85seconds",
-  "workerAdjudication": "acceptance-worker-v013.json preserves2AGYFAIL checkerpath/partialtimeout vsparentacceptance; same2exactroles mappedSQLiteIDLE/notFullyIdle0+backendshutdown settleswriter, not success"
+  "workerAdjudication": "acceptance-worker-v013.json preserves2AGYFAIL checkerpath/partialtimeout vsparentacceptance; same2exactroles mappedSQLiteIDLE/notFullyIdle0+backendshutdown settleswriter, not success",
+  "receiptPath": "evidence/native-ui-v013/<leaseId>.receipt.json; compatibility summary evidence/sandbox-ui-v013.json only after settled result"
 }

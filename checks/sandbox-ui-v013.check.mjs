@@ -1,4 +1,4 @@
-import {readFile,writeFile,mkdir,open} from 'node:fs/promises';
+import {readFile,writeFile,mkdir,open,readdir} from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {fileURLToPath} from 'node:url';
@@ -60,6 +60,23 @@ export async function dispatchOnce(persist,dispatch,metadata){
  return await dispatch();
 }
 
+export function primaryDocumentGate(app,currentDocument,currentWindowId,expectedWindowId){
+ if(app.workspace.containerEl.ownerDocument!==currentDocument)throw Error('Auxiliary document cannot run manager UI acceptance');
+ if(currentWindowId!==expectedWindowId)throw Error('Primary window identity changed');
+}
+export function layoutOwnershipGate(settings,owned){
+ if(settings.doc!==owned.doc||settings.modalEl!==owned.modal||settings.lastTabId!==owned.tab)throw Error('Settings document/modal/tab ownership changed');
+}
+export async function rejectPendingReceipts(paths){
+ for(const file of paths){let raw;try{raw=await readFile(file,'utf8');}catch(error){if(error.code==='ENOENT')continue;throw error;}
+  const r=JSON.parse(raw);if(['pending','running','dispatch-prepared','dispatching'].includes(r.status)||r.cleanup?.pending)throw Error('Prior UI receipt is pending: '+file);
+ }
+}
+export async function persistNewReceipt(file,data){
+ const handle=await open(file,'wx');try{await handle.writeFile(JSON.stringify(data,null,2)+'\n');await handle.sync();}finally{await handle.close();}
+ const directory=await open(path.dirname(file),'r');try{await directory.sync();}finally{await directory.close();}
+}
+
 export function registerUIJob(globals,key){
  if(Object.hasOwn(globals,key))throw Error('UI job token already exists; do not replace');
  const job={id:key,status:'pending',phase:'preflight',startedAt:new Date().toISOString(),checks:[],restoration:{}};
@@ -77,8 +94,9 @@ export function focusDecision(before,post,current){
 }
 
 export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,deadline,cleanupDeadline){
+ const primaryWindowId=require('@electron/remote').getCurrentWindow().id;primaryDocumentGate(app,document,primaryWindowId,primaryWindowId);
  const job=registerUIJob(globalThis,key);Object.defineProperty(job,'pluginRef',{value:app.plugins.plugins['aigility-plugin-manager'],enumerable:false});
- const checkIdentity=()=>validateUIIdentity(app,globalThis,key,job);
+ const checkIdentity=()=>{primaryDocumentGate(app,document,require('@electron/remote').getCurrentWindow().id,primaryWindowId);validateUIIdentity(app,globalThis,key,job);};
  const gate=()=>{uiGate(deadline);checkIdentity();};
  const cleanupGate=()=>{uiGate(cleanupDeadline);checkIdentity();};
  try {
@@ -149,7 +167,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  const pinnedMainWinId=mainWin.id;
  const settingsWindow=()=>{const wins=require('@electron/remote').BrowserWindow.getAllWindows().filter(w=>w.getTitle()==='Settings - Sandbox - Obsidian');if(wins.length!==1)throw Error('Settings window missing or ambiguous');if(pinnedSettingsWinId!==null&&wins[0].id!==pinnedSettingsWinId)throw Error('Settings window replaced');return wins[0];};
  const rememberOwnFocus=()=>{const current={electron:getElectronFocus(),os:getOSFrontmost()};if(current.electron!==null&&![initialElectronFocus,pinnedMainWinId,pinnedSettingsWinId].includes(current.electron))throw Error('Manual Electron focus changed; preserved');if(current.os!==initialOSBundle&&current.os!=='md.obsidian')throw Error('Manual OS focus changed; preserved');ownFocus=current;job.focusPost={...current};};
- const assertDocument=()=>{if(pinnedSettingsDoc&&settings.doc!==pinnedSettingsDoc)throw Error('Settings document replaced');if(pinnedSettingsWinId!==null)settingsWindow();};
+ const assertDocument=()=>{if(pinnedSettingsDoc)layoutOwnershipGate(settings,{doc:pinnedSettingsDoc,modal:pinnedSettingsModalEl,tab:ownedSettingsTab});if(pinnedSettingsWinId!==null)settingsWindow();};
 
 
  const capture=async(doc,imagePath)=>{
@@ -166,7 +184,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
   const rect=modal?.getBoundingClientRect();
   if(doc===document&&(!rect||rect.width<=0||rect.height<=0))throw Error('Own manager modal crop unavailable; refuse whole mainwindow capture');
   const clip=rect?{x:Math.max(0,Math.floor(rect.x)),y:Math.max(0,Math.floor(rect.y)),width:Math.ceil(rect.width),height:Math.ceil(rect.height)}:undefined;
-  const image=await targetWin.webContents.capturePage(clip);gate();
+  const image=await targetWin.webContents.capturePage(clip);gate();assertDocument();
   require('fs').writeFileSync(imagePath,image.toPNG());
   return {path:imagePath,size:image.getSize(),kind:'native Electron capturePage; physical desktop not observed by this procedure'};
  };
@@ -243,6 +261,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
   });
 
   await restore('filters',()=>{
+   assertDocument();
    const f=matchingRestore(prior.filter,ownedFilter,ui.filterCriteria);
    const s=matchingRestore(prior.sidebar,ownedSidebar,ui.sidebarFilterCriteria);
    if(!f||!s)throw Error('Manual filter edit preserved, cleanup conflicts');
@@ -287,7 +306,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
 }
 
 export function uiBody(key,deadline,cleanupDeadline,communityImage,downloadImage){
- return `const registerUIJob=${registerUIJob.toString()};const validateUIIdentity=${validateUIIdentity.toString()};const focusDecision=${focusDecision.toString()};const uiGate=${uiGate.toString()};
+ return `const primaryDocumentGate=${primaryDocumentGate.toString()};const layoutOwnershipGate=${layoutOwnershipGate.toString()};const registerUIJob=${registerUIJob.toString()};const validateUIIdentity=${validateUIIdentity.toString()};const focusDecision=${focusDecision.toString()};const uiGate=${uiGate.toString()};
 const matchingRestore=${matchingRestore.toString()};
 const waitClosed=${waitClosed.toString()};
 const casSettingsDecision=${casSettingsDecision.toString()};
@@ -309,12 +328,17 @@ export async function run(){
   assert.equal(hash(await readFile(path.join(VAULT_PATH,'.obsidian/plugins',MANAGER_ID,file))),ready.files[file]);
  }
 
+ assert.match(leaseId,/^[A-Za-z0-9_-]{1,80}$/,'Lease filename must be safe');
  const key='aigility-manager-ui:'+leaseId;
- const receiptPath=path.join(ROOT,'evidence/sandbox-ui-v013.json');
- const images=path.join(ROOT,'evidence/native-ui-v013');
- await mkdir(images,{recursive:true});
+ const pointerPath=path.join(ROOT,'evidence/sandbox-ui-v013.json');
+ const receiptDir=path.join(ROOT,'evidence/native-ui-v013');await mkdir(receiptDir,{recursive:true});
+ await rejectPendingReceipts([pointerPath,...(await readdir(receiptDir)).filter(n=>n.endsWith('.receipt.json')).map(n=>path.join(receiptDir,n))]);
+ const receiptPath=path.join(receiptDir,leaseId+'.receipt.json');
+ const images=path.join(receiptDir,leaseId);await mkdir(images,{recursive:true});let receiptCreated=false;
 
  const persistReceipt=async data=>{
+  if(!receiptCreated){await persistNewReceipt(receiptPath,data);receiptCreated=true;return;}
+  const previous=JSON.parse(await readFile(receiptPath,'utf8'));assert.equal(previous.key,key,'Own receipt identity changed');
   const file=await open(receiptPath,'w');try{await file.writeFile(JSON.stringify(data,null,2)+'\n');await file.sync();}finally{await file.close();}
  };
 
@@ -363,7 +387,8 @@ export async function run(){
   receipt={status:'pending',key,leaseId,ackUTC,deadlines:metadata.deadlines,reason:'No further native action permitted until same job settles'};
  }
 
- await persistReceipt(receipt);
+ receipt.key??=key;receipt.leaseId??=leaseId;receipt.ackUTC??=ackUTC;receipt.deadlines??=metadata.deadlines;await persistReceipt(receipt);
+ await rejectPendingReceipts([pointerPath]);await writeFile(pointerPath,JSON.stringify(receipt,null,2)+'\n');
  console.log(JSON.stringify({status:receipt.status,checks:receipt.checks?.length,error:receipt.error,restoration:receipt.restoration,captures:[receipt.communityCapture,receipt.downloadCapture]}));
  assert.equal(receipt.status,'complete',receipt.error??receipt.reason);
  return receipt;

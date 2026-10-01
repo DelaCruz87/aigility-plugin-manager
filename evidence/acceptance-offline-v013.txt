@@ -1,31 +1,35 @@
-✔ fixtureFiles allows only the two named fixture IDs and safe exact filenames (0.791ms)
-✔ purgeOwned removes only unchanged owned rows and preserves foreign fields (1.229625ms)
-✔ restoreUndo uses owned compare-and-swap and keeps manual undo edits (0.105458ms)
-✔ protectionCleanup removes only added non-baseline IDs and preserves all foreign additions and order (0.08275ms)
-✔ executes buildCasesBody against behavioral minimal runtime fake (6.449083ms)
-✔ deadline expiry prevents next operation (22.716125ms)
-✔ native UI harness imports without running or opening Settings (0.860791ms)
-✔ native UI deadline prevents next action at expiry (0.192959ms)
-✔ filter cleanup preserves a later manual edit (0.318625ms)
-✔ serialized native UI body compiles with its own guard and cleanup helpers (0.603667ms)
-✔ ackWindow requires explicit inputs, computes deadlines, and validates conditions (1.232084ms)
-✔ dispatchOnce persists before dispatch and enforces single execution without automatic second call (0.2145ms)
-✔ dispatchOnce failure leaves receipt durable and does not retry on unknown failure (0.093375ms)
-✔ casSettingsDecision validates and enforces CAS decisions (0.065834ms)
-✔ waitClosed awaits condition asynchronously and respects deadline budget (0.097208ms)
-✔ same UI token is never replaced, including a prepared predecessor (0.103833ms)
-✔ real identity gate after a held await prevents next action when the vault changes (0.111959ms)
-✔ real identity gate refuses an externally replaced pending token (0.122958ms)
-✔ focus cleanup refuses a later foreign focus instead of taking the current value as its own postimage (0.075ms)
-✔ ACK-origin budget is not extended by a slow preflight or future ACK (0.314791ms)
-✔ async close cannot report success until the actual modal disconnected (0.065ms)
-✔ failed durable persistence prevents the native dispatch entirely (0.05675ms)
-✔ the serialized identity gate also rejects a newly loaded replacement manager instance (0.073084ms)
-ℹ tests 23
+✔ fixtureFiles allows only the two named fixture IDs and safe exact filenames (0.778959ms)
+✔ purgeOwned removes only unchanged owned rows and preserves foreign fields (1.050458ms)
+✔ restoreUndo uses owned compare-and-swap and keeps manual undo edits (0.12725ms)
+✔ protectionCleanup removes only added non-baseline IDs and preserves all foreign additions and order (0.07675ms)
+✔ executes buildCasesBody against behavioral minimal runtime fake (6.359333ms)
+✔ deadline expiry prevents next operation (22.143291ms)
+✔ native UI harness imports without running or opening Settings (0.637583ms)
+✔ native UI deadline prevents next action at expiry (0.186583ms)
+✔ filter cleanup preserves a later manual edit (0.354459ms)
+✔ serialized native UI body compiles with its own guard and cleanup helpers (0.384834ms)
+✔ ackWindow requires explicit inputs, computes deadlines, and validates conditions (1.262167ms)
+✔ dispatchOnce persists before dispatch and enforces single execution without automatic second call (0.194584ms)
+✔ dispatchOnce failure leaves receipt durable and does not retry on unknown failure (0.097167ms)
+✔ casSettingsDecision validates and enforces CAS decisions (0.065417ms)
+✔ waitClosed awaits condition asynchronously and respects deadline budget (0.216667ms)
+✔ same UI token is never replaced, including a prepared predecessor (0.288125ms)
+✔ real identity gate after a held await prevents next action when the vault changes (0.107167ms)
+✔ real identity gate refuses an externally replaced pending token (0.064708ms)
+✔ focus cleanup refuses a later foreign focus instead of taking the current value as its own postimage (0.284791ms)
+✔ ACK-origin budget is not extended by a slow preflight or future ACK (0.116041ms)
+✔ async close cannot report success until the actual modal disconnected (0.064292ms)
+✔ failed durable persistence prevents the native dispatch entirely (0.071084ms)
+✔ the serialized identity gate also rejects a newly loaded replacement manager instance (0.073834ms)
+✔ a pending predecessor receipt survives without dispatch or overwrite (6.053417ms)
+✔ exclusive fsynced receipt creation never truncates an existing lease (10.313375ms)
+✔ primary document gate rejects the auxiliary Settings context and a different window (0.11975ms)
+✔ real ownership gate after capture refuses replacement doc and foreign tab before filter cleanup (0.213583ms)
+ℹ tests 27
 ℹ suites 0
-ℹ pass 23
+ℹ pass 27
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 147.761959
+ℹ duration_ms 147.13625
