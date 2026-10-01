@@ -23,6 +23,10 @@ function createHarness({ records = [], sources = {}, appVersion = '1.5.0', mobil
     async mkdir(path) { dirs.add(path); },
     async rename(from, to) { if (!files.has(from)) throw new Error(`missing staged file ${from}`); files.set(to, files.get(from)); files.delete(from); },
   };
+  // The real ManagerRuntime keys mutations by PluginRef, and any manual or
+  // equal-value toggle advances the counter for that ref.
+  const refKey = (ref) => `${ref.kind}:${ref.id}`;
+  const hostCalls = { nonPersistentLoads: [], persistent: [] };
   const runtime = {
     state: {
       schemaVersion: 1, records: Object.fromEntries(records.map((record) => [`community:${record.id}`, { ref: { kind: 'community', id: record.id }, name: record.id, version: record.version, tags: [], group: '', desired: true, metadata: {} }])),
@@ -34,7 +38,8 @@ function createHarness({ records = [], sources = {}, appVersion = '1.5.0', mobil
     queue: Promise.resolve(),
     failSave: false,
     generations: new Map(),
-    getMutationGeneration(id) { return this.generations.get(id) ?? 0; },
+    getMutationGeneration(ref) { return this.generations.get(refKey(ref)) ?? 0; },
+    bumpGeneration(id) { const ref = { kind: 'community', id }; this.generations.set(refKey(ref), this.getMutationGeneration(ref) + 1); },
     enqueue(_name, action) {
       const transaction = {
         async save() {
@@ -44,7 +49,7 @@ function createHarness({ records = [], sources = {}, appVersion = '1.5.0', mobil
         async setEnabled(ref, enabled) {
           const id = ref.id;
           if (enabled) app.plugins.enabledPlugins.add(id); else app.plugins.enabledPlugins.delete(id);
-          runtime.generations.set(id, runtime.getMutationGeneration(id) + 1);
+          runtime.bumpGeneration(id);
         },
         async refresh() { await app.plugins.loadManifests(); },
         async writeEffectiveState() { runtime.effectiveWrites = (runtime.effectiveWrites ?? 0) + 1; },
@@ -62,7 +67,13 @@ function createHarness({ records = [], sources = {}, appVersion = '1.5.0', mobil
     plugins: {
       manifests: {}, plugins: {}, enabledPlugins: new Set(),
       async unloadPlugin(id) { delete this.plugins[id]; },
-      async loadPlugin(id) { this.plugins[id] = { id }; },
+      // Host 1.14.3: loadPlugin/enablePlugin load without touching the autostart
+      // set; only the *AndSave pair adds the id and persists the config.
+      async loadPlugin(id) { hostCalls.nonPersistentLoads.push(`loadPlugin:${id}`); this.plugins[id] = { id }; },
+      async enablePlugin(id) { hostCalls.nonPersistentLoads.push(`enablePlugin:${id}`); this.plugins[id] = { id }; },
+      async enablePluginAndSave(id) { hostCalls.persistent.push(`enablePluginAndSave:${id}`); this.enabledPlugins.add(id); this.plugins[id] = { id }; },
+      async disablePluginAndSave(id) { hostCalls.persistent.push(`disablePluginAndSave:${id}`); this.enabledPlugins.delete(id); delete this.plugins[id]; },
+      async saveConfig() { hostCalls.persistent.push('saveConfig'); },
       async loadManifests() {
         this.manifests = {};
         for (const [path, text] of files) if (path.endsWith('/manifest.json') && path.includes('/plugins/')) {
@@ -72,7 +83,7 @@ function createHarness({ records = [], sources = {}, appVersion = '1.5.0', mobil
     },
   };
   const plugin = { app, manifest: { id: 'aigility-plugin-manager' }, githubRequest: undefined };
-  return { app, plugin, runtime, adapter, files, dirs, failNextWrite(testFn = () => true) { failWrite = testFn; } };
+  return { app, plugin, runtime, adapter, files, dirs, hostCalls, failNextWrite(testFn = () => true) { failWrite = testFn; } };
 }
 
 function response(json, { status = 200, headers = {}, text = undefined } = {}) { return { status, json, headers, text: text ?? (typeof json === 'string' ? json : JSON.stringify(json)) }; }
@@ -276,6 +287,76 @@ test('install does not reload a plugin after a newer manual disable', async () =
   assert.equal(app.plugins.enabledPlugins.has('calendar'), false);
 });
 
+test('install restores a loaded deferred plugin without adding native autostart or persisting a toggle', async () => {
+  const { GithubManager } = await importModule('src/integrated/github.ts');
+  const manifest = { id: 'calendar', version: '2.0.0' };
+  const { app, plugin, runtime, files, hostCalls } = createHarness({ records: [{ id: 'calendar', version: '1.0.0' }] });
+  plugin.githubRequest = hostRoutes({ releases: [release('v2.0.0', manifest)], manifests: { calendar: manifest } });
+  const root = '.obsidian/plugins/calendar';
+  files.set(`${root}/manifest.json`, '{"id":"calendar","version":"1.0.0"}');
+  files.set(`${root}/main.js`, 'old-main');
+  // Deferred postimage: a loaded instance with native autostart excluded.
+  app.plugins.plugins.calendar = { id: 'calendar' };
+  const manager = new GithubManager(runtime, app, plugin);
+  assert.equal(await manager.install('acme/calendar', 'v2.0.0'), 'calendar');
+  assert.equal(app.plugins.plugins.calendar.id, 'calendar');
+  assert.equal(app.plugins.enabledPlugins.has('calendar'), false);
+  assert.ok(hostCalls.nonPersistentLoads.includes('loadPlugin:calendar'), `expected a nonpersistent load, saw ${JSON.stringify(hostCalls.nonPersistentLoads)}`);
+  assert.deepEqual(hostCalls.persistent, []);
+  assert.equal(JSON.parse(files.get(`${root}/manifest.json`)).version, '2.0.0');
+  assert.equal(runtime.state.githubSources['community:calendar'].version, '2.0.0');
+  assert.equal(runtime.state.records['community:calendar'].version, '2.0.0');
+  assert.equal(runtime.state.records['community:calendar'].desired, true);
+  assert.equal(runtime.local.operationPending, undefined);
+});
+
+test('rollback restores the loaded deferred postimage and never reactivates a newer manual disable', async () => {
+  const { GithubManager } = await importModule('src/integrated/github.ts');
+  const manifest = { id: 'calendar', version: '2.0.0' };
+  {
+    const { app, plugin, runtime, files, hostCalls } = createHarness({ records: [{ id: 'calendar', version: '1.0.0' }] });
+    plugin.githubRequest = hostRoutes({ releases: [release('v2.0.0', manifest)], manifests: { calendar: manifest } });
+    const root = '.obsidian/plugins/calendar';
+    files.set(`${root}/manifest.json`, '{"id":"calendar","version":"1.0.0"}');
+    files.set(`${root}/main.js`, 'old main');
+    app.plugins.plugins.calendar = { id: 'calendar' };
+    const manager = new GithubManager(runtime, app, plugin);
+    await manager.install('acme/calendar', 'v2.0.0');
+    assert.equal(app.plugins.plugins.calendar.id, 'calendar');
+    await manager.rollback('calendar');
+    assert.equal(files.get(`${root}/manifest.json`), '{"id":"calendar","version":"1.0.0"}');
+    assert.equal(app.plugins.plugins.calendar.id, 'calendar');
+    assert.equal(app.plugins.enabledPlugins.has('calendar'), false);
+    assert.equal(runtime.state.records['community:calendar'].version, '1.0.0');
+    assert.deepEqual(hostCalls.persistent, []);
+    assert.equal(runtime.local.operationPending, undefined);
+  }
+  {
+    const { app, plugin, runtime, files, adapter, hostCalls } = createHarness({ records: [{ id: 'calendar', version: '1.0.0' }] });
+    plugin.githubRequest = hostRoutes({ releases: [release('v2.0.0', manifest)], manifests: { calendar: manifest } });
+    const root = '.obsidian/plugins/calendar';
+    files.set(`${root}/manifest.json`, '{"id":"calendar","version":"1.0.0"}');
+    files.set(`${root}/main.js`, 'old main');
+    app.plugins.plugins.calendar = { id: 'calendar' };
+    const manager = new GithubManager(runtime, app, plugin);
+    await manager.install('acme/calendar', 'v2.0.0');
+    // Manual disable while the rollback is restoring files: the runtime generation
+    // advances, so the older loaded postimage must stay off.
+    const write = adapter.write;
+    let toggled = false;
+    adapter.write = async (path, value) => {
+      await write(path, value);
+      if (!toggled && path.startsWith(`${root}/main.js`)) { toggled = true; runtime.bumpGeneration('calendar'); }
+    };
+    await manager.rollback('calendar');
+    assert.equal(toggled, true);
+    assert.equal(app.plugins.plugins.calendar, undefined);
+    assert.equal(app.plugins.enabledPlugins.has('calendar'), false);
+    assert.deepEqual(hostCalls.persistent, []);
+    assert.equal(runtime.local.operationPending, undefined);
+  }
+});
+
 test('checkAll fetches the registry once, caps active requests at three, and handles 723 installed plugins', async () => {
   const { GithubManager } = await importModule('src/integrated/github.ts');
   const records = Array.from({ length: 723 }, (_, index) => ({ id: `plug-${index}`, version: '1.0.0' }));
@@ -317,7 +398,7 @@ test('manual disable generation during asset download aborts before replacing ma
     if (!changed && request.url.endsWith('/manifest.json')) {
       changed = true;
       app.plugins.enabledPlugins.delete('calendar');
-      runtime.generations.set('calendar', runtime.getMutationGeneration('calendar') + 1);
+      runtime.bumpGeneration('calendar');
     }
     return routes(request);
   };

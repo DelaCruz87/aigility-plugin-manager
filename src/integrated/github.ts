@@ -1,6 +1,7 @@
 import * as Obsidian from 'obsidian';
 import { Platform, requestUrl } from 'obsidian';
-import type { GithubSource, Release, State, UpdateResult } from './types';
+import { key as recordKeyOf } from './types';
+import type { GithubSource, PluginRef, Release, State, UpdateResult } from './types';
 
 const API = 'https://api.github.com';
 const REGISTRY = 'https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugins.json';
@@ -26,7 +27,7 @@ type GithubRuntime = {
   local?: { recoveryReason?: string; operationPending?: string };
   localKey?: string;
   enqueue<T>(label: string, operation: (transaction?: GithubTransaction) => Promise<T>): Promise<T>;
-  getMutationGeneration(id: string): number;
+  getMutationGeneration(ref: PluginRef): number;
   list?(): Array<{ ref: { kind: string; id: string }; installed?: boolean; compatible?: boolean; version?: string }>;
 };
 type GithubTransaction = {
@@ -47,6 +48,13 @@ type ReleaseJson = {
 type PluginManifest = { id?: string; version?: string; minAppVersion?: string; name?: string };
 type SnapshotFile = { existed: boolean; backup?: string };
 type BackupManifest = { id: string; repo: string; tag: string; previousVersion?: string; previousSource?: GithubSource; createdAt: string; files: Record<string, SnapshotFile>; wasEnabled: boolean; wasLoaded: boolean };
+/**
+ * Postimage observed before the managed files were replaced. native and loaded
+ * are independent host facts: a deferred plugin is loaded while native autostart
+ * stays excluded, and both must be restored separately. generation pins the
+ * runtime mutation counter so a manual decision taken during the operation wins.
+ */
+type RestorePostimage = { ref: PluginRef; native: boolean; loaded: boolean; generation: number };
 
 function parseRepository(input: string): string {
   if (typeof input !== 'string' || !input.trim()) throw new TypeError('Invalid GitHub repository');
@@ -207,11 +215,22 @@ export class GithubManager {
     return version;
   }
 
-  private mutationGeneration(id: string): number {
-    const generation = this.runtime.getMutationGeneration(id);
+  private mutationGeneration(ref: PluginRef): number {
+    const generation = this.runtime.getMutationGeneration(ref);
     if (!Number.isSafeInteger(generation)) throw new Error('Runtime mutation generation is unavailable');
     return generation;
   }
+
+  private communityRef(id: string): PluginRef { return { kind: 'community', id }; }
+
+  /** Persisted native autostart flag, the only field a persistent host toggle owns. */
+  private isNativeAutostart(id: string): boolean {
+    const enabled = this.app.plugins?.enabledPlugins;
+    return enabled?.has ? enabled.has(id) : Boolean(enabled?.[id]);
+  }
+
+  /** Actually loaded instance, independent of the native autostart flag. */
+  private isLoadedInstance(id: string): boolean { return Boolean(this.app.plugins?.plugins?.[id]); }
 
   private backupRoot(id: string): string { return `${this.app.vault.configDir}/plugins/${MANAGER_ID}/backups/${id}`; }
   private pluginRoot(id: string): string { return `${this.app.vault.configDir}/plugins/${id}`; }
@@ -282,22 +301,58 @@ export class GithubManager {
     }
   }
 
-  private async syncPluginAfterWrite(id: string, wasLoaded: boolean): Promise<void> {
+  /**
+   * Whether the preimage has to be reloaded, read again from the live host so a
+   * newer manual decision is never overridden. An unchanged generation proves no
+   * runtime-observed mutation happened, including deliberate same-value toggles;
+   * an unchanged native flag covers host toggles taken outside the runtime.
+   */
+  private restoreDecision(postimage: RestorePostimage): 'restore' | 'was-unloaded' | 'superseded-by-manual-change' {
+    if (!postimage.loaded) return 'was-unloaded';
+    if (this.mutationGeneration(postimage.ref) !== postimage.generation) return 'superseded-by-manual-change';
+    if (this.isNativeAutostart(postimage.ref.id) !== postimage.native) return 'superseded-by-manual-change';
+    return 'restore';
+  }
+
+  /**
+   * Reload without touching native autostart: the host loader is used, and only
+   * enablePlugin is allowed as a fallback, never the persistent *AndSave pair,
+   * which would add the id to the autostart set and write it to disk.
+   */
+  private async restoreLoadedNonpersistent(postimage: RestorePostimage): Promise<void> {
+    const host = this.app?.plugins;
+    const loader = typeof host?.loadPlugin === 'function' ? 'loadPlugin' : typeof host?.enablePlugin === 'function' ? 'enablePlugin' : undefined;
+    if (!loader) throw new Error('Obsidian plugin loader is unavailable for restoring the loaded state');
+    if (loader === 'enablePlugin' && !postimage.native) throw new Error('Obsidian loadPlugin is unavailable, so a loaded deferred postimage cannot be restored without adding native autostart');
+    await host[loader](postimage.ref.id);
+    if (!this.isLoadedInstance(postimage.ref.id)) throw new Error('Plugin did not return to the loaded state');
+    if (this.isNativeAutostart(postimage.ref.id) !== postimage.native) throw new Error('Restoring the loaded state changed the native autostart flag');
+  }
+
+  /**
+   * Refresh the host view of the installed plugin and return the version the live
+   * host reports, so state can follow what was really verified on disk.
+   */
+  private async syncPluginAfterWrite(postimage: RestorePostimage): Promise<string | undefined> {
+    const id = postimage.ref.id;
     await this.app.plugins?.loadManifests?.();
     const manifest = this.app.plugins?.manifests?.[id] as PluginManifest | undefined;
     if (!manifest || manifest.id !== id) throw new Error('Installed manifest could not be read back');
     const disk = JSON.parse(await this.adapter.read(`${this.pluginRoot(id)}/manifest.json`)) as PluginManifest;
     if (disk.id !== id || disk.version !== manifest.version) throw new Error('Installed manifest readback mismatch');
-    if (wasLoaded && this.isEnabled(id)) {
-      if (typeof this.app.plugins?.loadPlugin !== 'function') throw new Error('Obsidian plugin loader is unavailable for restoring the loaded state');
-      await this.app.plugins.loadPlugin(id);
-      if (!this.app.plugins?.plugins?.[id]) throw new Error('Plugin did not return to the loaded state');
-    }
+    if (this.restoreDecision(postimage) === 'restore') await this.restoreLoadedNonpersistent(postimage);
+    return manifest.version;
   }
 
-  private isEnabled(id: string): boolean {
-    const enabled = this.app.plugins?.enabledPlugins;
-    return enabled?.has ? enabled.has(id) : Boolean(enabled?.[id]);
+  /**
+   * Publish the verified installed version in place. The existing record object is
+   * kept so tags, group, desired and metadata survive, and a backup copy is never
+   * used to overwrite a record: the only accepted source is the live host readback.
+   */
+  private recordVerifiedVersion(ref: PluginRef, version: string | undefined): void {
+    if (!version) return;
+    const record = this.runtime.state.records?.[recordKeyOf(ref)];
+    if (record) record.version = version;
   }
 
   async install(repoInput: string, tagInput: string): Promise<string> {
@@ -315,9 +370,9 @@ export class GithubManager {
       const sourceBefore = sourceKey ? structuredClone(this.runtime.state.githubSources[sourceKey]) : undefined;
       const expectedId = sourceKey?.startsWith('community:') ? sourceKey.slice('community:'.length) : undefined;
       const preNetworkFiles = new Map<string, string | null>();
-      const preNetworkGeneration = expectedId ? this.mutationGeneration(expectedId) : undefined;
-      const preNetworkEnabled = expectedId ? this.isEnabled(expectedId) : undefined;
-      const preNetworkLoaded = expectedId ? Boolean(this.app.plugins?.plugins?.[expectedId]) : undefined;
+      const preNetworkGeneration = expectedId ? this.mutationGeneration(this.communityRef(expectedId)) : undefined;
+      const preNetworkEnabled = expectedId ? this.isNativeAutostart(expectedId) : undefined;
+      const preNetworkLoaded = expectedId ? this.isLoadedInstance(expectedId) : undefined;
       if (expectedId) for (const filename of [...REQUIRED_FILES, 'styles.css']) {
         const path = `${this.pluginRoot(expectedId)}/${filename}`;
         preNetworkFiles.set(filename, await this.adapter.exists(path) ? await this.adapter.read(path) : null);
@@ -340,9 +395,14 @@ export class GithubManager {
       if ((manifest as JsonObject).isDesktopOnly === true && (this.app?.isMobile === true || Platform.isMobile || !Platform.isDesktopApp)) throw new Error('Plugin is desktop-only');
 
       const root = this.pluginRoot(manifest.id);
-      const generation = preNetworkGeneration ?? this.mutationGeneration(manifest.id);
-      const wasEnabled = preNetworkEnabled ?? this.isEnabled(manifest.id);
-      const wasLoaded = preNetworkLoaded ?? Boolean(this.app.plugins?.plugins?.[manifest.id]);
+      const ref = this.communityRef(manifest.id);
+      const generation = preNetworkGeneration ?? this.mutationGeneration(ref);
+      const wasEnabled = preNetworkEnabled ?? this.isNativeAutostart(manifest.id);
+      const wasLoaded = preNetworkLoaded ?? this.isLoadedInstance(manifest.id);
+      // Native autostart and loaded are captured apart: a plugin can be loaded
+      // while its native autostart stays excluded, and that is the postimage the
+      // update has to put back.
+      const postimage: RestorePostimage = { ref, native: wasEnabled, loaded: wasLoaded, generation };
       const original = preNetworkFiles.size ? preNetworkFiles : new Map<string, string | null>();
       for (const filename of [...REQUIRED_FILES, 'styles.css']) if (!original.has(filename)) {
         const path = `${root}/${filename}`;
@@ -351,7 +411,7 @@ export class GithubManager {
       const mainJs = await this.text(assets.get('main.js')!);
       const stylesUrl = assets.get('styles.css');
       const styles = stylesUrl ? await this.text(stylesUrl) : null;
-      if (this.mutationGeneration(manifest.id) !== generation || this.isEnabled(manifest.id) !== wasEnabled || Boolean(this.app.plugins?.plugins?.[manifest.id]) !== wasLoaded) throw new Error('Plugin enablement or mutation generation changed during release validation');
+      if (this.mutationGeneration(ref) !== generation || this.isNativeAutostart(manifest.id) !== wasEnabled || this.isLoadedInstance(manifest.id) !== wasLoaded) throw new Error('Plugin enablement or mutation generation changed during release validation');
       if (sourceKey && JSON.stringify(this.runtime.state.githubSources[sourceKey]) !== JSON.stringify(sourceBefore)) throw new Error('GitHub source configuration changed during release validation');
       for (const filename of [...REQUIRED_FILES, 'styles.css']) {
         const path = `${root}/${filename}`;
@@ -382,9 +442,10 @@ export class GithubManager {
           const path = `${root}/${filename}`;
           if (expected === null ? await this.adapter.exists(path) : await this.adapter.read(path) !== expected) throw new Error(`Installed file readback mismatch: ${filename}`);
         }
-        await this.syncPluginAfterWrite(manifest.id, wasLoaded && this.isEnabled(manifest.id) && this.mutationGeneration(manifest.id) === generation);
+        const verifiedVersion = await this.syncPluginAfterWrite(postimage);
         const source = this.runtime.state.githubSources[recordKey] ?? { repo, trackPrereleases: false };
         this.runtime.state.githubSources[recordKey] = { ...source, repo, version: manifest.version };
+        this.recordVerifiedVersion(ref, verifiedVersion);
         saveAttempted = true;
         await transaction.save();
         await transaction.refresh();
@@ -398,8 +459,9 @@ export class GithubManager {
           try {
             if (this.app.plugins?.plugins?.[manifest.id]) await this.app.plugins?.unloadPlugin?.(manifest.id);
             for (const filename of [...REQUIRED_FILES, 'styles.css']) await this.atomicWrite(`${root}/${filename}`, original.get(filename) ?? null, `${nonce}-restore`);
-            await this.syncPluginAfterWrite(manifest.id, wasLoaded && this.isEnabled(manifest.id) && this.mutationGeneration(manifest.id) === generation);
+            const compensatedVersion = await this.syncPluginAfterWrite(postimage);
             if (saveAttempted) {
+              this.recordVerifiedVersion(ref, compensatedVersion);
               await transaction.save();
               await transaction.refresh();
               await transaction.writeEffectiveState();
@@ -425,8 +487,11 @@ export class GithubManager {
       const { manifest } = await this.readLatestBackup(id);
       const operationLabel = `github-rollback:${id}`;
       this.beginPending(operationLabel);
-      const wasLoaded = Boolean(this.app.plugins?.plugins?.[id]);
-      const stillEnabled = this.isEnabled(id);
+      const wasLoaded = this.isLoadedInstance(id);
+      const stillEnabled = this.isNativeAutostart(id);
+      // The postimage is what the host holds right now, not the one stored in the
+      // backup: a manual toggle taken after the install is newer intent and wins.
+      const postimage: RestorePostimage = { ref: this.communityRef(id), native: stillEnabled, loaded: wasLoaded, generation: this.mutationGeneration(this.communityRef(id)) };
       const sourceKey = `community:${id}`;
       const currentFiles = new Map<string, string | null>();
       for (const filename of [...REQUIRED_FILES, 'styles.css']) {
@@ -437,8 +502,11 @@ export class GithubManager {
       try {
         if (wasLoaded) await this.app.plugins?.unloadPlugin?.(id);
         await this.restoreSnapshot(id, manifest);
-        if (manifest.files['manifest.json']?.existed) await this.syncPluginAfterWrite(id, wasLoaded && stillEnabled);
-        else {
+        if (manifest.files['manifest.json']?.existed) {
+          // previousVersion is a backup copy; only the live readback may update state.
+          const restoredVersion = await this.syncPluginAfterWrite(postimage);
+          this.recordVerifiedVersion(postimage.ref, restoredVersion);
+        } else {
           await this.app.plugins?.loadManifests?.();
           if (this.app.plugins?.manifests?.[id]) throw new Error('Rollback readback found an unexpected installed manifest');
         }
@@ -454,8 +522,9 @@ export class GithubManager {
         else delete this.runtime.state.githubSources[sourceKey];
         try {
           for (const filename of [...REQUIRED_FILES, 'styles.css']) await this.atomicWrite(`${this.pluginRoot(id)}/${filename}`, currentFiles.get(filename) ?? null, `rollback-failed-${Date.now()}`);
-          if (wasLoaded && stillEnabled) await this.syncPluginAfterWrite(id, true);
+          const compensatedVersion = await this.syncPluginAfterWrite(postimage);
           if (saveAttempted) {
+            this.recordVerifiedVersion(postimage.ref, compensatedVersion);
             await transaction.save();
             await transaction.refresh();
             await transaction.writeEffectiveState();

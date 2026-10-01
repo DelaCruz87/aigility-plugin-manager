@@ -18,7 +18,9 @@ export function installStartupGuards(plugin: any): () => void {
         const diagnostic = diagnostics[id];
         if (reason) diagnostic.reason = reason;
         const detail = reason ? `${id}: ${reason}` : `${id}: active`;
-        plugin.managerRuntime?.log?.(reason ? 'warn' : 'info', `Runtime guard ${detail}`);
+        // The manager runtime is published as plugin.runtime; managerRuntime never
+        // existed, so every guard diagnostic used to be dropped silently.
+        plugin.runtime?.log?.(reason ? 'warn' : 'info', `Runtime guard ${detail}`);
         if (reason) new Notice(`AIgility Plugin Manager: ${detail}`);
     };
 
@@ -83,7 +85,7 @@ export function installStartupGuards(plugin: any): () => void {
         if (disposed) return;
         disposed = true;
         for (const remove of [...removers].reverse()) {
-            try { remove(); } catch (error) { plugin.managerRuntime?.log?.('error', 'Runtime guard teardown failed.', error); }
+            try { remove(); } catch (error) { plugin.runtime?.log?.('error', 'Runtime guard teardown failed.', error); }
         }
         for (const diagnostic of Object.values(diagnostics)) {
             if (diagnostic.active) diagnostic.restored = false;
@@ -138,7 +140,7 @@ function installLinkResolverScheduleGuard(plugin: any, diagnostic: Diagnostic, r
                 state.errors.push({ path: file.path, message: String((error as any)?.message ?? error) });
                 state.paused = true;
                 report(diagnostic.id, `paused after ${file.path}; queued file preserved for diagnosis`);
-                plugin.managerRuntime?.log?.('error', 'Link resolver guard paused; failed file remains queued.', error);
+                plugin.runtime?.log?.('error', 'Link resolver guard paused; failed file remains queued.', error);
                 return;
             }
         }
@@ -169,7 +171,8 @@ function installLinkResolverScheduleGuard(plugin: any, diagnostic: Diagnostic, r
 // queue lifecycle, failure fallback and teardown against the installed host.
 function installRelatedLinkBatchGuard(plugin: any, diagnostic: Diagnostic, report: (id: string, reason?: string) => void, removers: Array<() => void>): void {
     const cache = plugin.app?.metadataCache;
-    if (!cache || plugin.relatedLinkBatchGuard) return;
+    if (plugin.relatedLinkBatchGuard) return;
+    if (!cache) { report(diagnostic.id, 'metadata cache is absent; native behavior retained'); return; }
     const update = cache.updateRelatedLinks; const clean = cache.isCacheClean;
     const items = cache.linkResolverQueue?.items;
     if (typeof update !== 'function' || typeof clean !== 'function' || !String(update).includes('this.getCachedFiles()') ||
@@ -216,7 +219,7 @@ function installRelatedLinkBatchGuard(plugin: any, diagnostic: Diagnostic, repor
         if (state.timer === null) state.timer = timers.setTimeout(() => {
             try { flush(); }
             catch (error) {
-                plugin.managerRuntime?.log?.('error', 'Related-link batch fallback to native resolver.', error);
+                plugin.runtime?.log?.('error', 'Related-link batch fallback to native resolver.', error);
                 const retry = [...state.names]; state.names.clear(); update.call(cache, retry); cache.checkCleanCache();
             }
         }, 100);
