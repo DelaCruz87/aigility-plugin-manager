@@ -1,0 +1,69 @@
+{
+  "capturedAt": "2026-10-01T13:07:03.428479+00:00",
+  "status": "installed-verified",
+  "identity": {
+    "name": "Sandbox",
+    "basePath": "/Users/eme/Obsidian/Sandbox",
+    "appId": "d137282e82167d84"
+  },
+  "live": {
+    "version": "0.1.0",
+    "native": true,
+    "loaded": true,
+    "recovery": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+    "devices": 7,
+    "fixtures": 42,
+    "omnisearchDesired": true,
+    "communityCount": 46,
+    "coreCount": 30
+  },
+  "receipts": [
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/migration-backups/2026-10-01T12-59-31-333Z/legacy-bpm.json",
+      "currentHash": "f191214f49b41c035734247f47d7539bb7fd1abfbb20813bd6f7fa0a459738f0",
+      "initialHashMatches": true
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/migration-backups/2026-10-01T12-59-31-333Z/legacy-companion.json",
+      "currentHash": "a2201eeeaecde518fa1df5ccf7dc03a6341b92829d9d8eed8efec1aea1f3b3cc",
+      "initialHashMatches": true
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/migration-backups/2026-10-01T12-59-31-333Z/community-plugins.json",
+      "currentHash": "01230015e626a54b606141815b48ae4a66975e11bae8318208cb2411e87f06bf",
+      "initialHashMatches": true
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/migration-backups/2026-10-01T12-59-31-333Z/core-plugins.json",
+      "currentHash": "ed04ad83c9919966e60d3bb9e09de067206b6275ff7bae0f3ca4c9fd94423352",
+      "initialHashMatches": true
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/data.json",
+      "currentHash": "19f80761dbbd1f78f6a6975d3f4b95367bdfd0f7640c1d04c8e7f3a53485f09b",
+      "initialHashMatches": false
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/main.js",
+      "currentHash": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada",
+      "initialHashMatches": true
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/manifest.json",
+      "currentHash": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa",
+      "initialHashMatches": true
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/styles.css",
+      "currentHash": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e",
+      "initialHashMatches": true
+    }
+  ],
+  "sourceHashes": {
+    "main.js": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada",
+    "manifest.json": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "ringerStatus": "FAIL: repeat --run correctly refused existing successful stage receipt",
+  "stageReceiptCaveat": "hostAvailableAtFinalCheck/installAttempted flags stale from failed pre-write attempt. data.json changed during host serialization; source and raw backup hashes match, current canonical migration counts checked separately. Stage is not feature acceptance."
+}

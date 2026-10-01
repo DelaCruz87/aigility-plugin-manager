@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "mode": "run",
+  "status": "staged",
+  "capturedAt": "2026-10-01T12:59:31.133Z",
+  "identity": {
+    "name": "Sandbox",
+    "basePath": "/Users/eme/Obsidian/Sandbox",
+    "appId": "d137282e82167d84"
+  },
+  "sourceHashes": {
+    "main.js": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada",
+    "manifest.json": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "receipts": [
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/migration-backups/2026-10-01T12-59-31-333Z/legacy-bpm.json",
+      "beforeHash": null,
+      "afterExpectedHash": "f191214f49b41c035734247f47d7539bb7fd1abfbb20813bd6f7fa0a459738f0",
+      "afterHash": "f191214f49b41c035734247f47d7539bb7fd1abfbb20813bd6f7fa0a459738f0"
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/migration-backups/2026-10-01T12-59-31-333Z/legacy-companion.json",
+      "beforeHash": null,
+      "afterExpectedHash": "a2201eeeaecde518fa1df5ccf7dc03a6341b92829d9d8eed8efec1aea1f3b3cc",
+      "afterHash": "a2201eeeaecde518fa1df5ccf7dc03a6341b92829d9d8eed8efec1aea1f3b3cc"
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/migration-backups/2026-10-01T12-59-31-333Z/community-plugins.json",
+      "beforeHash": null,
+      "afterExpectedHash": "01230015e626a54b606141815b48ae4a66975e11bae8318208cb2411e87f06bf",
+      "afterHash": "01230015e626a54b606141815b48ae4a66975e11bae8318208cb2411e87f06bf"
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/migration-backups/2026-10-01T12-59-31-333Z/core-plugins.json",
+      "beforeHash": null,
+      "afterExpectedHash": "ed04ad83c9919966e60d3bb9e09de067206b6275ff7bae0f3ca4c9fd94423352",
+      "afterHash": "ed04ad83c9919966e60d3bb9e09de067206b6275ff7bae0f3ca4c9fd94423352"
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/data.json",
+      "beforeHash": null,
+      "afterExpectedHash": "172c8abaf1142737d713b0a2230558cb6f7f23bca3bdfd2342581931ee0f1bba",
+      "afterHash": "19f80761dbbd1f78f6a6975d3f4b95367bdfd0f7640c1d04c8e7f3a53485f09b",
+      "postLoadHash": "19f80761dbbd1f78f6a6975d3f4b95367bdfd0f7640c1d04c8e7f3a53485f09b"
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/main.js",
+      "beforeHash": null,
+      "afterExpectedHash": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada",
+      "afterHash": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada"
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/manifest.json",
+      "beforeHash": null,
+      "afterExpectedHash": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa",
+      "afterHash": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa"
+    },
+    {
+      "target": "/Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/styles.css",
+      "beforeHash": null,
+      "afterExpectedHash": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e",
+      "afterHash": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+    }
+  ],
+  "hostAvailableAtFinalCheck": true,
+  "installAttempted": true,
+  "installed": true,
+  "enabled": true,
+  "loaded": true,
+  "foreignPreserved": true,
+  "communityCount": 45,
+  "coreCount": 30,
+  "tagCount": 76,
+  "groupCount": 5,
+  "deviceProfileCount": 7,
+  "fixtureCount": 42,
+  "deferredCount": 5,
+  "backupCount": 1,
+  "omnisearchDesired": true,
+  "omnisearchNativeEnabled": false,
+  "compatibilityPolicy": "Runtime revalidates host API and desktop constraints before plugin operations.",
+  "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+  "managerVersion": "0.1.0",
+  "backupHashes": {
+    "legacy-bpm.json": "f191214f49b41c035734247f47d7539bb7fd1abfbb20813bd6f7fa0a459738f0",
+    "legacy-companion.json": "a2201eeeaecde518fa1df5ccf7dc03a6341b92829d9d8eed8efec1aea1f3b3cc",
+    "community-plugins.json": "01230015e626a54b606141815b48ae4a66975e11bae8318208cb2411e87f06bf",
+    "core-plugins.json": "ed04ad83c9919966e60d3bb9e09de067206b6275ff7bae0f3ca4c9fd94423352"
+  }
+}

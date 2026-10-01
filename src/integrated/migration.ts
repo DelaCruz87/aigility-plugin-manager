@@ -135,7 +135,7 @@ function observedKey(observed: ObservedPlugin): string | null {
 }
 
 function isObservedEntry(value: unknown): value is ObservedPlugin {
-    return isPlainObject(value) && observedKey(value as ObservedPlugin) !== null;
+    return isPlainObject(value) && observedKey(value as unknown as ObservedPlugin) !== null;
 }
 
 function isActive(observed: ObservedPlugin | undefined): boolean {
