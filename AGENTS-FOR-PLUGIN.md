@@ -4,6 +4,8 @@
 
 [effective-state.json](file:///Users/eme/Obsidian/ENSO/.obsidian/plugins/aigility-plugin-manager/effective-state.json) is generated from the live Obsidian host by AIgility Plugin Manager. It is a read-only observation for agents, not a command input or a substitute for manager State.
 
+The report includes `installation.appId`, `installation.vaultName` and platform provenance. When Sync copies this file between devices, it remains the last writer's observation. Match that identity and `generatedAt` to the current host before interpreting it as local state. The device binding stays in localStorage and is not a synchronized setting.
+
 Each row carries `kind`, `id`, `installed`, `desired`, `nativeAutostart`, `loaded`, `scheduled`, optional `reason`, and `version`:
 
 - `installed` reports whether Obsidian has a plugin manifest.
@@ -17,7 +19,7 @@ Do not collapse these fields into a single enabled/disabled claim. Deferred plug
 
 ## Native plugin IDs
 
-For core plugins, accept only IDs present in the live `app.internalPlugins.plugins` registry. Read `wrapper.enabled` for current native enablement and `wrapper.instance` for loaded state. Do not call `internalPlugins.enable(id, enabled)`; Obsidian's `enable()` has no ID parameter and can rehydrate all core plugin settings. Use the supported per-plugin wrapper methods through the manager runtime, then save and read back host state.
+For core plugins, accept only IDs present in the live `app.internalPlugins.plugins` registry. Read `wrapper.enabled` for current native enablement and `wrapper.instance?._loaded === true` for loaded state. The existence of an instance alone does not establish that it is loaded. Do not call `internalPlugins.enable(id, enabled)`; Obsidian's `enable()` has no ID parameter and can rehydrate all core plugin settings. Use the supported per-plugin wrapper methods through the manager runtime, then save and read back host state.
 
 The live [core-plugins.json](file:///Users/eme/Obsidian/ENSO/.obsidian/core-plugins.json) was inspected on 2026-10-01. Its currently enabled IDs were:
 
@@ -59,3 +61,7 @@ If debugging was interrupted, report the stored session and request deliberate r
 ## Build and verification
 
 The production bundle is built from root [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/main]]. `managerBuild` and the plugin manifest version identify the active build. Do not claim module integration from a green typecheck alone; inspect the bundle entry and run the requested lifecycle tests. A build does not establish Sandbox rendering or physical-device acceptance.
+
+## Manual profile confirmation
+
+A comparison is bound to the runtime snapshot that produced it. If profile membership, tags or host state change before confirmation, the manual apply rejects that comparison and requires a new preview. Startup application does not use an interactive comparison. A rejected comparison must not be bypassed by calling the unguarded startup path.
