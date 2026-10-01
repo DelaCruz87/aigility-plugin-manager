@@ -47,6 +47,164 @@ export function pluginRefKey(ref: PluginRef): string {
     return `${ref.kind}:${ref.id}`;
 }
 
+/**
+ * Canonical `kind:id` parser. Selector values always carry the kind so that a
+ * community plugin and a core plugin sharing the same id never collide.
+ */
+export function parsePluginRefKey(value: string): PluginRef | null {
+    const separator = value.indexOf(':');
+    if (separator < 1 || separator === value.length - 1) return null;
+    const kind = value.slice(0, separator);
+    if (kind !== 'community' && kind !== 'core') return null;
+    return { kind, id: value.slice(separator + 1) };
+}
+
+/**
+ * Raised when a modal's working copy no longer matches the refreshed state:
+ * the queued save aborts instead of overwriting an externally changed field.
+ */
+export class UiStateConflictError extends Error {
+    constructor(message = 'El estado cambió fuera de este diálogo mientras editabas. Reabre la sección para recargar los datos; no se sobreescribió nada.') {
+        super(message);
+        this.name = 'UiStateConflictError';
+    }
+}
+
+/** Snapshot created by this manager: definitions only, never live enablement. */
+export interface ManagerProfileBackup {
+    id: string;
+    timestamp: string;
+    profiles: DeviceProfile[];
+    fixtures: FixtureProfile[];
+    tagMembership: { [pluginKey: string]: { tags: string[]; group: string } };
+}
+
+/** One device variant inside an imported Companion backup payload. */
+export interface CompanionBackupVariant {
+    name?: string;
+    savedAt?: string;
+    pluginStates?: { [pluginId: string]: unknown };
+}
+
+/**
+ * Imported Companion backup, preserved verbatim by the migration as
+ * { source, migratedAt, backups: { desktop/mobile/tablet: { name, savedAt,
+ * pluginStates } } }. The original object is never rewritten by the UI.
+ */
+export interface CompanionBackupEntry {
+    source: string;
+    migratedAt?: string;
+    backups: { [variant: string]: CompanionBackupVariant };
+}
+
+/** Stable identity used to resolve a backup entry inside refreshed state. */
+export type BackupIdentity =
+    | { kind: 'manager'; id: string }
+    | { kind: 'companion'; source: string; migratedAt: string };
+
+/** Fixture definition produced from an imported Companion backup variant. */
+export interface CompanionRestoreFixture {
+    id: string;
+    name: string;
+    members: { [pluginKey: string]: boolean };
+    metadata: { [key: string]: unknown };
+}
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function deepClone<T>(value: T): T {
+    return JSON.parse(JSON.stringify(value)) as T;
+}
+
+/** Guards an imported Companion backup entry without mutating it. */
+export function companionBackupEntryOf(entry: unknown): CompanionBackupEntry | null {
+    if (!isObjectRecord(entry) || typeof entry.source !== 'string' || !isObjectRecord(entry.backups)) return null;
+    return entry as unknown as CompanionBackupEntry;
+}
+
+export function backupIdentityOf(entry: unknown): BackupIdentity | null {
+    if (!isObjectRecord(entry)) return null;
+    if (typeof entry.id === 'string' && entry.id) return { kind: 'manager', id: entry.id };
+    if (typeof entry.source === 'string' && entry.source) {
+        return { kind: 'companion', source: entry.source, migratedAt: typeof entry.migratedAt === 'string' ? entry.migratedAt : '' };
+    }
+    return null;
+}
+
+function sameBackupIdentity(entry: unknown, identity: BackupIdentity): boolean {
+    const other = backupIdentityOf(entry);
+    if (!other || other.kind !== identity.kind) return false;
+    if (identity.kind === 'manager' && other.kind === 'manager') return other.id === identity.id;
+    if (identity.kind === 'companion' && other.kind === 'companion') {
+        return other.source === identity.source && other.migratedAt === identity.migratedAt;
+    }
+    return false;
+}
+
+/** Deterministic fixture id per device variant: restoring twice never duplicates. */
+export function fixtureIdForCompanionVariant(variant: string): string {
+    const slug = variant.toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
+    return `companion-restore-${slug || 'variant'}`;
+}
+
+/**
+ * Light owner/repo normalization for pre-filling the release picker. This is
+ * display-default only: the GithubManager re-validates the repository string
+ * authoritatively before any network call.
+ */
+export function normalizeGithubRepoInput(input: string): string | null {
+    const trimmed = input.trim();
+    if (!trimmed) return null;
+    let path = trimmed;
+    const urlMatch = path.match(/^https?:\/\/github\.com\/([^/\s]+)\/([^/?#\s]+)/i);
+    if (urlMatch) path = `${urlMatch[1]}/${urlMatch[2]}`;
+    if (path.includes('://')) return null;
+    const segments = path.split('/').filter(Boolean);
+    if (segments.length < 2) return null;
+    const owner = segments[0];
+    let repo = segments[1];
+    if (repo.endsWith('.git')) repo = repo.slice(0, -4);
+    if (!owner || !repo) return null;
+    return `${owner}/${repo}`;
+}
+
+/**
+ * Pure plan for restoring an imported Companion backup: one partial fixture per
+ * device variant built from its pluginStates, with canonical `kind:id` member
+ * keys (raw legacy ids map to community, like the migration does). Returns null
+ * when the payload holds no usable pluginStates. Never touches the entry.
+ */
+export function companionRestorePlan(entry: unknown): CompanionRestoreFixture[] | null {
+    const parsed = companionBackupEntryOf(entry);
+    if (!parsed) return null;
+    const plans: CompanionRestoreFixture[] = [];
+    for (const [variant, rawVariant] of Object.entries(parsed.backups)) {
+        if (!isObjectRecord(rawVariant) || !isObjectRecord(rawVariant.pluginStates)) continue;
+        const members: { [pluginKey: string]: boolean } = {};
+        for (const [pluginId, state] of Object.entries(rawVariant.pluginStates)) {
+            if (!pluginId) continue;
+            const canonical = parsePluginRefKey(pluginId);
+            members[canonical ? pluginRefKey(canonical) : `community:${pluginId}`] = state === true;
+        }
+        if (Object.keys(members).length === 0) continue;
+        const name = typeof rawVariant.name === 'string' && rawVariant.name.trim() ? rawVariant.name.trim() : `Companion ${variant}`;
+        plans.push({
+            id: fixtureIdForCompanionVariant(variant),
+            name,
+            members,
+            metadata: {
+                restoredFrom: 'companion-backup',
+                source: parsed.source,
+                ...(typeof parsed.migratedAt === 'string' ? { migratedAt: parsed.migratedAt } : {}),
+                ...(typeof rawVariant.savedAt === 'string' ? { savedAt: rawVariant.savedAt } : {}),
+            },
+        });
+    }
+    return plans.length > 0 ? plans : null;
+}
+
 export interface FilterCriteria {
     search?: string;
     kind?: 'all' | 'community' | 'core';
@@ -54,11 +212,33 @@ export interface FilterCriteria {
     group?: string;
 }
 
+/**
+ * Transactional handle delivered with every queued operation. Transactions are
+ * the ONLY sanctioned write path: tx.refresh() pulls the freshest persisted
+ * state, entities are resolved by stable id inside the callback, and tx.save()
+ * plus tx.writeEffectiveState() persist in the same queue slot. Calling public
+ * save()/enqueue() from inside a transaction would deadlock the serial queue.
+ */
+export interface RuntimeTransaction {
+    save(): Promise<void>;
+    refresh(): Promise<State>;
+    writeEffectiveState(): Promise<void>;
+    setEnabled(ref: PluginRef, enabled: boolean, options?: { loadNow?: boolean; origin?: string }): Promise<void>;
+    /**
+     * Optional runtime-side native exclusion for deferred policies. It is
+     * provided by the runtime when available; the UI never fakes it. When it is
+     * missing and a plugin still owns native autostart, configuring the policy
+     * must fail visibly instead of claiming a deferred configuration it cannot
+     * enforce.
+     */
+    reconcileDeferred?(ref: PluginRef): Promise<void>;
+}
+
 export interface ManagerRuntime {
     state: State;
     local: LocalState;
     list(): EffectivePlugin[];
-    enqueue<T>(label: string, operation: () => Promise<T>): Promise<T>;
+    enqueue<T>(label: string, operation: (tx: RuntimeTransaction) => Promise<T>): Promise<T>;
     save(): Promise<void>;
     previewProfile(id: string): Promise<Change[]>;
     applyProfile(id: string): Promise<void>;
@@ -83,6 +263,12 @@ export interface GithubManager {
     setPin(id: string, version?: string): Promise<void>;
 }
 
+export interface AdvancedCapability {
+    id: string;
+    supported: boolean;
+    reason?: string;
+}
+
 export interface DebugManager {
     session?: any;
     start(refs?: PluginRef[]): Promise<void>;
@@ -93,6 +279,10 @@ export interface DebugManager {
     finish(): Promise<void>;
     exportReports(): Promise<{ markdown: string; json: string }>;
     advanced(enable: boolean): Promise<void>;
+    configureAdvanced?(option: string, value: unknown): Promise<void>;
+    cancelRunningTask?(): Promise<void>;
+    resume?(): Promise<void>;
+    advancedCapabilities?(): AdvancedCapability[];
     dispose(): void;
 }
 
@@ -161,6 +351,11 @@ export class ManagerUI {
     private installedDiagnosticEl: HTMLElement | null = null;
     private sidebarControlsEl: HTMLElement | null = null;
     private hiddenNativeElements: Array<{
+        el: HTMLElement;
+        display: string;
+        priority: string;
+    }> = [];
+    private sidebarTabSnapshots: Array<{
         el: HTMLElement;
         display: string;
         priority: string;
@@ -525,8 +720,36 @@ export class ManagerUI {
     }
 
     /**
-     * Filters ONLY plugin-specific settings rows mapped by tab.id/plugin.id or records.
-     * Core and general settings tabs remain completely untouched!
+     * Resolves the canonical PluginRef kind of a settings tab found in
+     * setting.pluginTabs (host 1.14.3 includes CORE and community tabs there).
+     * Canonical records decide first; the app.internalPlugins.plugins registry
+     * identifies core tabs that have no local record yet.
+     */
+    private resolveSidebarTabKind(tab: any): 'community' | 'core' {
+        const pluginId = String(tab?.id || tab?.plugin?.manifest?.id || '');
+        const records = this.runtime.state?.records;
+        if (records && Object.prototype.hasOwnProperty.call(records, `core:${pluginId}`)) {
+            return 'core';
+        }
+        if (records && Object.prototype.hasOwnProperty.call(records, `community:${pluginId}`)) {
+            return 'community';
+        }
+        const internalPlugins = this.plugin?.app?.internalPlugins?.plugins;
+        if (internalPlugins && Object.prototype.hasOwnProperty.call(internalPlugins, pluginId)) {
+            return 'core';
+        }
+        return 'community';
+    }
+
+    private sidebarTabRecord(tab: any, kind: 'community' | 'core'): PluginRecord | undefined {
+        const pluginId = String(tab?.id || tab?.plugin?.manifest?.id || '');
+        return this.runtime.state?.records?.[`${kind}:${pluginId}`];
+    }
+
+    /**
+     * Filters plugin tabs of BOTH kinds by name/ID/tag/group. Only each tab's
+     * nav element visibility is touched; the nine general categories in
+     * setting.settingTabs stay accessible.
      */
     public applySidebarFilter(setting: any): void {
         if (!setting || !Array.isArray(setting.pluginTabs)) return;
@@ -534,53 +757,100 @@ export class ManagerUI {
         const { search, tag, group } = this.sidebarFilterCriteria;
         const normalizedSearch = search ? search.trim().toLowerCase() : '';
 
-        // pluginTabs contains ONLY community plugin tabs
         for (const tab of setting.pluginTabs) {
-            const pluginId = tab.id || tab.plugin?.manifest?.id || '';
-            const record = this.runtime.state?.records?.[`community:${pluginId}`];
-            const pluginName = (tab.name || tab.plugin?.manifest?.name || record?.name || pluginId).toLowerCase();
+            const kind = this.resolveSidebarTabKind(tab);
+            const pluginId = String(tab?.id || tab?.plugin?.manifest?.id || '');
+            const record = this.sidebarTabRecord(tab, kind);
+            const pluginName = String(tab?.name || tab?.plugin?.manifest?.name || record?.name || pluginId).toLowerCase();
 
             let matches = true;
 
-            // Search filter
+            // Search filter (name or ID)
             if (normalizedSearch) {
                 if (!pluginName.includes(normalizedSearch) && !pluginId.toLowerCase().includes(normalizedSearch)) {
                     matches = false;
                 }
             }
 
-            // Tag filter
+            // Tag filter (both kinds)
             if (matches && tag && tag !== 'all') {
-                if (!record || !record.tags || !record.tags.includes(tag)) {
+                if (!record || !Array.isArray(record.tags) || !record.tags.includes(tag)) {
                     matches = false;
                 }
             }
 
-            // Group filter
+            // Group filter (both kinds)
             if (matches && group && group !== 'all') {
                 if (!record || record.group !== group) {
                     matches = false;
                 }
             }
 
-            // Hide or show the tab's nav element
-            const navEl = tab.navEl;
-            if (navEl && navEl.style) {
-                navEl.style.display = matches ? '' : 'none';
-            }
+            this.applySidebarTabVisibility(tab, matches);
         }
     }
 
     /**
-     * Restores visibility of all plugin tabs in sidebar.
+     * Applies one tab's visibility through an owned snapshot. Hiding records
+     * the previous inline display and stores our postimage; showing or
+     * restoring only reverts the element while it still carries our postimage
+     * (`display: none`), so later manual DOM changes always win.
+     */
+    private applySidebarTabVisibility(tab: any, matches: boolean): void {
+        const navEl = tab?.navEl;
+        if (!navEl || !navEl.style) return;
+
+        const style = navEl.style as CSSStyleDeclaration;
+        const snapshotIndex = this.sidebarTabSnapshots.findIndex((s) => s.el === navEl);
+
+        if (matches) {
+            if (snapshotIndex !== -1) {
+                const snapshot = this.sidebarTabSnapshots[snapshotIndex];
+                if (style.display === 'none') {
+                    if (typeof style.setProperty === 'function') {
+                        if (snapshot.display) style.setProperty('display', snapshot.display, snapshot.priority);
+                        else style.removeProperty('display');
+                    } else {
+                        style.display = snapshot.display;
+                    }
+                }
+                this.sidebarTabSnapshots.splice(snapshotIndex, 1);
+            } else if (style.display !== 'none') {
+                style.display = '';
+            }
+            return;
+        }
+
+        if (snapshotIndex !== -1) return; // already hidden by us
+        if (style.display === 'none') return; // hidden by someone else; we do not own it
+        this.sidebarTabSnapshots.push({
+            el: navEl,
+            display: typeof style.getPropertyValue === 'function'
+                ? style.getPropertyValue('display')
+                : (style.display || ''),
+            priority: typeof style.getPropertyPriority === 'function'
+                ? style.getPropertyPriority('display')
+                : ''
+        });
+        style.display = 'none';
+    }
+
+    /**
+     * Restores visibility of only the tabs this UI hid, and only while they
+     * still carry our owned postimage.
      */
     private restoreSidebarTabs(setting: any): void {
-        if (!setting || !Array.isArray(setting.pluginTabs)) return;
-        for (const tab of setting.pluginTabs) {
-            if (tab.navEl && tab.navEl.style) {
-                tab.navEl.style.display = '';
+        for (const snapshot of this.sidebarTabSnapshots) {
+            const style = snapshot.el?.style as CSSStyleDeclaration | undefined;
+            if (!style || style.display !== 'none') continue;
+            if (typeof style.setProperty === 'function') {
+                if (snapshot.display) style.setProperty('display', snapshot.display, snapshot.priority);
+                else style.removeProperty('display');
+            } else {
+                style.display = snapshot.display;
             }
         }
+        this.sidebarTabSnapshots = [];
     }
 
     /**
@@ -942,7 +1212,9 @@ export class ManagerUI {
         // Settings gear button (if community and has setting tab)
         if (plugin.ref.kind === 'community') {
             const settingTab = this.plugin?.app?.setting?.pluginTabs?.find(
-                (t: any) => t.id === plugin.ref.id || t.plugin?.manifest?.id === plugin.ref.id
+                (t: any) =>
+                    (t.id === plugin.ref.id || t.plugin?.manifest?.id === plugin.ref.id) &&
+                    this.resolveSidebarTabKind(t) === 'community'
             );
             if (settingTab) {
                 const gearBtn = document.createElement('button');
@@ -1093,7 +1365,7 @@ export class ManagerUI {
 
         new Setting(content)
             .setName('Versión a fijar')
-            .setDesc('Introduce la versión exacta para evitar actualizaciones automáticas, o déjalo vacío para desfijar.')
+            .setDesc(`Versión instalada actual: ${plugin.installed && plugin.version ? plugin.version : 'desconocida'}. Introduce la versión a fijar, o déjalo vacío para desfijar.`)
             .addText((text) => {
                 text.setValue(version);
                 text.onChange((val) => {
@@ -1128,6 +1400,208 @@ export class ManagerUI {
 
     public showNotice(msg: string): void {
         new Notice(msg, 5000);
+    }
+
+    /** Re-renders the mounted installed list; safe when the settings tab is closed. */
+    public refreshManagerView(): void {
+        if (this.installedContainerEl) this.display(this.installedContainerEl);
+    }
+
+    /**
+     * The single write path for manager-state edits. The callback runs inside the
+     * runtime serial queue against freshly refreshed state and must resolve its
+     * target entity by stable id from THAT state, mutating only the requested
+     * fields, so unrelated concurrent edits survive. save + writeEffectiveState
+     * happen in the same transaction; public save() is never nested here.
+     */
+    public enqueueStateWrite(
+        label: string,
+        write: (state: State, tx: RuntimeTransaction) => void | Promise<void>
+    ): Promise<void> {
+        return this.runtime.enqueue(label, async (tx) => {
+            const state = await tx.refresh();
+            await write(state, tx);
+            await tx.save();
+            await tx.writeEffectiveState();
+        });
+    }
+
+    /**
+     * Deferred policy edits (save, delay, parked, disable, delete) go through the
+     * queue and immediately cancel their pending loads by pausing the runtime
+     * inside the queued mutation: pause invalidates every scheduled deferred
+     * timer and surfaces a visible recovery reason, while native exclusions are
+     * retained. Apply/Resume (Reanudar) recalculates scheduling from the edited
+     * policy, so no stale timer can fire after the edit. Shared by the deferred
+     * section and the per-plugin policy modal.
+     */
+    public enqueueDeferredPolicyWrite(
+        label: string,
+        write: (state: State, tx: RuntimeTransaction) => void | Promise<void>
+    ): Promise<void> {
+        return this.enqueueStateWrite(label, (state, tx) => {
+            this.runtime.pause(`Política de carga diferida editada (${label}); cargas programadas canceladas. Pulsa Reanudar para recalcular.`);
+            return write(state, tx);
+        });
+    }
+
+    /**
+     * Why an ENABLED deferred policy cannot be honoured for this reference, or
+     * null when it can. The runtime enforces both rules (a core wrapper has no
+     * nonpersistent activation path, and a protected plugin is never mutated), so
+     * the UI refuses them BEFORE any host call instead of letting the request
+     * fail half-applied. Disabling an already-invalid policy stays allowed: that
+     * is how the user resolves the conflict.
+     */
+    public deferredEnableRefusal(ref: PluginRef): string | null {
+        if (ref.kind === 'core') {
+            return `No se puede habilitar la carga diferida de ${ref.id}: los plugins core no tienen una activación no persistente, así que excluir su autoarranque lo desactivaría de forma permanente. Desactiva la política en lugar de habilitarla.`;
+        }
+        if (this.isSelfRef(ref)) {
+            return `No se puede habilitar la carga diferida de ${ref.id}: es el propio gestor y su autoarranque está protegido.`;
+        }
+        const state = this.runtime.state;
+        const protectedList = state?.protected ?? [];
+        if (protectedList.includes(pluginRefKey(ref)) || protectedList.includes(ref.id)) {
+            return `No se puede habilitar la carga diferida de ${ref.id}: está en la lista de protegidos y su autoarranque no se modifica.`;
+        }
+        return null;
+    }
+
+    /** The manager plugin always protects itself, even if the list is empty. */
+    public isSelfRef(ref: PluginRef): boolean {
+        const manifestId = typeof this.plugin?.manifest?.id === 'string' ? this.plugin.manifest.id : 'aigility-plugin-manager';
+        return ref.id === manifestId || ref.id === 'aigility-plugin-manager';
+    }
+
+    /**
+     * Applies a deferred-policy edit to ONE plugin inside a single queued slot,
+     * in the only order the runtime honours:
+     *
+     * 1. validate(freshState, fresh) - conflict and refusal checks, before any
+     *    mutation and before any host call.
+     * 2. mutate(policy) - the requested fields land on the FRESH policy (the
+     *    entry is created when absent) BEFORE the exclusion is requested.
+     * 3. reconcileDeferred(ref) - only now, and for EVERY enabled policy, even
+     *    when native autostart is already off: the exclusion also unloads the
+     *    plugin while the runtime is paused, and reconcileDeferred() returns
+     *    without touching the host when no enabled policy exists yet, which is
+     *    why calling it first saved native=true together with a claimed deferment.
+     *
+     * A missing or failing helper reverts ONLY the fields this edit touched (or
+     * removes the entry this edit created) and then throws: the transaction never
+     * reaches tx.save(), so nothing partial is persisted and no success is faked.
+     */
+    public enqueueDeferredPolicyApply(
+        label: string,
+        ref: PluginRef,
+        validate: (freshState: State, fresh: DeferredPolicy | null) => void,
+        mutate: (policy: DeferredPolicy) => void
+    ): Promise<void> {
+        return this.enqueueDeferredPolicyWrite(label, async (freshState, tx) => {
+            if (!Array.isArray(freshState.deferred)) freshState.deferred = [];
+            const index = freshState.deferred.findIndex((candidate) => candidate.id === ref.id);
+            const existing = index === -1 ? null : freshState.deferred[index];
+            validate(freshState, existing);
+
+            const previous = existing
+                ? { enabled: existing.enabled, delayMs: existing.delayMs, parked: existing.parked }
+                : null;
+            const policy = existing ?? { id: ref.id, delayMs: 1000, enabled: false, parked: false };
+            if (!existing) freshState.deferred.push(policy);
+            mutate(policy);
+
+            if (!policy.enabled) return;
+            const revert = (): void => {
+                if (previous) {
+                    policy.enabled = previous.enabled;
+                    policy.delayMs = previous.delayMs;
+                    policy.parked = previous.parked;
+                    return;
+                }
+                const created = freshState.deferred.indexOf(policy);
+                if (created !== -1) freshState.deferred.splice(created, 1);
+            };
+            if (typeof tx.reconcileDeferred !== 'function') {
+                revert();
+                throw new Error(`No se puede configurar la carga diferida de ${ref.id}: el runtime no expone reconcileDeferred() para excluir su autoarranque nativo. La política no se guardó.`);
+            }
+            try {
+                await tx.reconcileDeferred(ref);
+            } catch (err) {
+                revert();
+                throw new Error(`No se pudo excluir el autoarranque nativo de ${ref.id}: ${(err as Error).message} La política no se guardó.`);
+            }
+        });
+    }
+
+    /** Restores a NEW-format backup: definitions only, nothing hot-applied. */
+    public restoreManagerBackup(identity: BackupIdentity): Promise<void> {
+        return this.enqueueStateWrite(`ui:backup-restore:${JSON.stringify(identity)}`, (state) => {
+            const index = state.profileBackups.findIndex((entry) => sameBackupIdentity(entry, identity));
+            if (index === -1) throw new Error('La copia de seguridad ya no existe en el estado actual.');
+            const snapshot = state.profileBackups[index] as Partial<ManagerProfileBackup>;
+            // Device profile definitions. deepClone only runs on verified arrays;
+            // a backup without profiles never reaches JSON.parse(undefined).
+            if (Array.isArray(snapshot.profiles)) state.deviceProfiles = deepClone(snapshot.profiles);
+            if (Array.isArray(snapshot.fixtures)) {
+                for (const fixture of deepClone(snapshot.fixtures)) {
+                    const existing = state.fixtureProfiles.find((candidate) => candidate.id === fixture.id);
+                    if (existing) {
+                        existing.name = fixture.name;
+                        existing.members = { ...fixture.members };
+                    } else {
+                        state.fixtureProfiles.push({ id: fixture.id, name: fixture.name, members: { ...fixture.members } });
+                    }
+                }
+            }
+            // Tag membership follows the same definitions-only rule: records are
+            // updated in place and missing records are never resurrected.
+            if (isObjectRecord(snapshot.tagMembership)) {
+                for (const [pluginKey, membership] of Object.entries(snapshot.tagMembership)) {
+                    const record = state.records[pluginKey];
+                    if (!record || !isObjectRecord(membership)) continue;
+                    if (Array.isArray(membership.tags)) record.tags = [...membership.tags];
+                    if (typeof membership.group === 'string') record.group = membership.group;
+                }
+            }
+        });
+    }
+
+    /**
+     * Restores an imported Companion backup as explicit partial fixtures built
+     * from its pluginStates. The original backup object is preserved exactly, no
+     * device profile is replaced and nothing is applied automatically.
+     */
+    public restoreCompanionBackup(identity: BackupIdentity): Promise<string[]> {
+        return this.enqueueStateWrite(`ui:backup-restore-companion:${JSON.stringify(identity)}`, (state) => {
+            const entry = state.profileBackups.find((candidate) => sameBackupIdentity(candidate, identity));
+            if (!entry) throw new Error('La copia importada ya no existe en el estado actual.');
+            const plan = companionRestorePlan(entry);
+            if (!plan) throw new Error('La copia importada no contiene estados de plugins utilizables (pluginStates); no se restauró nada.');
+            for (const fixture of plan) {
+                const existing = state.fixtureProfiles.find((candidate) => candidate.id === fixture.id);
+                if (existing) {
+                    existing.name = fixture.name;
+                    existing.members = { ...fixture.members };
+                    existing.metadata = { ...(existing.metadata ?? {}), ...fixture.metadata };
+                } else {
+                    state.fixtureProfiles.push({
+                        id: fixture.id,
+                        name: fixture.name,
+                        members: { ...fixture.members },
+                        metadata: { ...fixture.metadata },
+                    });
+                }
+            }
+        }).then(() => {
+            const plan = companionRestorePlan(this.findBackupByIdentity(identity));
+            return plan ? plan.map((fixture) => fixture.id) : [];
+        });
+    }
+
+    private findBackupByIdentity(identity: BackupIdentity): unknown {
+        return (this.runtime.state?.profileBackups ?? []).find((candidate) => sameBackupIdentity(candidate, identity));
     }
 }
 
@@ -1255,7 +1729,7 @@ export class TagMembershipModal extends Modal {
                                 Array.from(this.selectedTags)
                             );
                             this.ui.showNotice(`Etiquetas actualizadas para ${this.pluginItem.name}`);
-                            this.ui.display(this.ui['installedContainerEl'] as HTMLElement);
+                            this.ui.refreshManagerView();
                         } catch (err) {
                             this.ui.showNotice('Error al guardar etiquetas: ' + (err as Error).message);
                         }
@@ -1269,6 +1743,12 @@ export class TagMembershipModal extends Modal {
 
 /**
  * Modal for Deferred policy configuration on a single plugin.
+ *
+ * The save is a queued transaction: the policy is resolved by stable id from
+ * refreshed state, a policy changed externally since open conflicts instead of
+ * being overwritten, and a plugin that still owns native autostart requires the
+ * runtime's reconcileDeferred() exclusion (or the save fails visibly rather than
+ * claiming a deferred configuration that cannot be enforced).
  */
 export class DeferredConfigModal extends Modal {
     private ui: ManagerUI;
@@ -1286,6 +1766,10 @@ export class DeferredConfigModal extends Modal {
 
         const deferredList = this.ui.runtime.state?.deferred || [];
         const existing = deferredList.find((p) => p.id === this.pluginItem.ref.id);
+        // Snapshot of the target policy at open time for the conflict check.
+        const snapshot = existing
+            ? { enabled: existing.enabled, delayMs: existing.delayMs, parked: Boolean(existing.parked) }
+            : null;
 
         let enabled = existing ? existing.enabled : false;
         let delayMs = existing ? existing.delayMs : 1000;
@@ -1322,18 +1806,35 @@ export class DeferredConfigModal extends Modal {
                 btn.setButtonText('Guardar política')
                     .setCta()
                     .onClick(async () => {
-                        this.close();
                         try {
-                            const state = this.ui.runtime.state;
-                            const idx = state.deferred.findIndex((p) => p.id === this.pluginItem.ref.id);
-                            if (idx !== -1) {
-                                state.deferred[idx] = { id: this.pluginItem.ref.id, delayMs, enabled, parked };
-                            } else {
-                                state.deferred.push({ id: this.pluginItem.ref.id, delayMs, enabled, parked });
-                            }
-                            await this.ui.runtime.save();
-                            this.ui.showNotice('Política de carga diferida guardada');
-                            this.ui.display(this.ui['installedContainerEl'] as HTMLElement);
+                            await this.ui.enqueueDeferredPolicyApply(
+                                `ui:deferred-policy-save:${this.pluginItem.ref.id}`,
+                                this.pluginItem.ref,
+                                (freshState, fresh) => {
+                                    // Conflict: existence or field values changed while the
+                                    // modal was open. The stale copy never wins.
+                                    const freshSnapshot = fresh
+                                        ? { enabled: fresh.enabled, delayMs: fresh.delayMs, parked: Boolean(fresh.parked) }
+                                        : null;
+                                    if (JSON.stringify(freshSnapshot) !== JSON.stringify(snapshot)) throw new UiStateConflictError();
+                                    // Enabling a core or protected plugin is refused BEFORE
+                                    // any host call: the runtime cannot honour it. Turning
+                                    // the policy OFF stays allowed, which is how the user
+                                    // resolves an already-invalid policy.
+                                    if (enabled) {
+                                        const refusal = this.ui.deferredEnableRefusal(this.pluginItem.ref);
+                                        if (refusal) throw new Error(refusal);
+                                    }
+                                },
+                                (policy) => {
+                                    policy.enabled = enabled;
+                                    policy.delayMs = delayMs;
+                                    policy.parked = parked;
+                                }
+                            );
+                            this.close();
+                            this.ui.showNotice('Política de carga diferida guardada; las cargas programadas fueron canceladas. Pulsa Reanudar para recalcular.');
+                            this.ui.refreshManagerView();
                         } catch (err) {
                             this.ui.showNotice('Error al guardar política: ' + (err as Error).message);
                         }
@@ -1347,62 +1848,122 @@ export class DeferredConfigModal extends Modal {
 
 /**
  * Modal for GitHub releases list and installation.
+ *
+ * The tracked source is looked up by its CANONICAL `community:<id>` key. When no
+ * source is configured the repo field starts empty: the repository name is never
+ * assumed to equal the plugin id. Installing calls github.install(repo, tag) and
+ * the GithubManager persists the source under the manifest id it verified, so
+ * even uninstalled sources can be adopted from here.
  */
 export class GitHubReleasesModal extends Modal {
     private ui: ManagerUI;
     private pluginItem: EffectivePlugin;
+    private initialRepo: string;
 
-    constructor(app: App, ui: ManagerUI, pluginItem: EffectivePlugin) {
+    constructor(app: App, ui: ManagerUI, pluginItem: EffectivePlugin, options?: { repo?: string }) {
         super(app);
         this.ui = ui;
         this.pluginItem = pluginItem;
+        this.initialRepo = options?.repo ?? '';
     }
 
     async onOpen(): Promise<void> {
         const { contentEl, titleEl } = this;
-        titleEl.setText(`Releases de GitHub: ${this.pluginItem.name}`);
+        const canonicalKey = this.pluginItem.ref.id ? pluginRefKey(this.pluginItem.ref) : '';
+        // Canonical source lookup; an empty id (new source) has no key to look up.
+        const source = canonicalKey ? this.ui.runtime.state?.githubSources?.[canonicalKey] : undefined;
+        const prefilledRepo = source?.repo || this.initialRepo;
 
-        const source = this.ui.runtime.state?.githubSources?.[this.pluginItem.ref.id];
-        const repo = source?.repo || this.pluginItem.ref.id;
+        titleEl.setText(`Releases de GitHub: ${this.pluginItem.name || prefilledRepo || this.pluginItem.ref.id || 'nuevo origen'}`);
 
-        contentEl.createEl('p', { text: `Repositorio: ${repo}` });
+        // Actual installed version (host readback via the runtime list) and the
+        // pin proposed for this source, labeled apart so they are never confused.
+        contentEl.createEl('p', {
+            text: `Versión instalada: ${this.pluginItem.installed && this.pluginItem.version ? this.pluginItem.version : 'no instalado'}`
+                + ` | Fijada (pin): ${source?.pinned || 'ninguna'}`
+                + ` | Prereleases: ${source?.trackPrereleases ? 'Sí' : 'No'}`
+        });
 
-        const loadingEl = contentEl.createEl('p', { text: 'Cargando releases...' });
+        let repoInput = '';
+        const releasesContainer = contentEl.createDiv();
 
-        try {
-            const releases = await this.ui.github.releases(repo);
-            loadingEl.remove();
-
-            if (!releases || releases.length === 0) {
-                contentEl.createEl('p', { text: 'No se encontraron releases disponibles.' });
-                return;
-            }
-
-            for (const release of releases) {
-                const setting = new Setting(contentEl)
-                    .setName(`${release.name || release.tag} ${release.prerelease ? '(Pre-release)' : ''}`)
-                    .setDesc(`Tag: ${release.tag}`);
-
-                setting.addButton((btn) => {
-                    btn.setButtonText('Instalar')
-                        .onClick(async () => {
-                            btn.setDisabled(true);
-                            btn.setButtonText('Instalando...');
-                            try {
-                                await this.ui.github.install(repo, release.tag);
-                                this.ui.showNotice(`Instalada versión ${release.tag} de ${this.pluginItem.name}`);
-                                this.close();
-                                this.ui.display(this.ui['installedContainerEl'] as HTMLElement);
-                            } catch (err) {
-                                btn.setDisabled(false);
-                                btn.setButtonText('Instalar');
-                                this.ui.showNotice('Error al instalar release: ' + (err as Error).message);
-                            }
-                        });
+        new Setting(contentEl)
+            .setName('Repositorio (owner/repo o URL)')
+            .setDesc(source?.repo ? 'Origen configurado para este plugin; puedes consultarlo o instalar otra release.' : 'Sin origen configurado: introduce el repositorio; nunca se deduce del ID del plugin.')
+            .addText((text) => {
+                text.setPlaceholder('owner/repo o URL');
+                text.setValue(prefilledRepo);
+                text.onChange((val) => (repoInput = val.trim()));
+                repoInput = prefilledRepo;
+            })
+            .addButton((btn) => {
+                btn.setButtonText('Ver releases').onClick(async () => {
+                    if (!repoInput) {
+                        this.ui.showNotice('Introduce un repositorio (owner/repo o URL) antes de buscar releases.');
+                        return;
+                    }
+                    btn.setDisabled(true);
+                    try {
+                        await this.renderReleases(releasesContainer, repoInput);
+                    } finally {
+                        btn.setDisabled(false);
+                    }
                 });
-            }
+            });
+
+        if (prefilledRepo) {
+            await this.renderReleases(releasesContainer, prefilledRepo);
+        } else {
+            releasesContainer.createEl('p', {
+                text: 'Introduce owner/repo y pulsa "Ver releases" para listar las versiones disponibles.'
+            });
+        }
+    }
+
+    private async renderReleases(container: HTMLElement, repo: string): Promise<void> {
+        container.empty?.();
+        while (container.firstChild) container.removeChild(container.firstChild);
+
+        const loadingEl = container.createEl('p', { text: 'Cargando releases...' });
+        let releases: Release[];
+        try {
+            releases = await this.ui.github.releases(repo);
         } catch (err) {
             loadingEl.setText('Error al obtener releases: ' + (err as Error).message);
+            return;
+        }
+        loadingEl.remove();
+
+        if (!releases || releases.length === 0) {
+            container.createEl('p', { text: 'No se encontraron releases disponibles.' });
+            return;
+        }
+
+        for (const release of releases) {
+            const setting = new Setting(container)
+                .setName(`${release.name || release.tag} ${release.prerelease ? '(Pre-release)' : ''}`)
+                .setDesc(`Tag: ${release.tag}`);
+
+            setting.addButton((btn) => {
+                btn.setButtonText('Instalar')
+                    .onClick(async () => {
+                        btn.setDisabled(true);
+                        btn.setButtonText('Instalando...');
+                        try {
+                            // install() verifies the release manifest and returns the
+                            // plugin id it installed; the GithubManager persists the
+                            // source under that verified id, never a guessed one.
+                            const verifiedId = await this.ui.github.install(repo, release.tag);
+                            this.ui.showNotice(`Instalada ${release.tag} desde ${repo}; origen registrado para el ID verificado ${verifiedId}.`);
+                            this.close();
+                            this.ui.refreshManagerView();
+                        } catch (err) {
+                            btn.setDisabled(false);
+                            btn.setButtonText('Instalar');
+                            this.ui.showNotice('Error al instalar release: ' + (err as Error).message);
+                        }
+                    });
+            });
         }
     }
 }
@@ -1578,8 +2139,16 @@ export class ManagerOptionsModal extends Modal {
                     toggle.setValue(profile.applyAtStart);
                     toggle.setTooltip('Apply at start');
                     toggle.onChange(async (val) => {
-                        profile.applyAtStart = val;
-                        await this.ui.runtime.save();
+                        try {
+                            await this.ui.enqueueStateWrite(`ui:profile-apply-at-start:${profile.id}`, (freshState) => {
+                                const fresh = freshState.deviceProfiles.find((candidate) => candidate.id === profile.id);
+                                if (!fresh) throw new Error(`El perfil ${profile.id} ya no existe; recarga la sección.`);
+                                fresh.applyAtStart = val;
+                            });
+                            this.ui.showNotice(`Apply at start ${val ? 'activado' : 'desactivado'} para ${profile.name}`);
+                        } catch (err) {
+                            this.ui.showNotice('Error al guardar Apply at start: ' + (err as Error).message);
+                        }
                     });
                 })
                 .addButton((btn) => {
@@ -1589,11 +2158,24 @@ export class ManagerOptionsModal extends Modal {
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Eliminar').setWarning().onClick(async () => {
-                        const idx = state.deviceProfiles.indexOf(profile);
-                        if (idx !== -1) {
-                            state.deviceProfiles.splice(idx, 1);
-                            await this.ui.runtime.save();
+                        try {
+                            // The binding lives in queued runtime state: clear it with the
+                            // normal queued bindProfile BEFORE the delete transaction, never
+                            // inside it (a queued call inside a transaction deadlocks the
+                            // serial queue).
+                            if (this.ui.runtime.local?.deviceProfileId === profile.id) {
+                                await this.ui.runtime.bindProfile('');
+                                this.ui.showNotice(`Vínculo local con ${profile.name} liberado antes de eliminar.`);
+                            }
+                            await this.ui.enqueueStateWrite(`ui:profile-delete:${profile.id}`, (freshState) => {
+                                const index = freshState.deviceProfiles.findIndex((candidate) => candidate.id === profile.id);
+                                if (index === -1) throw new Error(`El perfil ${profile.id} ya no existe; recarga la sección.`);
+                                freshState.deviceProfiles.splice(index, 1);
+                            });
+                            this.ui.showNotice(`Perfil ${profile.name} eliminado`);
                             this.renderActiveSection(container);
+                        } catch (err) {
+                            this.ui.showNotice('Error al eliminar perfil: ' + (err as Error).message);
                         }
                     });
                 });
@@ -1608,9 +2190,12 @@ export class ManagerOptionsModal extends Modal {
                 });
             });
 
-        // Profile Backups
+        // Profile Backups: two on-disk formats are rendered with their real
+        // timestamp and origin - manager snapshots ({id, timestamp, profiles,
+        // fixtures, tagMembership}) and verbatim imported Companion backups
+        // ({source, migratedAt, backups: {variant: {name, savedAt, pluginStates}}}).
         container.createEl('h4', { text: 'Copias de respaldo de perfiles (Backups)' });
-        const backups = (state.profileBackups || []) as Array<{ id: string; timestamp: string; profiles: DeviceProfile[] }>;
+        const backups = state.profileBackups || [];
         if (backups.length === 0) {
             container.createEl('p', {
                 cls: 'setting-item-description',
@@ -1618,30 +2203,79 @@ export class ManagerOptionsModal extends Modal {
             });
         } else {
             for (const backup of backups) {
-                const setting = new Setting(container)
-                    .setName(`Copia ${new Date(backup.timestamp).toLocaleString()}`)
-                    .setDesc(`Perfiles incluidos: ${backup.profiles?.length ?? 0}`);
+                const identity = backupIdentityOf(backup);
+                const companion = companionBackupEntryOf(backup);
+                let setting: Setting;
+                if (companion) {
+                    const variants = Object.entries(companion.backups)
+                        .map(([variant, data]) => {
+                            const savedAt = typeof data?.savedAt === 'string' ? ` (${new Date(data.savedAt).toLocaleString()})` : '';
+                            return `${variant}${savedAt}`;
+                        })
+                        .join(', ');
+                    setting = new Setting(container)
+                        .setName(`Copia importada de ${companion.source}`)
+                        .setDesc(`Origen: Companion | Migrada: ${companion.migratedAt ? new Date(companion.migratedAt).toLocaleString() : 'fecha desconocida'} | Variantes: ${variants || 'ninguna'}`);
 
-                setting.addButton((btn) => {
-                    btn.setButtonText('Restaurar').onClick(async () => {
-                        try {
-                            state.deviceProfiles = JSON.parse(JSON.stringify(backup.profiles));
-                            await this.ui.runtime.save();
-                            this.ui.showNotice('Perfiles restaurados desde la copia de seguridad');
-                            this.renderActiveSection(container);
-                        } catch (err) {
-                            this.ui.showNotice('Error al restaurar: ' + (err as Error).message);
-                        }
+                    setting.addButton((btn) => {
+                        btn.setButtonText('Restaurar como fixture').onClick(async () => {
+                            if (!identity) {
+                                this.ui.showNotice('La copia importada no tiene una identidad reconocible; no se puede restaurar.');
+                                return;
+                            }
+                            try {
+                                const fixtureIds = await this.ui.restoreCompanionBackup(identity);
+                                this.ui.showNotice(`Fixtures creados desde la copia de ${companion.source}: ${fixtureIds.join(', ')}. Nada se aplicó automáticamente.`);
+                                this.renderActiveSection(container);
+                            } catch (err) {
+                                this.ui.showNotice('Error al restaurar copia importada: ' + (err as Error).message);
+                            }
+                        });
                     });
-                });
+                } else if (isObjectRecord(backup) && Array.isArray(backup.profiles)) {
+                    const snapshot = backup as Partial<ManagerProfileBackup>;
+                    const membershipCount = isObjectRecord(snapshot.tagMembership) ? Object.keys(snapshot.tagMembership).length : 0;
+                    setting = new Setting(container)
+                        .setName(`Copia ${typeof snapshot.timestamp === 'string' ? new Date(snapshot.timestamp).toLocaleString() : 'sin fecha'}`)
+                        .setDesc(`Origen: Gestor | Perfiles: ${Array.isArray(snapshot.profiles) ? snapshot.profiles.length : 0} | Fixtures: ${Array.isArray(snapshot.fixtures) ? snapshot.fixtures.length : 0} | Membresías: ${membershipCount}`);
+
+                    setting.addButton((btn) => {
+                        btn.setButtonText('Restaurar').onClick(async () => {
+                            if (!identity) {
+                                this.ui.showNotice('La copia no tiene una identidad reconocible; no se puede restaurar.');
+                                return;
+                            }
+                            try {
+                                await this.ui.restoreManagerBackup(identity);
+                                this.ui.showNotice('Definiciones restauradas desde la copia (perfiles, fixtures y membresías). No se aplicó ningún estado de activación guardado.');
+                                this.renderActiveSection(container);
+                            } catch (err) {
+                                this.ui.showNotice('Error al restaurar: ' + (err as Error).message);
+                            }
+                        });
+                    });
+                } else {
+                    setting = new Setting(container)
+                        .setName('Copia con formato desconocido')
+                        .setDesc('Esta entrada no coincide con ningún formato conocido; se conserva intacta.');
+                }
 
                 setting.addButton((btn) => {
                     btn.setButtonText('Eliminar').setWarning().onClick(async () => {
-                        const idx = state.profileBackups.indexOf(backup);
-                        if (idx !== -1) {
-                            state.profileBackups.splice(idx, 1);
-                            await this.ui.runtime.save();
+                        if (!identity) {
+                            this.ui.showNotice('La copia no tiene una identidad reconocible; no se puede eliminar de forma segura.');
+                            return;
+                        }
+                        try {
+                            await this.ui.enqueueStateWrite(`ui:backup-delete:${JSON.stringify(identity)}`, (freshState) => {
+                                const index = freshState.profileBackups.findIndex((entry) => sameBackupIdentity(entry, identity));
+                                if (index === -1) throw new Error('La copia de seguridad ya no existe en el estado actual.');
+                                freshState.profileBackups.splice(index, 1);
+                            });
+                            this.ui.showNotice('Copia de seguridad eliminada');
                             this.renderActiveSection(container);
+                        } catch (err) {
+                            this.ui.showNotice('Error al eliminar copia: ' + (err as Error).message);
                         }
                     });
                 });
@@ -1650,19 +2284,24 @@ export class ManagerOptionsModal extends Modal {
 
         new Setting(container)
             .setName('Crear copia de respaldo')
-            .setDesc('Guarda una instantánea de la configuración de perfiles actual.')
+            .setDesc('Guarda definiciones de perfiles, fixtures y membresías de etiquetas. La activación guardada no se re-aplica al restaurar.')
             .addButton((btn) => {
                 btn.setButtonText('Crear respaldo').onClick(async () => {
                     try {
-                        if (!Array.isArray(state.profileBackups)) {
-                            state.profileBackups = [];
-                        }
-                        state.profileBackups.push({
-                            id: Date.now().toString(),
-                            timestamp: new Date().toISOString(),
-                            profiles: JSON.parse(JSON.stringify(state.deviceProfiles))
+                        await this.ui.enqueueStateWrite('ui:backup-create', (freshState) => {
+                            if (!Array.isArray(freshState.profileBackups)) freshState.profileBackups = [];
+                            const tagMembership: ManagerProfileBackup['tagMembership'] = {};
+                            for (const record of Object.values(freshState.records ?? {})) {
+                                tagMembership[pluginRefKey(record.ref)] = { tags: [...(record.tags ?? [])], group: record.group ?? '' };
+                            }
+                            freshState.profileBackups.push({
+                                id: `backup-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                                timestamp: new Date().toISOString(),
+                                profiles: deepClone(freshState.deviceProfiles ?? []),
+                                fixtures: deepClone(freshState.fixtureProfiles ?? []),
+                                tagMembership,
+                            } satisfies ManagerProfileBackup);
                         });
-                        await this.ui.runtime.save();
                         this.ui.showNotice('Copia de respaldo creada con éxito');
                         this.renderActiveSection(container);
                     } catch (err) {
@@ -1678,6 +2317,9 @@ export class ManagerOptionsModal extends Modal {
         const content = modal.contentEl;
 
         const currentTags = new Set(profile.tagIds);
+        // Snapshot of the target field at open time: if tagIds changed externally
+        // while editing, the save must conflict instead of overwriting.
+        const tagIdsSnapshot = JSON.stringify(profile.tagIds ?? []);
         const tags = this.ui.runtime.state?.tags || [];
 
         for (const tag of tags) {
@@ -1700,10 +2342,18 @@ export class ManagerOptionsModal extends Modal {
                 btn.setButtonText('Guardar')
                     .setCta()
                     .onClick(async () => {
-                        modal.close();
-                        profile.tagIds = Array.from(currentTags);
-                        await this.ui.runtime.save();
-                        this.ui.showNotice(`Tags actualizadas para ${profile.name}`);
+                        try {
+                            await this.ui.enqueueStateWrite(`ui:profile-tags:${profile.id}`, (freshState) => {
+                                const fresh = freshState.deviceProfiles.find((candidate) => candidate.id === profile.id);
+                                if (!fresh) throw new Error(`El perfil ${profile.id} ya no existe; recarga la sección.`);
+                                if (JSON.stringify(fresh.tagIds ?? []) !== tagIdsSnapshot) throw new UiStateConflictError();
+                                fresh.tagIds = Array.from(currentTags);
+                            });
+                            modal.close();
+                            this.ui.showNotice(`Tags actualizadas para ${profile.name}`);
+                        } catch (err) {
+                            this.ui.showNotice('Error al guardar tags del perfil: ' + (err as Error).message);
+                        }
                     });
             })
             .addButton((btn) => {
@@ -1742,16 +2392,25 @@ export class ManagerOptionsModal extends Modal {
                             this.ui.showNotice('El nombre no puede estar vacío');
                             return;
                         }
-                        modal.close();
-                        this.ui.runtime.state.deviceProfiles.push({
-                            id,
-                            name,
-                            tagIds: [],
-                            applyAtStart: true,
-                            workspaceId: workspaceId || undefined
-                        });
-                        await this.ui.runtime.save();
-                        this.renderActiveSection(parentContainer);
+                        try {
+                            await this.ui.enqueueStateWrite(`ui:profile-create:${id}`, (freshState) => {
+                                if (freshState.deviceProfiles.some((candidate) => candidate.id === id)) {
+                                    throw new Error(`Ya existe un perfil con el ID ${id}.`);
+                                }
+                                freshState.deviceProfiles.push({
+                                    id,
+                                    name,
+                                    tagIds: [],
+                                    applyAtStart: true,
+                                    ...(workspaceId ? { workspaceId } : {})
+                                });
+                            });
+                            modal.close();
+                            this.ui.showNotice(`Perfil ${name} creado`);
+                            this.renderActiveSection(parentContainer);
+                        } catch (err) {
+                            this.ui.showNotice('Error al crear perfil: ' + (err as Error).message);
+                        }
                     });
             })
             .addButton((btn) => btn.setButtonText('Cancelar').onClick(() => modal.close()));
@@ -1775,15 +2434,26 @@ export class ManagerOptionsModal extends Modal {
         });
 
         const protectedList = container.createDiv({ cls: 'aigility-protected-list' });
+        // The manager protects itself with the canonical `community:<id>` key;
+        // both spellings are irremovable here so self-protection never lapses.
+        const managerProtectedForms = ['aigility-plugin-manager', 'community:aigility-plugin-manager'];
         for (const id of state.protected || []) {
             const row = protectedList.createDiv({ cls: 'aigility-protected-row' });
             row.createSpan({ text: id });
-            if (id !== 'aigility-plugin-manager') {
+            if (!managerProtectedForms.includes(id)) {
                 const delBtn = row.createEl('button', { text: '✖', cls: 'clickable-icon' });
                 delBtn.onclick = async () => {
-                    state.protected = state.protected.filter((p) => p !== id);
-                    await this.ui.runtime.save();
-                    this.renderActiveSection(container);
+                    try {
+                        await this.ui.enqueueStateWrite(`ui:protected-remove:${id}`, (freshState) => {
+                            const index = freshState.protected.indexOf(id);
+                            if (index === -1) throw new Error(`La protección ${id} ya no existe; recarga la sección.`);
+                            freshState.protected.splice(index, 1);
+                        });
+                        this.ui.showNotice(`Protección eliminada: ${id}`);
+                        this.renderActiveSection(container);
+                    } catch (err) {
+                        this.ui.showNotice('Error al eliminar protección: ' + (err as Error).message);
+                    }
                 };
             } else {
                 row.createSpan({ cls: 'aigility-badge', text: 'Gestor (Fijo)' });
@@ -1799,10 +2469,22 @@ export class ManagerOptionsModal extends Modal {
             .addButton((btn) => {
                 btn.setButtonText('Añadir').onClick(async () => {
                     const newId = (this as any)._newProtectedId;
-                    if (newId && !state.protected.includes(newId)) {
-                        state.protected.push(newId);
-                        await this.ui.runtime.save();
+                    if (!newId) return;
+                    try {
+                        await this.ui.enqueueStateWrite(`ui:protected-add:${newId}`, (freshState) => {
+                            const canonical = parsePluginRefKey(newId);
+                            const counterpart = canonical
+                                ? newId
+                                : Object.keys(freshState.records ?? {}).find((recordKey) => recordKey === `community:${newId}` || recordKey === `core:${newId}`);
+                            if (freshState.protected.includes(newId) || (counterpart && freshState.protected.includes(counterpart))) {
+                                throw new Error(`Ese plugin ya está protegido (${counterpart ?? newId}).`);
+                            }
+                            freshState.protected.push(newId);
+                        });
+                        this.ui.showNotice(`Protección añadida: ${newId}`);
                         this.renderActiveSection(container);
+                    } catch (err) {
+                        this.ui.showNotice('Error al añadir protección: ' + (err as Error).message);
                     }
                 });
             });
@@ -1820,12 +2502,25 @@ export class ManagerOptionsModal extends Modal {
                 .setDesc(`Miembros: ${Object.keys(fixture.members || {}).length}`)
                 .addButton((btn) => {
                     btn.setButtonText('Aplicar parcialmente').onClick(async () => {
-                        try {
-                            for (const [pluginId, desiredState] of Object.entries(fixture.members || {})) {
-                                const kind = pluginId.startsWith('core:') ? 'core' : 'community';
-                                const cleanId = pluginId.replace(/^(core|community):/, '');
-                                await this.ui.runtime.setEnabled({ kind, id: cleanId }, desiredState);
+                        // Canonical keys only: member entries that do not parse are
+                        // reported instead of being guessed as community ids.
+                        const targets: Array<{ ref: PluginRef; enabled: boolean }> = [];
+                        for (const [pluginKey, desiredState] of Object.entries(fixture.members || {})) {
+                            const ref = parsePluginRefKey(pluginKey);
+                            if (!ref) {
+                                this.ui.showNotice(`El fixture ${fixture.name} contiene una clave no canónica (${pluginKey}); corrígelo antes de aplicar.`);
+                                return;
                             }
+                            targets.push({ ref, enabled: desiredState === true });
+                        }
+                        try {
+                            // One queue slot for the whole partial apply; tx.setEnabled
+                            // applies each member without re-enqueueing.
+                            await this.ui.runtime.enqueue(`ui:fixture-apply:${fixture.id}`, async (tx) => {
+                                for (const target of targets) {
+                                    await tx.setEnabled(target.ref, target.enabled);
+                                }
+                            });
                             this.ui.showNotice(`Fixture ${fixture.name} aplicado parcialmente`);
                         } catch (err) {
                             this.ui.showNotice('Error al aplicar fixture: ' + (err as Error).message);
@@ -1839,11 +2534,16 @@ export class ManagerOptionsModal extends Modal {
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Eliminar').setWarning().onClick(async () => {
-                        const idx = state.fixtureProfiles.indexOf(fixture);
-                        if (idx !== -1) {
-                            state.fixtureProfiles.splice(idx, 1);
-                            await this.ui.runtime.save();
+                        try {
+                            await this.ui.enqueueStateWrite(`ui:fixture-delete:${fixture.id}`, (freshState) => {
+                                const index = freshState.fixtureProfiles.findIndex((candidate) => candidate.id === fixture.id);
+                                if (index === -1) throw new Error(`El fixture ${fixture.id} ya no existe; recarga la sección.`);
+                                freshState.fixtureProfiles.splice(index, 1);
+                            });
+                            this.ui.showNotice(`Fixture ${fixture.name} eliminado`);
                             this.renderActiveSection(container);
+                        } catch (err) {
+                            this.ui.showNotice('Error al eliminar fixture: ' + (err as Error).message);
                         }
                     });
                 });
@@ -1883,17 +2583,20 @@ export class ManagerOptionsModal extends Modal {
                             this.ui.showNotice('El nombre no puede estar vacío');
                             return;
                         }
-                        modal.close();
-                        if (!Array.isArray(this.ui.runtime.state.fixtureProfiles)) {
-                            this.ui.runtime.state.fixtureProfiles = [];
+                        try {
+                            await this.ui.enqueueStateWrite(`ui:fixture-create:${id}`, (freshState) => {
+                                if (!Array.isArray(freshState.fixtureProfiles)) freshState.fixtureProfiles = [];
+                                if (freshState.fixtureProfiles.some((candidate) => candidate.id === id)) {
+                                    throw new Error(`Ya existe un fixture con el ID ${id}.`);
+                                }
+                                freshState.fixtureProfiles.push({ id, name, members: {} });
+                            });
+                            modal.close();
+                            this.ui.showNotice(`Fixture ${name} creado`);
+                            this.renderActiveSection(parentContainer);
+                        } catch (err) {
+                            this.ui.showNotice('Error al crear fixture: ' + (err as Error).message);
                         }
-                        this.ui.runtime.state.fixtureProfiles.push({
-                            id,
-                            name,
-                            members: {}
-                        });
-                        await this.ui.runtime.save();
-                        this.renderActiveSection(parentContainer);
                     });
             })
             .addButton((btn) => btn.setButtonText('Cancelar').onClick(() => modal.close()));
@@ -1918,12 +2621,22 @@ export class ManagerOptionsModal extends Modal {
                 slider.setValue(state.settings.staggerMs || 200);
                 slider.setDynamicTooltip();
                 slider.onChange(async (val) => {
-                    state.settings.staggerMs = val;
-                    await this.ui.runtime.save();
+                    try {
+                        await this.ui.enqueueStateWrite('ui:deferred-stagger', (freshState) => {
+                            freshState.settings.staggerMs = val;
+                        });
+                        this.ui.showNotice(`Escalonado diferido guardado: ${val}ms`);
+                    } catch (err) {
+                        this.ui.showNotice('Error al guardar el escalonado: ' + (err as Error).message);
+                    }
                 });
             });
 
         container.createEl('h4', { text: 'Políticas configuradas' });
+        container.createEl('p', {
+            cls: 'setting-item-description',
+            text: 'Cada edición de política cancela al instante las cargas diferidas programadas (la automatización queda pausada con un motivo visible). Pulsa Reanudar para recalcular con la política nueva.'
+        });
 
         for (const policy of state.deferred || []) {
             const pluginRecord = state.records[`community:${policy.id}`] || state.records[`core:${policy.id}`];
@@ -1936,23 +2649,74 @@ export class ManagerOptionsModal extends Modal {
                     toggle.setValue(policy.enabled);
                     toggle.setTooltip('Habilitar diferido');
                     toggle.onChange(async (val) => {
-                        policy.enabled = val;
-                        await this.ui.runtime.save();
+                        // Enabling resolves the plugin's kind from the record it was
+                        // declared for: the reconcile target is that plugin and no
+                        // other. Disabling never forces a load, it only lets the
+                        // existing pause cancel the scheduled ones.
+                        const ref: PluginRef = state.records[`core:${policy.id}`]
+                            ? { kind: 'core', id: policy.id }
+                            : { kind: 'community', id: policy.id };
+                        try {
+                            await this.ui.enqueueDeferredPolicyApply(
+                                `ui:deferred-policy-enable:${policy.id}`,
+                                ref,
+                                (freshState, fresh) => {
+                                    if (!fresh) throw new Error(`La política de ${policy.id} ya no existe; recarga la sección.`);
+                                    if (val) {
+                                        const refusal = this.ui.deferredEnableRefusal(ref);
+                                        if (refusal) throw new Error(refusal);
+                                    }
+                                },
+                                (fresh) => {
+                                    fresh.enabled = val;
+                                }
+                            );
+                            this.ui.showNotice(`Política diferida de ${name} ${val ? 'habilitada' : 'deshabilitada'}`);
+                        } catch (err) {
+                            this.ui.showNotice('Error al guardar la política diferida: ' + (err as Error).message);
+                        }
                     });
                 })
                 .addToggle((toggle) => {
                     toggle.setValue(Boolean(policy.parked));
                     toggle.setTooltip('Estacionado');
                     toggle.onChange(async (val) => {
-                        policy.parked = val;
-                        await this.ui.runtime.save();
+                        // Parked only changes WHERE the load happens, never WHETHER
+                        // it is deferred, so an already-enabled policy re-reconciles
+                        // its own native exclusion instead of leaving it stale.
+                        const ref: PluginRef = state.records[`core:${policy.id}`]
+                            ? { kind: 'core', id: policy.id }
+                            : { kind: 'community', id: policy.id };
+                        try {
+                            await this.ui.enqueueDeferredPolicyApply(
+                                `ui:deferred-policy-parked:${policy.id}`,
+                                ref,
+                                (freshState, fresh) => {
+                                    if (!fresh) throw new Error(`La política de ${policy.id} ya no existe; recarga la sección.`);
+                                },
+                                (fresh) => {
+                                    fresh.parked = val;
+                                }
+                            );
+                            this.ui.showNotice(`Política diferida de ${name} ${val ? 'estacionada' : 'desestacionada'}`);
+                        } catch (err) {
+                            this.ui.showNotice('Error al guardar la política diferida: ' + (err as Error).message);
+                        }
                     });
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Eliminar').onClick(async () => {
-                        state.deferred = state.deferred.filter((p) => p !== policy);
-                        await this.ui.runtime.save();
-                        this.renderActiveSection(container);
+                        try {
+                            await this.ui.enqueueDeferredPolicyWrite(`ui:deferred-policy-delete:${policy.id}`, (freshState) => {
+                                const index = freshState.deferred.findIndex((candidate) => candidate.id === policy.id);
+                                if (index === -1) throw new Error(`La política de ${policy.id} ya no existe; recarga la sección.`);
+                                freshState.deferred.splice(index, 1);
+                            });
+                            this.ui.showNotice(`Política diferida de ${name} eliminada`);
+                            this.renderActiveSection(container);
+                        } catch (err) {
+                            this.ui.showNotice('Error al eliminar la política diferida: ' + (err as Error).message);
+                        }
                     });
                 });
         }
@@ -1966,17 +2730,12 @@ export class ManagerOptionsModal extends Modal {
 
         const state = this.ui.runtime.state;
 
-        // Automatic updates toggle (default off)
+        // Automatic updates: the setting stays off and there is deliberately NO
+        // toggle here. No update engine is implemented yet, so a control would be
+        // an inert no-op; checks are manual until that engine exists.
         new Setting(container)
             .setName('Comprobación automática de actualizaciones')
-            .setDesc('Desactivada por defecto para máxima estabilidad del vault.')
-            .addToggle((toggle) => {
-                toggle.setValue(state.settings.automaticUpdates || false);
-                toggle.onChange(async (val) => {
-                    state.settings.automaticUpdates = val;
-                    await this.ui.runtime.save();
-                });
-            });
+            .setDesc('Sin motor implementado: permanece desactivada. Revisa actualizaciones de forma manual con "Comprobar ahora"; cuando exista el motor de actualizaciones aparecerá su control aquí.');
 
         // Catalog check button
         new Setting(container)
@@ -2001,84 +2760,112 @@ export class ManagerOptionsModal extends Modal {
                     });
             });
 
-        // Tracked sources
+        // Tracked sources. State keys are canonical `community:<id>`; every
+        // action (releases picker, rollback, pin toggle) parses that key so raw
+        // plugin ids never leak into the GitHub manager API.
         container.createEl('h4', { text: 'Repositorios GitHub configurados' });
-        for (const [id, source] of Object.entries(state.githubSources || {})) {
-            new Setting(container)
-                .setName(id)
-                .setDesc(`Repo: ${source.repo} | Pin: ${source.pinned || 'Ninguno'} | Prereleases: ${source.trackPrereleases ? 'Sí' : 'No'}`)
-                .addButton((btn) => {
-                    btn.setButtonText('Releases').onClick(() => {
-                        const pluginItem = this.ui.runtime.list().find((p) => p.ref.id === id);
-                        if (pluginItem) {
-                            new GitHubReleasesModal(this.app, this.ui, pluginItem).open();
-                        }
-                    });
-                })
-                .addButton((btn) => {
-                    btn.setButtonText('Rollback').onClick(async () => {
-                        try {
-                            await this.ui.github.rollback(id);
-                            this.ui.showNotice(`Rollback ejecutado para ${id}`);
-                        } catch (err) {
-                            this.ui.showNotice('Error en rollback: ' + (err as Error).message);
-                        }
-                    });
-                })
-                .addToggle((toggle) => {
-                    toggle.setValue(source.trackPrereleases);
-                    toggle.setTooltip('Seguir pre-releases');
-                    toggle.onChange(async (val) => {
-                        source.trackPrereleases = val;
-                        await this.ui.runtime.save();
-                    });
+        for (const [sourceKey, source] of Object.entries(state.githubSources || {})) {
+            const ref = parsePluginRefKey(sourceKey);
+            const record = ref ? state.records[pluginRefKey(ref)] : undefined;
+            const pinLabel = source.pinned ? source.pinned : 'ninguno';
+            const desc = ref
+                ? `Repo: ${source.repo} | Instalada: ${record?.version || source.version || 'desconocida'} | Fijada (pin): ${pinLabel} | Prereleases: ${source.trackPrereleases ? 'Sí' : 'No'}`
+                : `Repo: ${source.repo} | Clave no canónica: las acciones quedan deshabilitadas para no adivinar el plugin.`;
+
+            const row = new Setting(container)
+                .setName(sourceKey)
+                .setDesc(desc);
+
+            if (!ref) continue;
+
+            row.addButton((btn) => {
+                btn.setButtonText('Releases').onClick(() => {
+                    const pluginItem = this.ui.runtime.list().find((p) => pluginRefKey(p.ref) === sourceKey)
+                        ?? this.uninstalledSourceItem(sourceKey, source.repo);
+                    new GitHubReleasesModal(this.app, this.ui, pluginItem).open();
                 });
+            });
+            row.addButton((btn) => {
+                btn.setButtonText('Rollback').onClick(async () => {
+                    try {
+                        // rollback() takes the RAW plugin id, never the canonical key.
+                        await this.ui.github.rollback(ref.id);
+                        this.ui.showNotice(`Rollback ejecutado para ${ref.id}`);
+                    } catch (err) {
+                        this.ui.showNotice('Error en rollback: ' + (err as Error).message);
+                    }
+                });
+            });
+            row.addToggle((toggle) => {
+                toggle.setValue(source.trackPrereleases);
+                toggle.setTooltip('Seguir pre-releases');
+                toggle.onChange(async (val) => {
+                    try {
+                        await this.ui.enqueueStateWrite(`ui:github-prereleases:${sourceKey}`, (freshState) => {
+                            const freshSource = freshState.githubSources[sourceKey];
+                            if (!freshSource) throw new Error(`El origen ${sourceKey} ya no existe; recarga la sección.`);
+                            // Only the requested field changes: a concurrent pin or
+                            // repo edit in the same source object is preserved.
+                            freshSource.trackPrereleases = val;
+                        });
+                        this.ui.showNotice(`Pre-releases ${val ? 'activados' : 'desactivados'} para ${sourceKey}`);
+                    } catch (err) {
+                        this.ui.showNotice('Error al guardar pre-releases: ' + (err as Error).message);
+                    }
+                });
+            });
         }
 
-        // Add new GitHub source
+        // Add a new GitHub source. The UI never invents a plugin id from the repo
+        // name and never writes githubSources itself: the release picker accepts
+        // owner/repo or URL (even for uninstalled plugins), and after a verified
+        // install the GithubManager persists the source under the manifest id it
+        // read back from the release.
         let newRepoInput = '';
-        let newTrackPrereleases = false;
 
         new Setting(container)
             .setName('Añadir repositorio de GitHub')
-            .setDesc('Introduce owner/repo o URL completa (ej: obsidianmd/obsidian-sample-plugin)')
+            .setDesc('Introduce owner/repo o URL completa (ej: obsidianmd/obsidian-sample-plugin) y elige una release; el origen se registra con el ID verificado del manifiesto instalado.')
             .addText((text) => {
                 text.setPlaceholder('owner/repo o URL');
                 text.onChange((val) => (newRepoInput = val.trim()));
             })
-            .addToggle((toggle) => {
-                toggle.setTooltip('Seguir pre-releases');
-                toggle.onChange((val) => (newTrackPrereleases = val));
-            })
             .addButton((btn) => {
-                btn.setButtonText('Añadir origen').onClick(async () => {
+                btn.setButtonText('Elegir release...').onClick(() => {
                     if (!newRepoInput) {
                         this.ui.showNotice('Introduce un repositorio válido');
                         return;
                     }
-                    // Normalize URL to owner/repo if full URL given
-                    let repo = newRepoInput.replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
-                    const parts = repo.split('/');
-                    if (parts.length < 2) {
-                        this.ui.showNotice('Formato inválido. Usa owner/repo');
+                    const normalized = normalizeGithubRepoInput(newRepoInput);
+                    if (!normalized) {
+                        this.ui.showNotice('Formato inválido. Usa owner/repo o una URL de GitHub');
                         return;
                     }
-                    const cleanRepo = `${parts[0]}/${parts[1]}`;
-                    const pluginId = parts[1];
-
-                    if (!state.githubSources) {
-                        state.githubSources = {};
-                    }
-
-                    state.githubSources[pluginId] = {
-                        repo: cleanRepo,
-                        trackPrereleases: newTrackPrereleases
-                    };
-                    await this.ui.runtime.save();
-                    this.ui.showNotice(`Origen GitHub añadido: ${cleanRepo}`);
-                    this.renderActiveSection(container);
+                    new GitHubReleasesModal(this.app, this.ui, this.uninstalledSourceItem('', normalized), { repo: normalized }).open();
                 });
             });
+    }
+
+    /**
+     * Synthetic list entry for a tracked source whose plugin is not installed or
+     * not observed yet, so the release picker stays usable without assuming any
+     * installed state. An empty sourceKey yields an id-less target (new source).
+     */
+    private uninstalledSourceItem(sourceKey: string, repo: string): EffectivePlugin {
+        const ref = parsePluginRefKey(sourceKey);
+        return {
+            ref: ref ?? { kind: 'community', id: '' },
+            name: repo,
+            version: '',
+            installed: false,
+            compatible: true,
+            nativeAutostart: false,
+            loaded: false,
+            desired: false,
+            tags: [],
+            group: '',
+            scheduled: false,
+        };
     }
 
     private showCatalogCheckResults(results: UpdateResult[]): void {
@@ -2104,31 +2891,97 @@ export class ManagerOptionsModal extends Modal {
     private renderDebugSection(container: HTMLElement): void {
         container.createEl('h3', { text: 'Sesión de Depuración y Diagnóstico' });
 
-        const debug = this.ui.debug;
-        const isSessionActive = Boolean(debug.session);
+        const session = this.ui.debug?.session;
+        // A finished session keeps its object for reports; only session.active means active.
+        const active = Boolean(session?.active);
+        const interrupted = Boolean(active && session.interrupted);
 
-        if (!isSessionActive) {
-            container.createEl('p', {
-                text: 'No hay ninguna sesión de depuración activa. Selecciona candidatos para iniciar búsqueda binaria de conflictos.'
-            });
+        // Persistent compatibility status: stays in the DOM, never console-only.
+        const statusEl = container.createDiv({ cls: 'aigility-debug-status' });
+        statusEl.setAttribute('role', 'status');
+        const reportError = (message: string): void => {
+            statusEl.textContent = `Error de compatibilidad: ${message}`;
+            this.ui.showNotice(message);
+        };
+
+        if (!active) {
+            if (session) {
+                container.createEl('p', {
+                    cls: 'setting-item-description',
+                    text: 'La sesión anterior ya ha finalizado. Sus informes siguen disponibles; inicia una nueva sesión para continuar el diagnóstico.'
+                });
+            } else {
+                container.createEl('p', {
+                    text: 'No hay ninguna sesión de depuración activa. Selecciona candidatos para iniciar búsqueda binaria de conflictos.'
+                });
+            }
 
             new Setting(container)
                 .setName('Iniciar sesión de depuración')
                 .setDesc('Desactivará plugins no candidatos respetando las protecciones.')
                 .addButton((btn) => {
-                    btn.setButtonText('Iniciar con todos').setCta().onClick(async () => {
+                    // No refs on purpose: the manager's own default IS the safe
+                    // active set. The label named "todos" for a selection that
+                    // never was; it now says what actually starts.
+                    btn.setButtonText('Iniciar con los activos').setCta().onClick(async () => {
                         try {
-                            await debug.start();
-                            this.ui.showNotice('Sesión de depuración iniciada con todos los plugins');
+                            await this.ui.debug.start();
+                            this.ui.showNotice('Sesión de depuración iniciada con los plugins activos');
                             this.renderActiveSection(container);
                         } catch (err) {
-                            this.ui.showNotice('Error al iniciar: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Seleccionar candidatos...').onClick(() => {
                         this.openSelectDebugCandidatesModal(container);
+                    });
+                });
+        } else if (interrupted) {
+            // Interrupted session: only explicit recover/finish; no step is replayed.
+            container.createDiv({ cls: 'aigility-recovery-banner mod-warning' }).createSpan({
+                text: '⚠️ Sesión de depuración interrumpida. Las automatizaciones siguen pausadas hasta que elijas una acción explícita. Reanudar registra el estado actual del vault sin repetir los pasos previos.'
+            });
+
+            new Setting(container)
+                .setName('Sesión interrumpida')
+                .setDesc('Reanudar continúa la sesión conservando el estado actual. Finalizar cierra la sesión y restaura los cambios propios de la sesión.')
+                .addButton((btn) => {
+                    btn.setButtonText('Reanudar sesión').setCta().onClick(async () => {
+                        if (typeof this.ui.debug.resume !== 'function') {
+                            reportError('Esta sesión no expone reanudación explícita (resume()).');
+                            return;
+                        }
+                        try {
+                            await this.ui.debug.resume();
+                            this.ui.showNotice('Sesión reanudada sin repetir pasos previos');
+                            this.renderActiveSection(container);
+                        } catch (err) {
+                            // No re-render on failure: the persistent status must survive.
+                            reportError((err as Error).message);
+                        }
+                    });
+                })
+                .addButton((btn) => {
+                    btn.setButtonText('Finalizar sesión').setWarning().onClick(async () => {
+                        try {
+                            await this.ui.debug.finish();
+                            this.ui.showNotice('Sesión de depuración finalizada');
+                            this.renderActiveSection(container);
+                        } catch (err) {
+                            reportError((err as Error).message);
+                        }
+                    });
+                })
+                .addButton((btn) => {
+                    btn.setButtonText('Exportar informes').onClick(async () => {
+                        try {
+                            const reports = await this.ui.debug.exportReports();
+                            this.showReportsModal(reports);
+                        } catch (err) {
+                            reportError((err as Error).message);
+                        }
                     });
                 });
         } else {
@@ -2139,70 +2992,69 @@ export class ManagerOptionsModal extends Modal {
                 .addButton((btn) => {
                     btn.setButtonText('Probar mitad').onClick(async () => {
                         try {
-                            await debug.testHalf(false);
+                            await this.ui.debug.testHalf(false);
                             this.ui.showNotice('Probando primera mitad');
                         } catch (err) {
-                            this.ui.showNotice('Error: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Probar complemento').onClick(async () => {
                         try {
-                            await debug.testHalf(true);
+                            await this.ui.debug.testHalf(true);
                             this.ui.showNotice('Probando complemento');
                         } catch (err) {
-                            this.ui.showNotice('Error: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Paso anterior').onClick(async () => {
                         try {
-                            await debug.previous();
+                            await this.ui.debug.previous();
                             this.ui.showNotice('Vuelto al paso anterior');
                         } catch (err) {
-                            this.ui.showNotice('Error: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 });
 
-            // Test Pair Controls
-            const pluginsList = this.ui.runtime.list();
-            let pairA: string = pluginsList[0]?.ref.id || '';
-            let pairB: string = pluginsList[1]?.ref.id || '';
+            // Test Pair Controls: canonical kind:id selector values avoid
+            // collisions when a community plugin and a core plugin share an id.
+            const pairOptions = this.ui.runtime.list().map((p) => ({
+                value: pluginRefKey(p.ref),
+                label: `${p.name} (${pluginRefKey(p.ref)})`
+            }));
+            let pairA = pairOptions[0]?.value || '';
+            let pairB = pairOptions[1]?.value || '';
 
             new Setting(container)
                 .setName('Probar pareja (Test pair)')
-                .setDesc('Aísla y prueba la interacción entre dos plugins específicos.')
+                .setDesc('Aísla la interacción entre dos plugins concretos usando referencias canónicas kind:id.')
                 .addDropdown((dropdown) => {
-                    for (const p of pluginsList) {
-                        dropdown.addOption(p.ref.id, `${p.name} (${p.ref.kind})`);
-                    }
+                    for (const opt of pairOptions) dropdown.addOption(opt.value, opt.label);
                     dropdown.setValue(pairA);
                     dropdown.onChange((val) => (pairA = val));
                 })
                 .addDropdown((dropdown) => {
-                    for (const p of pluginsList) {
-                        dropdown.addOption(p.ref.id, `${p.name} (${p.ref.kind})`);
-                    }
+                    for (const opt of pairOptions) dropdown.addOption(opt.value, opt.label);
                     dropdown.setValue(pairB);
                     dropdown.onChange((val) => (pairB = val));
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Probar pareja').onClick(async () => {
-                        if (!pairA || !pairB || pairA === pairB) {
+                        const refA = parsePluginRefKey(pairA);
+                        const refB = parsePluginRefKey(pairB);
+                        if (!refA || !refB || pluginRefKey(refA) === pluginRefKey(refB)) {
                             this.ui.showNotice('Selecciona dos plugins distintos');
                             return;
                         }
-                        const itemA = pluginsList.find((p) => p.ref.id === pairA);
-                        const itemB = pluginsList.find((p) => p.ref.id === pairB);
-                        if (!itemA || !itemB) return;
                         try {
-                            await debug.testPair(itemA.ref, itemB.ref);
-                            this.ui.showNotice(`Probando pareja: ${itemA.name} y ${itemB.name}`);
+                            await this.ui.debug.testPair(refA, refB);
+                            this.ui.showNotice(`Probando pareja: ${pairA} y ${pairB}`);
                         } catch (err) {
-                            this.ui.showNotice('Error al probar pareja: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 });
@@ -2215,30 +3067,30 @@ export class ManagerOptionsModal extends Modal {
                 .addButton((btn) => {
                     btn.setButtonText('Falla').setWarning().onClick(async () => {
                         try {
-                            await debug.observe(note, 'fails');
+                            await this.ui.debug.observe(note, 'fails');
                             this.ui.showNotice('Observación registrada (falla)');
                         } catch (err) {
-                            this.ui.showNotice('Error: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Pasa').setCta().onClick(async () => {
                         try {
-                            await debug.observe(note, 'passes');
+                            await this.ui.debug.observe(note, 'passes');
                             this.ui.showNotice('Observación registrada (pasa)');
                         } catch (err) {
-                            this.ui.showNotice('Error: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Desconocido').onClick(async () => {
                         try {
-                            await debug.observe(note, 'unknown');
+                            await this.ui.debug.observe(note, 'unknown');
                             this.ui.showNotice('Observación registrada (desconocido)');
                         } catch (err) {
-                            this.ui.showNotice('Error: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 });
@@ -2249,41 +3101,264 @@ export class ManagerOptionsModal extends Modal {
                 .addButton((btn) => {
                     btn.setButtonText('Exportar informes').onClick(async () => {
                         try {
-                            const reports = await debug.exportReports();
+                            const reports = await this.ui.debug.exportReports();
                             this.showReportsModal(reports);
                         } catch (err) {
-                            this.ui.showNotice('Error al exportar: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Finalizar sesión').setCta().onClick(async () => {
                         try {
-                            await debug.finish();
+                            await this.ui.debug.finish();
                             this.ui.showNotice('Sesión de depuración finalizada');
                             this.renderActiveSection(container);
                         } catch (err) {
-                            this.ui.showNotice('Error al finalizar: ' + (err as Error).message);
+                            reportError((err as Error).message);
                         }
                     });
                 });
         }
 
-        // Advanced Debug Mode (AMD) Toggle
+        this.renderDebugAdvancedControls(container, session, active && !interrupted, reportError);
+    }
+
+    /**
+     * Compact on-demand Advanced Debug controls. Every control stays disabled
+     * until an active diagnostic session exists AND Advanced Debug Mode is
+     * enabled; values rehydrate from the live session settings, and each
+     * capability reports its compatibility reason visibly when unsupported.
+     */
+    private renderDebugAdvancedControls(
+        container: HTMLElement,
+        session: any,
+        usableSession: boolean,
+        reportError: (message: string) => void
+    ): void {
+        const advanced = session?.advanced ?? { active: false, settings: {}, restore: {} };
+        const advancedActive = Boolean(advanced.active);
+        const settings = (advanced.settings ?? {}) as Record<string, unknown>;
+
+        const capabilities = new Map<string, AdvancedCapability>();
+        if (typeof this.ui.debug.advancedCapabilities === 'function') {
+            for (const cap of this.ui.debug.advancedCapabilities()) {
+                capabilities.set(cap.id, cap);
+            }
+        }
+        const isSupported = (id: string): boolean => capabilities.get(id)?.supported !== false;
+        const capabilityReason = (id: string): string =>
+            capabilities.get(id)?.reason || `Advanced Debug Mode no es compatible con ${id} en este host.`;
+
+        const apply = async (option: string, value: unknown): Promise<void> => {
+            if (typeof this.ui.debug.configureAdvanced !== 'function') {
+                reportError('La sesión de depuración no expone configureAdvanced().');
+                return;
+            }
+            try {
+                await this.ui.debug.configureAdvanced(option, value);
+            } catch (err) {
+                reportError((err as Error).message);
+            }
+        };
+
+        const guard = (option: string): boolean => {
+            if (!usableSession || !advancedActive) return false;
+            if (!isSupported(option)) {
+                reportError(capabilityReason(option));
+                return false;
+            }
+            return true;
+        };
+
+        const disableComponent = (component: any): void => {
+            if (typeof component?.setDisabled === 'function') component.setDisabled(true);
+        };
+
+        container.createEl('h4', { text: 'Advanced Debug Mode (controles bajo demanda)' });
+
+        // AMD master toggle: rehydrated from the live session, never hardcoded.
         new Setting(container)
             .setName('Advanced Debug Mode (AMD)')
-            .setDesc('Habilita diagnósticos avanzados bajo demanda sin mantener plugins siempre activos.')
+            .setDesc(usableSession
+                ? 'Habilita diagnósticos avanzados para esta sesión sin mantener plugins siempre activos.'
+                : 'Requiere una sesión de depuración activa no interrumpida.')
             .addToggle((toggle) => {
-                toggle.setValue(false);
+                toggle.setValue(advancedActive);
+                if (!usableSession) disableComponent(toggle);
                 toggle.onChange(async (val) => {
+                    if (!usableSession) {
+                        toggle.setValue(advancedActive);
+                        return;
+                    }
                     try {
-                        await debug.advanced(val);
+                        await this.ui.debug.advanced(val);
                         this.ui.showNotice(`Modo AMD ${val ? 'activado' : 'desactivado'}`);
+                        this.renderActiveSection(container);
                     } catch (err) {
-                        this.ui.showNotice('Error en AMD: ' + (err as Error).message);
+                        // Snap the toggle back and keep the persistent status visible.
+                        toggle.setValue(advancedActive);
+                        reportError((err as Error).message);
                     }
                 });
             });
+
+        // debugMode: boolean
+        new Setting(container)
+            .setName('Modo debug (debugMode)')
+            .setDesc('Activa el modo debug nativo del host durante la sesión.')
+            .addToggle((toggle) => {
+                toggle.setValue(Boolean(settings.debugMode));
+                if (!usableSession || !advancedActive || !isSupported('debugMode')) {
+                    disableComponent(toggle);
+                    if (!isSupported('debugMode')) this.attachCapabilityNote(container, 'debugMode', capabilityReason('debugMode'));
+                }
+                toggle.onChange(async (val) => {
+                    if (!guard('debugMode')) return;
+                    await apply('debugMode', val);
+                });
+            });
+
+        // namespaces: list of strings
+        new Setting(container)
+            .setName('Namespaces de debug')
+            .setDesc('Nombres separados por coma o espacio; se envían como lista de strings.')
+            .addText((text) => {
+                text.setPlaceholder('ej: aigility, app');
+                text.setValue(Array.isArray(settings.namespaces)
+                    ? (settings.namespaces as unknown[]).filter((n) => typeof n === 'string').join(', ')
+                    : (typeof settings.namespaces === 'string' ? settings.namespaces : ''));
+                if (!usableSession || !advancedActive || !isSupported('namespaces')) {
+                    disableComponent(text);
+                    if (!isSupported('namespaces')) this.attachCapabilityNote(container, 'namespaces', capabilityReason('namespaces'));
+                }
+                text.onChange((raw) => {
+                    if (!guard('namespaces')) return;
+                    const list = raw.split(/[,\s]+/).map((item) => item.trim()).filter(Boolean);
+                    void apply('namespaces', list);
+                });
+            });
+
+        // longStackTraces / asyncLongStackTraces: gated by the capability catalog
+        // (upstream patch lifecycle not embeddable yet reports them unsupported).
+        for (const option of ['longStackTraces', 'asyncLongStackTraces'] as const) {
+            new Setting(container)
+                .setName(option === 'longStackTraces' ? 'Long stack traces' : 'Async long stack traces')
+                .setDesc(isSupported(option) ? 'Trazas de pila extendidas para la sesión.' : capabilityReason(option))
+                .addToggle((toggle) => {
+                    toggle.setValue(Boolean(settings[option]));
+                    if (!usableSession || !advancedActive || !isSupported(option)) {
+                        disableComponent(toggle);
+                        if (!isSupported(option)) this.attachCapabilityNote(container, option, capabilityReason(option));
+                    }
+                    toggle.onChange(async (val) => {
+                        if (!guard(option)) return;
+                        await apply(option, val);
+                    });
+                });
+        }
+
+        // stackTraceLimit: numeric
+        new Setting(container)
+            .setName('Límite de stack trace')
+            .setDesc('Entero mayor o igual a cero para Error.stackTraceLimit.')
+            .addText((text) => {
+                text.setValue(typeof settings.stackTraceLimit === 'number' ? String(settings.stackTraceLimit) : '');
+                if (!usableSession || !advancedActive || !isSupported('stackTraceLimit')) {
+                    disableComponent(text);
+                    if (!isSupported('stackTraceLimit')) this.attachCapabilityNote(container, 'stackTraceLimit', capabilityReason('stackTraceLimit'));
+                }
+                text.onChange((raw) => {
+                    if (!guard('stackTraceLimit')) return;
+                    const parsed = Number(raw.trim());
+                    if (!Number.isInteger(parsed) || parsed < 0) {
+                        reportError('stackTraceLimit debe ser un entero mayor o igual a cero.');
+                        return;
+                    }
+                    void apply('stackTraceLimit', parsed);
+                });
+            });
+
+        // timeouts: boolean, Desktop FileSystemAdapter only
+        new Setting(container)
+            .setName('Desactivar timeouts (60s)')
+            .setDesc(isSupported('timeouts') ? 'Desactiva el aviso/timeout de tareas largas del adaptador de escritorio.' : capabilityReason('timeouts'))
+            .addToggle((toggle) => {
+                toggle.setValue(Boolean(settings.timeouts));
+                if (!usableSession || !advancedActive || !isSupported('timeouts')) {
+                    disableComponent(toggle);
+                    if (!isSupported('timeouts')) this.attachCapabilityNote(container, 'timeouts', capabilityReason('timeouts'));
+                }
+                toggle.onChange(async (val) => {
+                    if (!guard('timeouts')) return;
+                    await apply('timeouts', val);
+                });
+            });
+
+        // mobileConsole: boolean
+        new Setting(container)
+            .setName('Consola móvil')
+            .setDesc(isSupported('mobileConsole') ? 'Abre la consola móvil integrada durante la sesión.' : capabilityReason('mobileConsole'))
+            .addToggle((toggle) => {
+                toggle.setValue(Boolean(settings.mobileConsole));
+                if (!usableSession || !advancedActive || !isSupported('mobileConsole')) {
+                    disableComponent(toggle);
+                    if (!isSupported('mobileConsole')) this.attachCapabilityNote(container, 'mobileConsole', capabilityReason('mobileConsole'));
+                }
+                toggle.onChange(async (val) => {
+                    if (!guard('mobileConsole')) return;
+                    await apply('mobileConsole', val);
+                });
+            });
+
+        // mobileEmulation: boolean, Desktop only
+        new Setting(container)
+            .setName('Emulación móvil')
+            .setDesc(isSupported('mobileEmulation') ? 'Emula la interfaz móvil; solo disponible en Desktop.' : capabilityReason('mobileEmulation'))
+            .addToggle((toggle) => {
+                toggle.setValue(Boolean(settings.mobileEmulation));
+                if (!usableSession || !advancedActive || !isSupported('mobileEmulation')) {
+                    disableComponent(toggle);
+                    if (!isSupported('mobileEmulation')) this.attachCapabilityNote(container, 'mobileEmulation', capabilityReason('mobileEmulation'));
+                }
+                toggle.onChange(async (val) => {
+                    if (!guard('mobileEmulation')) return;
+                    await apply('mobileEmulation', val);
+                });
+            });
+
+        // Cancel current operation
+        new Setting(container)
+            .setName('Cancelar operación en curso')
+            .setDesc(isSupported('cancelRunningTask')
+                ? 'Aborta la tarea en curso a través del sharedAbortController.'
+                : capabilityReason('cancelRunningTask'))
+            .addButton((btn) => {
+                btn.setButtonText('Cancelar operación actual');
+                if (!usableSession || !advancedActive || !isSupported('cancelRunningTask')) {
+                    btn.setDisabled(true);
+                }
+                btn.onClick(async () => {
+                    if (!guard('cancelRunningTask')) return;
+                    if (typeof this.ui.debug.cancelRunningTask !== 'function') {
+                        reportError('La sesión de depuración no expone cancelRunningTask().');
+                        return;
+                    }
+                    try {
+                        await this.ui.debug.cancelRunningTask();
+                        this.ui.showNotice('Operación en curso cancelada');
+                    } catch (err) {
+                        reportError((err as Error).message);
+                    }
+                });
+            });
+    }
+
+    /** Renders a visible, per-option compatibility note next to the control. */
+    private attachCapabilityNote(container: HTMLElement, option: string, reason: string): void {
+        const note = container.createDiv({ cls: 'aigility-capability-note' });
+        note.setAttribute('role', 'note');
+        note.textContent = `${option}: ${reason}`;
     }
 
     private showReportsModal(reports: { markdown: string; json: string }): void {
@@ -2302,32 +3377,47 @@ export class ManagerOptionsModal extends Modal {
         modal.open();
     }
 
-    private openSelectDebugCandidatesModal(parentContainer: HTMLElement): void {
+    /**
+     * Opens the candidate picker. Public and modal-returning so hosts and tests
+     * can inspect the rendered selection without reaching into detached DOM.
+     */
+    public openSelectDebugCandidatesModal(parentContainer: HTMLElement): Modal {
         const modal = new Modal(this.app);
         modal.titleEl.setText('Seleccionar Candidatos de Depuración');
         const content = modal.contentEl;
 
         const plugins = this.ui.runtime.list();
         const protectedSet = new Set(this.ui.runtime.state.protected || []);
+        // Protection entries may be canonical `kind:id` keys (the manager's own,
+        // for example) or legacy raw ids; both forms mark a plugin protected.
+        const isProtectedPlugin = (p: EffectivePlugin): boolean =>
+            protectedSet.has(pluginRefKey(p.ref)) || protectedSet.has(p.ref.id) || this.ui.isSelfRef(p.ref);
         const selectedRefs = new Set<string>();
 
-        // Default: all non-protected plugins selected
+        // Default = the SAFE ACTIVE set, not every installed plugin. Handing
+        // debug.start() an explicit array bypasses the DebugManager default,
+        // which is what made an inert catalog of hundreds of inactive-but-installed
+        // plugins a bulk load to disable. Active means loaded, native-autostart,
+        // or scheduled-and-desired; incompatible and uninstalled entries are never
+        // preselected. Inactive-but-installed plugins stay listed and SELECTABLE,
+        // so an explicit choice is still one click away.
         for (const p of plugins) {
-            if (!protectedSet.has(p.ref.id)) {
+            if (!isProtectedPlugin(p) && p.installed && p.compatible
+                && (p.loaded || p.nativeAutostart || (p.scheduled && p.desired))) {
                 selectedRefs.add(pluginRefKey(p.ref));
             }
         }
 
         const note = content.createEl('p', {
             cls: 'setting-item-description',
-            text: 'Los plugins desmarcados y los protegidos permanecerán intactos durante la sesión de depuración.'
+            text: 'Por defecto se seleccionan solo los plugins activos (cargados, con autoarranque nativo o programados). Los plugins instalados pero inactivos quedan sin marcar: puedes marcarlos si el diagnóstico lo necesita. Los plugins protegidos permanecen intactos durante la sesión. Los plugins fuera del aislamiento (desmarcados) NO permanecen intactos: se desactivan durante el diagnóstico y se restauran al finalizar.'
         });
 
         const listContainer = content.createDiv({ cls: 'aigility-diff-table-container' });
 
         for (const p of plugins) {
             const key = pluginRefKey(p.ref);
-            const isProtected = protectedSet.has(p.ref.id);
+            const isProtected = isProtectedPlugin(p);
 
             const row = new Setting(listContainer)
                 .setName(`${p.name} (${p.ref.kind})`)
@@ -2369,6 +3459,7 @@ export class ManagerOptionsModal extends Modal {
             .addButton((btn) => btn.setButtonText('Cancelar').onClick(() => modal.close()));
 
         modal.open();
+        return modal;
     }
 
     /**
@@ -2451,6 +3542,8 @@ export class ManagerOptionsModal extends Modal {
 export class FixtureEditModal extends Modal {
     private ui: ManagerUI;
     private fixture: FixtureProfile;
+    private membersSnapshot = '';
+    private workingMembers: { [pluginKey: string]: boolean } = {};
 
     constructor(app: App, ui: ManagerUI, fixture: FixtureProfile) {
         super(app);
@@ -2462,29 +3555,35 @@ export class FixtureEditModal extends Modal {
         const { contentEl, titleEl } = this;
         titleEl.setText(`Editar Fixture: ${this.fixture.name}`);
 
-        const members = this.fixture.members || {};
+        if (!this.membersSnapshot) {
+            // First open: snapshot the member map for the conflict check and edit
+            // a working copy, so the render-time object is never written directly
+            // and an external member edit makes the save conflict.
+            this.membersSnapshot = JSON.stringify(this.fixture.members ?? {});
+            this.workingMembers = { ...(this.fixture.members ?? {}) };
+        }
         const plugins = this.ui.runtime.list();
 
         for (const p of plugins) {
             const key = pluginRefKey(p.ref);
-            const isMember = key in members;
-            const stateVal = isMember ? members[key] : false;
+            const isMember = key in this.workingMembers;
+            const stateVal = isMember ? this.workingMembers[key] : false;
 
             new Setting(contentEl)
                 .setName(`${p.name} (${key})`)
                 .addToggle((toggle) => {
                     toggle.setValue(stateVal);
                     toggle.onChange((val) => {
-                        this.fixture.members[key] = val;
+                        this.workingMembers[key] = val;
                     });
                 })
                 .addButton((btn) => {
                     btn.setButtonText(isMember ? 'Quitar miembro' : 'Añadir miembro')
                         .onClick(() => {
                             if (isMember) {
-                                delete this.fixture.members[key];
+                                delete this.workingMembers[key];
                             } else {
-                                this.fixture.members[key] = p.desired;
+                                this.workingMembers[key] = p.desired;
                             }
                             this.onOpen();
                         });
@@ -2496,9 +3595,19 @@ export class FixtureEditModal extends Modal {
                 btn.setButtonText('Guardar fixture')
                     .setCta()
                     .onClick(async () => {
-                        this.close();
-                        await this.ui.runtime.save();
-                        this.ui.showNotice(`Fixture ${this.fixture.name} guardado`);
+                        try {
+                            await this.ui.enqueueStateWrite(`ui:fixture-edit:${this.fixture.id}`, (freshState) => {
+                                const fresh = freshState.fixtureProfiles.find((candidate) => candidate.id === this.fixture.id);
+                                if (!fresh) throw new Error(`El fixture ${this.fixture.id} ya no existe; recarga la sección.`);
+                                if (JSON.stringify(fresh.members ?? {}) !== this.membersSnapshot) throw new UiStateConflictError();
+                                fresh.members = { ...this.workingMembers };
+                            });
+                            this.close();
+                            this.ui.showNotice(`Fixture ${this.fixture.name} guardado`);
+                            this.ui.refreshManagerView();
+                        } catch (err) {
+                            this.ui.showNotice('Error al guardar fixture: ' + (err as Error).message);
+                        }
                     });
             })
             .addButton((btn) => btn.setButtonText('Cerrar').onClick(() => this.close()));
