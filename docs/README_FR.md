@@ -1,3 +1,5 @@
+> Historical source snapshot - 2026-10-01, Codex. Documentación de BPM conservada desde el fork upstream e56155faaf0b86a0c046039434384ae415e3113b. Describe ese componente anterior, no la configuración verificada de AIgility Plugin Manager. Las recomendaciones de takeover y los comandos aquí recogidos requieren revalidación; el contrato vigente está en SPEC.md.
+
 <div align="center">
 
 # Better Plugins Manager
