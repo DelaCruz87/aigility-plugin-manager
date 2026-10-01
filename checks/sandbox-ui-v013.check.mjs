@@ -56,8 +56,11 @@ export function settingsOwnershipPlan(connected,tab,approvedPreexistingTab){
  return {open:true,close:true,restoreTab:tab};
 }
 export function settingsBaselineGate(settings,baseline){
- layoutOwnershipGate(settings,{doc:baseline.doc,modal:baseline.modal,tab:baseline.tab});
+ layoutOwnershipGate(settings,{doc:baseline.doc,modal:baseline.modal,tab:baseline.tab,activeTab:baseline.activeTab});
  if((settings.modalEl?.isConnected===true)!==baseline.connected)throw Error('Settings connected state changed during preflight');
+}
+export function effectiveSettingsGate(settings,registered){
+ if(settings.modalEl?.isConnected===true&&(!settings.activeTab||settings.activeTab.id!==settings.lastTabId||!registered.includes(settings.activeTab)))throw Error('Preexisting Settings effective active tab is absent, stale or unregistered');
 }
 export function selectSettingsWindow(settingsDoc,primaryDoc,mainWindow,windows,expectedId){
  const matches=settingsDoc===primaryDoc?[mainWindow]:windows.filter(w=>w.getTitle()==='Settings - Sandbox - Obsidian');
@@ -68,10 +71,13 @@ export function selectSettingsWindow(settingsDoc,primaryDoc,mainWindow,windows,e
 export async function restoreOwnedSettings(settings,owned,plan,gate,waitForClose){
  gate();const cas=casSettingsDecision(plan.restoreTab,owned.tab,settings.lastTabId,owned.doc,settings.doc,owned.modal,settings.modalEl);
  if(!cas.ok)throw Error(cas.reason);
+ layoutOwnershipGate(settings,owned);
  if(plan.close){
   settings.lastTabId=plan.restoreTab;gate();settings.close();await waitForClose(()=>!owned.modal.isConnected);gate();
  }else{
+  if(plan.priorActiveTab&&![...settings.settingTabs,...settings.pluginTabs].includes(plan.priorActiveTab))throw Error('Prior effective Settings tab was replaced; preserve current');
   gate();settings.openTabById(plan.restoreTab);gate();layoutOwnershipGate(settings,{doc:owned.doc,modal:owned.modal,tab:plan.restoreTab});
+  if(settings.activeTab?.id!==plan.restoreTab||(plan.priorActiveTab&&settings.activeTab!==plan.priorActiveTab))throw Error('Native Settings restore did not restore effective active tab');
   if(!owned.modal.isConnected)throw Error('Preexisting Settings unexpectedly closed');
  }
 }
@@ -90,7 +96,7 @@ export function primaryDocumentGate(app,currentDocument,currentWindowId,expected
  if(currentWindowId!==expectedWindowId)throw Error('Primary window identity changed');
 }
 export function layoutOwnershipGate(settings,owned){
- if(settings.doc!==owned.doc||settings.modalEl!==owned.modal||settings.lastTabId!==owned.tab)throw Error('Settings document/modal/tab ownership changed');
+ if(settings.doc!==owned.doc||settings.modalEl!==owned.modal||settings.lastTabId!==owned.tab||(Object.hasOwn(owned,'activeTab')&&settings.activeTab!==owned.activeTab))throw Error('Settings document/modal/tab ownership changed');
 }
 export async function rejectPendingReceipts(paths){
  for(const file of paths){let raw;try{raw=await readFile(file,'utf8');}catch(error){if(error.code==='ENOENT')continue;throw error;}
@@ -166,12 +172,12 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  const cores=()=>Object.entries(app.internalPlugins.plugins).map(([id,w])=>({id,enabled:w.enabled,loaded:w.instance?._loaded===true})).sort((a,b)=>a.id.localeCompare(b.id));
  const prior={filter:structuredClone(ui.filterCriteria),sidebar:structuredClone(ui.sidebarFilterCriteria),tab:settings.lastTabId,leaf:app.workspace.activeLeaf,leaves:[],foreign:foreign(),core:cores(),local:JSON.stringify(P.runtime.local)};
  app.workspace.iterateAllLeaves(l=>prior.leaves.push(l.id));
- prior.settingsConnected=settings.modalEl?.isConnected===true;prior.settingsDoc=settings.doc;prior.settingsModal=settings.modalEl;
+ prior.settingsConnected=settings.modalEl?.isConnected===true;prior.settingsDoc=settings.doc;prior.settingsModal=settings.modalEl;prior.settingsActiveTab=settings.activeTab;
  const dataPath=P.manifest.dir+'/data.json';
  prior.dataHash=digest(await adapter.read(dataPath));gate();
 
  let ownedFilter=structuredClone(prior.filter),ownedSidebar=structuredClone(prior.sidebar),ownModal=null,sd=null;
- let ownedSettingsTab=null,pinnedSettingsDoc=null,pinnedSettingsModalEl=null,pinnedSettingsWinId=null,uiStarted=false,settingsPlan=null;
+ let ownedSettingsTab=null,pinnedSettingsDoc=null,pinnedSettingsModalEl=null,pinnedSettingsWinId=null,pinnedSettingsActiveTab=null,uiStarted=false,settingsPlan=null;
 
  const wait=async(predicate,label)=>{
   for(let i=0;i<80;i++){
@@ -193,7 +199,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  const pinnedMainWinId=mainWin.id;
  const settingsWindow=()=>selectSettingsWindow(settings.doc,document,mainWin,require('@electron/remote').BrowserWindow.getAllWindows(),pinnedSettingsWinId);
  const rememberOwnFocus=()=>{const current={electron:getElectronFocus(),os:getOSFrontmost()};if(current.electron!==null&&![initialElectronFocus,pinnedMainWinId,pinnedSettingsWinId].includes(current.electron))throw Error('Manual Electron focus changed; preserved');if(current.os!==initialOSBundle&&current.os!=='md.obsidian')throw Error('Manual OS focus changed; preserved');ownFocus=current;job.focusPost={...current};};
- const assertDocument=()=>{if(pinnedSettingsDoc)layoutOwnershipGate(settings,{doc:pinnedSettingsDoc,modal:pinnedSettingsModalEl,tab:ownedSettingsTab});if(pinnedSettingsWinId!==null)settingsWindow();};
+ const assertDocument=()=>{if(pinnedSettingsDoc)layoutOwnershipGate(settings,{doc:pinnedSettingsDoc,modal:pinnedSettingsModalEl,tab:ownedSettingsTab,activeTab:pinnedSettingsActiveTab});if(pinnedSettingsWinId!==null)settingsWindow();};
 
 
  const capture=async(doc,imagePath)=>{
@@ -220,14 +226,14 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  try{
   gate();check('Correct Sandbox identity',app.vault.getName()==='Sandbox'&&adapter.getBasePath()==='/Users/eme/Obsidian/Sandbox'&&app.appId==='d137282e82167d84');
   check('Native loaded0.1.3',P._loaded&&P.manifest.version==='0.1.3');
-  settingsBaselineGate(settings,{doc:prior.settingsDoc,modal:prior.settingsModal,tab:prior.tab,connected:prior.settingsConnected});
-  if(prior.settingsConnected&&!([...settings.settingTabs,...settings.pluginTabs].some(t=>t.id===prior.tab)))throw Error('Preexisting Settings tab is no longer registered');
-  settingsPlan=settingsOwnershipPlan(prior.settingsConnected,prior.tab,approvedPreexistingTab);check('Settings ownership preflight',true,{preexisting:prior.settingsConnected,priorTab:prior.tab,openedByUs:settingsPlan.open});
+  settingsBaselineGate(settings,{doc:prior.settingsDoc,modal:prior.settingsModal,tab:prior.tab,connected:prior.settingsConnected,activeTab:prior.settingsActiveTab});
+  effectiveSettingsGate(settings,[...settings.settingTabs,...settings.pluginTabs]);
+  settingsPlan=settingsOwnershipPlan(prior.settingsConnected,prior.tab,approvedPreexistingTab);if(prior.settingsConnected)settingsPlan.priorActiveTab=prior.settingsActiveTab;check('Settings ownership preflight',true,{preexisting:prior.settingsConnected,priorTab:prior.tab,openedByUs:settingsPlan.open});
   check('No previous manager modal',!q('.aigility-options-modal'));
   check('Recovery remains paused',!!P.runtime.local.recoveryReason&&!P.runtime.local.deviceProfileId&&!P.runtime.local.operationPending&&!P.runtime.state.debug?.active);
-  gate();settingsBaselineGate(settings,{doc:prior.settingsDoc,modal:prior.settingsModal,tab:prior.tab,connected:prior.settingsConnected});uiStarted=true;if(settingsPlan.open)settings.open();ownedSettingsTab=settings.lastTabId;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsDoc=settings.doc;await wait(()=>settings.doc?.querySelector('.vertical-tab-content'),'Settings document');
-  sd=settings.doc;pinnedSettingsWinId=settingsWindow().id;rememberOwnFocus();pinnedSettingsDoc=settings.doc;pinnedSettingsModalEl=settings.modalEl;
-  gate();settings.openTabById('community-plugins');ownedSettingsTab='community-plugins';await wait(()=>sd.querySelector('.aigility-manager-root'),'integrated Community list');
+  gate();settingsBaselineGate(settings,{doc:prior.settingsDoc,modal:prior.settingsModal,tab:prior.tab,connected:prior.settingsConnected,activeTab:prior.settingsActiveTab});uiStarted=true;if(settingsPlan.open)settings.open();ownedSettingsTab=settings.lastTabId;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsDoc=settings.doc;pinnedSettingsActiveTab=settings.activeTab;await wait(()=>settings.doc?.querySelector('.vertical-tab-content'),'Settings document');
+  sd=settings.doc;pinnedSettingsWinId=settingsWindow().id;rememberOwnFocus();pinnedSettingsDoc=settings.doc;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsActiveTab=settings.activeTab;
+  gate();settings.openTabById('community-plugins');ownedSettingsTab='community-plugins';pinnedSettingsActiveTab=settings.activeTab;await wait(()=>sd.querySelector('.aigility-manager-root'),'integrated Community list');
   ownedSettingsTab='community-plugins';
   check('One integrated list',sd.querySelectorAll('.aigility-manager-installed-container').length===1);
   check('Sidebar options is visible',visible(sd.querySelector('.aigility-options-btn')));
@@ -246,8 +252,8 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
   check('Sidebar hides only plugin entries',settings.pluginTabs.every(t=>!t.navEl||t.navEl.style.display==='none'));
   check('General categories stay accessible',equal(general,settings.settingTabs.map(t=>({id:t.id,display:t.navEl?.style.display??null}))));
   gate();sidebar.value=prior.sidebar.search??'';event(sidebar,'input');ownedSidebar=structuredClone(ui.sidebarFilterCriteria);
-  gate();settings.openTabById('appearance');ownedSettingsTab='appearance';
-  gate();settings.openTabById('community-plugins');ownedSettingsTab='community-plugins';
+  gate();settings.openTabById('appearance');ownedSettingsTab='appearance';pinnedSettingsActiveTab=settings.activeTab;
+  gate();settings.openTabById('community-plugins');ownedSettingsTab='community-plugins';pinnedSettingsActiveTab=settings.activeTab;
   check('Direct tab switch mounts once',sd.querySelectorAll('.aigility-manager-installed-container').length===1);
   rememberOwnFocus();assertDocument();job.phase='capture-community';job.communityCapture=await capture(sd,settingsImage);gate();
   sd.querySelector('.aigility-options-btn').click();await wait(()=>q('.aigility-options-modal'),'Options');ownModal=q('.aigility-options-modal').closest('.modal-container');
@@ -302,7 +308,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
   await restore('settings',async()=>{
    if(!uiStarted){job.cleanupNotRequired??=[];job.cleanupNotRequired.push('settings');return;}
    if(!focusDecision(job.focusBefore,ownFocus,{electron:getElectronFocus(),os:getOSFrontmost()}).ok)throw Error('Manual focus changed; preserve Settings');
-   await restoreOwnedSettings(settings,{tab:ownedSettingsTab,doc:pinnedSettingsDoc,modal:pinnedSettingsModalEl},settingsPlan,cleanupGate,predicate=>waitClosedLocal(predicate,cleanupDeadline));
+   await restoreOwnedSettings(settings,{tab:ownedSettingsTab,doc:pinnedSettingsDoc,modal:pinnedSettingsModalEl,activeTab:pinnedSettingsActiveTab},settingsPlan,cleanupGate,predicate=>waitClosedLocal(predicate,cleanupDeadline));
    ownedSettingsTab=settingsPlan.restoreTab;rememberOwnFocus();job.settingsAfter={connected:settings.modalEl?.isConnected===true,tab:settings.lastTabId,preexisting:prior.settingsConnected};
   });
 
@@ -329,7 +335,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
 }
 
 export function uiBody(key,deadline,cleanupDeadline,communityImage,downloadImage,approvedPreexistingTab){
- return `const settingsBaselineGate=${settingsBaselineGate.toString()};const selectSettingsWindow=${selectSettingsWindow.toString()};const settingsOwnershipPlan=${settingsOwnershipPlan.toString()};const restoreOwnedSettings=${restoreOwnedSettings.toString()};const primaryDocumentGate=${primaryDocumentGate.toString()};const layoutOwnershipGate=${layoutOwnershipGate.toString()};const registerUIJob=${registerUIJob.toString()};const validateUIIdentity=${validateUIIdentity.toString()};const focusDecision=${focusDecision.toString()};const uiGate=${uiGate.toString()};
+ return `const effectiveSettingsGate=${effectiveSettingsGate.toString()};const settingsBaselineGate=${settingsBaselineGate.toString()};const selectSettingsWindow=${selectSettingsWindow.toString()};const settingsOwnershipPlan=${settingsOwnershipPlan.toString()};const restoreOwnedSettings=${restoreOwnedSettings.toString()};const primaryDocumentGate=${primaryDocumentGate.toString()};const layoutOwnershipGate=${layoutOwnershipGate.toString()};const registerUIJob=${registerUIJob.toString()};const validateUIIdentity=${validateUIIdentity.toString()};const focusDecision=${focusDecision.toString()};const uiGate=${uiGate.toString()};
 const matchingRestore=${matchingRestore.toString()};
 const waitClosed=${waitClosed.toString()};
 const casSettingsDecision=${casSettingsDecision.toString()};
