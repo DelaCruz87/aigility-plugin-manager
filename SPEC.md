@@ -62,7 +62,7 @@ Snapshot de campos tocados; operationPending antes de mutaciones; APIs verificad
 Spec/contrato; módulos; unit/build; Sandbox real; migración ENSO backup/readback; restart; matriz física según acceso.
 
 ### 5.2 Acceptance (10)
-- [ ] AC-1 - npm test/build return 0; evidence/tests.txt/build.txt.
+- [x] AC-1 - npm test/build return 0; evidence/tests.txt/build.txt. Snapshot 2026-10-01 15:48 Madrid: 228 pruebas aprobadas y build exit0. Revalidar después de cambios posteriores.
 - [ ] AC-2 - Migración tags/templates/core/deferred/fixtures; tests y receipt.
 - [ ] AC-3 - UI/sidebar en Sandbox; evidence/sandbox.json y screenshot.
 - [ ] AC-4 - Full/core/protected/incompatible/fixture/undo; tests + Sandbox.
@@ -84,7 +84,7 @@ Spec/contrato; módulos; unit/build; Sandbox real; migración ENSO backup/readba
 Adapters falsos DOM-free; CLI con nombre de vault comprobado; screenshots; comparación before/after. No pruebas destructivas en ENSO.
 
 ### 5.5 Checkpoint
-2026-10-01 Codex: spec inicial y fork GitHub creado; implementación pendiente. Research de septiembre es histórico, no configuración actual.
+2026-10-01 15:48 Madrid, Codex: módulos y comandos integrados implementados; 228 pruebas/build aprobados. Sandbox instalado/habilitado/cargado, migración7perfiles/42fixtures preservada. La aceptación nativa funcional todavía está en ejecución; no sustituir gestores ENSO hasta esa aceptación. Research de septiembre es histórico, no configuración actual.
 
 ## 6. Delivery & Acceptance Runbook
 Verificar build marker y binding. Probar filtros/perfiles/core/deferred/recovery/debug/beta rollback. Matriz macbook, zenbook, iphone, ipad, s24, lenovo tab, boox tab mini c: distinguir pruebas físicas, emuladas y pendientes por acceso. Referencias de vault en documentos usan wikilinks sin alias; hidden/external files usan links navegables. No editar AGENTS/REMEMBER ni index.md.

@@ -1,0 +1,2 @@
+npm notice run aigility-plugin-manager@0.1.0 build
+npm notice run tsc --noEmit --skipLibCheck -p tsconfig.json && node esbuild.config.mjs production
