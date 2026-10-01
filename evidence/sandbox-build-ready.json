@@ -1,5 +1,5 @@
 {
-  "status": "ready-offline-v012",
+  "status": "consumed-passed-v012",
   "version": "0.1.2",
   "at": "2026-10-01T19:08:39.371919+00:00",
   "scope": "Sandbox only: selective recovery of46 proven identity fields then manager-only build update; no fixture creation/archive move/UI/focus",
@@ -49,5 +49,7 @@
     "originalOnloadBugReproduced": true,
     "queuedRefreshSaveProtectionPauseUnloadPreserveRepair": true,
     "onReloadOldBug": "Rollback restores only own matching corrupt preimages before loading the old binary; it does not feed repaired metadata into the old redactor"
-  }
+  },
+  "consumedAt": "2026-10-01T19:20:08.683Z",
+  "nativeReceipt": "evidence/sandbox-build.json"
 }

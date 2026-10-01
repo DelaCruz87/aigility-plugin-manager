@@ -1,0 +1,33 @@
+{
+  "status": "ready-offline-v013",
+  "version": "0.1.3",
+  "at": "2026-10-01T19:43:25.494043+00:00",
+  "scope": "Mac Sandbox manager-only build reload, no data repair, archive move, fixtures, UI, Sync or iPad changes",
+  "vault": "Sandbox",
+  "basePath": "/Users/eme/Obsidian/Sandbox",
+  "appId": "d137282e82167d84",
+  "files": {
+    "main.js": {
+      "source": "bb45ba99633a121255a3a25a46619e2b0119bedcc97c5f0ca068280e11ae4b2a",
+      "installed": "d3c7878c44a5e137d26726ca1cdeffe7c8ad92359a93d46f48fb8030d1cb448c"
+    },
+    "manifest.json": {
+      "source": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+      "installed": "0d271ec8231a4e08c5175d2de387e2c61d6d4974c3b71e2a41487e72ccf707ab"
+    },
+    "styles.css": {
+      "source": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e",
+      "installed": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+    }
+  },
+  "sourceCommit": "c28913acb8d6669f2f07c2a27b94a522bf615c21",
+  "checkSha256": "cdc5db50ba97981ea1c7d9732777c15c128bd655f77928e1b739c98f32eab7fa",
+  "command": "AIGILITY_SANDBOX_RUN_AUTHORIZED=1 node checks/sandbox-build-v013.check.mjs",
+  "durationSeconds": 120,
+  "cleanupReserveSeconds": 35,
+  "preconditions": "Installed native-loaded0.1.2 already repaired, no device binding/pending/debug, settingsclosed, unchanged ownartifacts",
+  "tests": "295PASS fullsuite;63UI regressions,3newdeployhelpers; sourcebuild0",
+  "rollback": "Only own matching artifact postimages; single-manager manifest reload; no whole managerState restore",
+  "preservation": "Compare all foreign community andcore activation/version plus entire managerState/profile/fixture content; selective own added protections/local cleanup",
+  "asyncGuarantee": "Unique persisted token each phase; deadline before every next native mutation after await; pollsame pendingjob only; never toggle again while pending"
+}
