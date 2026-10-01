@@ -18,7 +18,7 @@ Build y tests con exit code 0; importación sin pérdida; UI real; 723+ plugins 
 
 ## 2. Functional Requirements
 
-### 2.1 Features & capabilities (12)
+### 2.1 Features & capabilities (13)
 - [ ] FR-1 - Requirement.open - N-1: Lista compacta, filtros nombre/ID/tag/grupo/core-community, menú secundario, sidebar filtrable y Opciones.
 - [ ] FR-2 - Requirement.open - N-2: Siete perfiles, tags múltiples, CRUD, Apply at start true, binding local por appId.
 - [ ] FR-3 - Requirement.open - N-2: Perfil completo activa miembros compatibles y desactiva otros; gestor protegido; protecciones editables; preview/undo.
@@ -31,6 +31,7 @@ Build y tests con exit code 0; importación sin pérdida; UI real; 723+ plugins 
 - [ ] FR-10 - Requirement.open - N-4: Advanced Debug integrado bajo demanda con consola, trazas, timeouts, emulación/abort y restauración por plataforma.
 - [ ] FR-11 - Requirement.open - N-2: Fixtures con IDs originales, edición/backups/apply parcial y workspace por perfil.
 - [ ] FR-12 - Requirement.open - N-3: Guards de Companion reversibles/versionados; eliminar bridges/no-op y migrar referencias.
+- [ ] FR-13 - Requirement.open - N-1/N-3: Gestionar descargados mediante archivo completo en .obsidian/plugins/_archive, conservando configuración y archivos propios; sólo community plugins apagados y no protegidos; restauración manual o por perfil compatible en cola común, índice local y detección de conflictos/Sync.
 
 ### 2.2 Flows
 Load tardío no aplica perfiles. Los siete perfiles tienen applyAtStart true y requieren binding local explícito. Templates Desktop a macbook/zenbook, Mobile a iphone/s24, Tablet a ipad/lenovo tab/boox tab mini c. Omnisearch deferred activo se incluye en templates compatibles. Core inicial deriva estado vivo por ausencia en snapshots. Editar tags no aplica en caliente. Debugging nunca reescribe config de terceros.
@@ -72,6 +73,7 @@ Spec/contrato; módulos; unit/build; Sandbox real; migración ENSO backup/readba
 - [ ] AC-8 - Beta/pin/update/rollback/assets/rate-limit; fake transport y live check.
 - [ ] AC-9 - Debug individual/pair/complement/undo/restore/export/AMD unload; tests + Sandbox.
 - [ ] AC-10 - ENSO installed/enabled/loaded/UI/restart; evidence/enso.json + device runbook.
+- [ ] AC-11 - Archive exact .obsidian/plugins/_archive; carpeta completa y configuración conservadas; doble traslado/conflicto/protección/recovery/Sync probados; restauración sin reinstalar; lista Descargados y catálogo723; native roundtrip sólo en entorno donde Sync permita mover sin propagar retirada. Las pruebas offline y el guard visible no acreditan mejora física en iPad.
 
 ### 5.3 Decisions (5)
 - [x] TD-1 - accepted - Nuevo ID aigility-plugin-manager; usuario aprobó plan 2026-10-01. Reabrir por incompatibilidad de migración.
@@ -126,3 +128,9 @@ Deploy0.1.3 pasó en Sandbox19:47:29.006Z. Sólo se escribieron main.js y manife
 - [ ] Aceptación UI nativa - procedimiento con guardas/capturas preparado; espera su turno coordinado, no acredita todavía la interfaz.
 - [ ] Aceptación funcional de perfiles, diferidos, debugging y betas - fixtures acotados pendientes de ejecución.
 - [ ] Siguiente arranque y migración ENSO - después de evidencia funcional; los gestores existentes siguen activos.
+
+## Current acceptance procedure checkpoint
+
+2026-10-02 00:18 Madrid, Codex. Producto0.1.3 ya desplegado/cargado en Mac Sandbox el2026-10-01T19:47:29Z, con State completo/protecciones/local/perfiles7-42 y estados ajenos preservados. No hay nuevo build;299PASS/build0 siguen siendo la evidencia de fuente anterior. UI R3 cerrada FAILED por precondición, sin apertura ni capturas; su cleanup sí refrescó filtros existentes. Nuevo UIb08a/37checks exige activeTab efectivo registrado y cero cleanupUI antes de ownership, esperando ventana nueva y reparación por su owner.
+
+Controller de perfiles y runner180/120/60 publicados en f80cdac:40checks offline PASS mediante Ringer p93713, con ManagerRuntime real y APIs nativas simuladas. Once pasos, baseline/intents/postimages durables, sólo dos fixtures propios, limpieza por hashes/generaciones/CAS y readback independiente State/local/foreign/core/workspace/Settings. READY exige nuevo START/ACK; ninguna ejecución nativa ni fixture creado. Source, instalación/carga y aceptación funcional/visual siguen siendo resultados distintos. No hay sustitución ENSO ni traslados físicos a _archive.
