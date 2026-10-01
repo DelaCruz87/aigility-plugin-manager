@@ -272,6 +272,35 @@ test('setPin persists and clearing it removes the pin; prerelease tracking and p
   assert.equal(runtime.local.operationPending, undefined);
 });
 
+test('unsorted prerelease catalog picks the highest version rather than the first or the newest', async () => {
+  const { GithubManager } = await importModule('src/integrated/github.ts');
+  const records = [{ id: 'stable', version: '1.0.0' }, { id: 'beta', version: '1.0.0' }];
+  const sources = { 'community:stable': { repo: 'acme/stable', trackPrereleases: false }, 'community:beta': { repo: 'acme/beta', trackPrereleases: true } };
+  const rows = { 'acme/stable': [['1.4.0', false], ['1.3.0', false], ['1.2.0', false]], 'acme/beta': [['2.3.0-beta.1', true], ['2.0.0', false], ['1.9.0-beta.4', true]] };
+  const manifests = Object.fromEntries(Object.entries(rows).flatMap(([key, list]) => list.map(([tag]) => [tag, { id: key.split('/')[1], version: tag }])));
+  const transport = async ({ url }) => {
+    const parsed = new URL(url);
+    if (url === registryUrl) return response([]);
+    if (parsed.pathname.endsWith('/releases/latest')) {
+      const stable = rows['acme/stable'].find(([, pre]) => !pre);
+      return response(release(stable[0], manifests[stable[0]]));
+    }
+    if (parsed.pathname.endsWith('/releases')) {
+      const key = parsed.pathname.includes('/beta/') ? 'acme/beta' : 'acme/stable';
+      return response(rows[key].map(([tag, pre]) => ({ ...release(tag, manifests[tag]), prerelease: pre })));
+    }
+    if (parsed.pathname.endsWith('/manifest.json')) {
+      const tag = decodeURIComponent(parsed.pathname.split('/').at(-2));
+      return response(manifests[tag]);
+    }
+    return response({}, { status: 404 });
+  };
+  const { app, plugin, runtime } = createHarness({ records, sources }); plugin.githubRequest = transport;
+  const results = await new GithubManager(runtime, app, plugin).checkAll();
+  assert.equal(results.find((result) => result.id === 'stable').proposed, '1.4.0', 'stable-only channels ignore prereleases even when listed first');
+  assert.equal(results.find((result) => result.id === 'beta').proposed, '2.3.0-beta.1', 'the highest eligible version wins regardless of catalog order');
+});
+
 test('install does not reload a plugin after a newer manual disable', async () => {
   const { GithubManager } = await importModule('src/integrated/github.ts');
   const manifest = { id: 'calendar', version: '2.0.0' };

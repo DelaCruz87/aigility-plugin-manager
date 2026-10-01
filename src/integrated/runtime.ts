@@ -275,6 +275,12 @@ export class ManagerRuntime {
      * - While the policy is enabled, native autostart is excluded regardless of
      *   desired or profile membership: the policy is a host-level claim, and a
      *   record that disagrees must not keep the plugin on the native path.
+     * - Protection outranks the policy, and so does the absence of a
+     *   nonpersistent path. An enabled policy for a protected ref, or for a core
+     *   ref whose exclusion would persist a native disable, is rejected before
+     *   the timer is cancelled and before the host is touched, so a contradictory
+     *   configuration can never be half-applied. The rejection leaves the imported
+     *   policy and the user record untouched for the operator to resolve.
      * - Nothing is ever loaded here. A deferred instance that is loaded anyway
      *   is unloaded nonpersistently, so recovery leaves it off without touching
      *   desired or membership records.
@@ -287,14 +293,21 @@ export class ManagerRuntime {
      */
     private async reconcileDeferredInternal(ref: PluginRef, options?: { origin?: string }): Promise<void> {
         if (this.disposed || this.host.isRestricted()) throw new Error('Operation cannot mutate the host while plugin loading is paused or the manager is unloading.');
-        this.scheduler.cancel(ref.id);
         const policy = this.state.deferred.find((item) => item.id === ref.id);
-        if (!policy?.enabled) return;
+        if (!policy?.enabled) {
+            this.scheduler.cancel(ref.id);
+            return;
+        }
+        if (this.isProtected(ref)) throw new Error(`Deferred policy for protected plugin ${key(ref)} conflicts with its protection and cannot be reconciled.`);
+        // A core wrapper has no nonpersistent activation path: excluding it turns
+        // its native flag off for real, so honouring the policy would be a
+        // persistent disable wearing a policy's clothes. Rejecting here keeps the
+        // core native flag untouched instead of faking a deferment.
+        if (ref.kind === 'core') throw new Error(`Core plugin ${key(ref)} cannot be deferred: core exclusion changes the persistent native flag and no nonpersistent deferred load exists for it.`);
+        this.scheduler.cancel(ref.id);
         const observed = this.host.observe().find((item) => key(item.ref) === key(ref) && item.installed);
         if (!observed) throw new Error(`Plugin ${key(ref)} is not installed, deferred exclusion cannot be reconciled.`);
-        // unload only ever removes an instance that the policy must not keep
-        // loaded; a protected plugin keeps its instance and loses native only.
-        await this.host.excludeDeferred(ref, { unload: observed.loaded && !this.isProtected(ref), origin: options?.origin });
+        await this.host.excludeDeferred(ref, { unload: observed.loaded, origin: options?.origin });
         if (this.host.isEnabled(ref)) throw new Error(`Deferred reconciliation left ${key(ref)} loaded.`);
         this.bumpGeneration(ref);
     }
@@ -611,8 +624,30 @@ export class ManagerRuntime {
                 this.log('warn', `Deferred plugin ${policy.id} is not installed; no native entry was found to exclude.`);
                 continue;
             }
+            // Protection is decided before any host mutation. An enabled policy
+            // that names a protected ref is a contradictory imported
+            // configuration, not an instruction: native autostart and the loaded
+            // instance stay exactly as observed, the policy is left in place for
+            // the operator to resolve instead of being silently dropped, the
+            // conflict becomes a visible recovery reason, and startup keeps going
+            // so a foreign policy never kills the manager's own onload.
+            if (this.isProtected(ref)) {
+                this.pause(`Deferred policy for protected plugin ${key(ref)} conflicts with its protection: native autostart and loaded state were left unchanged.`);
+                this.log('warn', `Deferred exclusion skipped for protected plugin ${key(ref)}; the imported policy is retained for review.`);
+                continue;
+            }
+            // The same rule that rejects a core policy edit applies here: a core
+            // wrapper has no nonpersistent activation path, so excluding it would
+            // persist a native disable and present it as a deferment. Startup
+            // refuses it the same way instead of faking the policy's promise, and
+            // the deferred load below already skips core refs it cannot honour.
+            if (ref.kind === 'core') {
+                this.pause(`Deferred policy for core plugin ${key(ref)} cannot be honoured: a core wrapper has no nonpersistent deferred load, so its native state was left unchanged.`);
+                this.log('warn', `Deferred exclusion skipped for core plugin ${key(ref)}; the imported policy is retained for review.`);
+                continue;
+            }
             try {
-                await this.host.excludeDeferred(ref, { unload: !this.isProtected(ref) });
+                await this.host.excludeDeferred(ref, { unload: true });
             } catch (error) {
                 this.pause(`Could not exclude deferred plugin ${policy.id} from native autostart.`);
                 this.log('error', `Deferred exclusion failed for ${policy.id}.`, error);

@@ -81,3 +81,33 @@ test('a diagnostic origin alone cannot bypass an unrelated interrupted-operation
   assert.equal(f.runtime.local.operationPending,'profile-apply:interrupted');
  }finally{f.debug.dispose();f.runtime.dispose();}
 });
+test('an invalid deferred policy for the protected manager cannot remove its native startup entry', {timeout:3000}, async()=>{
+ const f=fixture(),id='aigility-plugin-manager',ref={kind:'community',id};
+ f.api.manifests[id]={id,name:'AIgility Plugin Manager',version:'0.1.0',minAppVersion:'1.0.0'};
+ f.api.enabledPlugins.add(id);f.api.plugins[id]={_loaded:true,manifest:f.api.manifests[id]};
+ f.state.records['community:'+id]={ref,name:id,version:'0.1.0',tags:[],group:'',desired:true,metadata:{}};
+ f.state.deferred.push({id,enabled:true,delayMs:50});
+ try {
+  await f.runtime.start(false);
+  assert.equal(f.api.enabledPlugins.has(id),true,'self protection includes retaining native startup');
+  assert.equal(Boolean(f.api.plugins[id]),true);
+  assert.ok(f.runtime.local.recoveryReason,'the invalid policy is surfaced in recovery');
+  await assert.rejects(f.runtime.enqueue('invalid-self-defer',tx=>tx.reconcileDeferred(ref)),/protect|manager|conflict/i);
+  assert.equal(f.api.enabledPlugins.has(id),true);
+ }finally{f.debug.dispose();f.runtime.dispose();}
+});
+test('a partial fixture cannot disable the protected manager through an explicit false member', {timeout:3000}, async()=>{
+ const f=fixture(),id='aigility-plugin-manager',ref={kind:'community',id};
+ f.api.manifests[id]={id,name:'AIgility Plugin Manager',version:'0.1.0',minAppVersion:'1.0.0'};
+ f.api.enabledPlugins.add(id);f.api.plugins[id]={_loaded:true,manifest:f.api.manifests[id]};
+ f.state.records['community:'+id]={ref,name:id,version:'0.1.0',tags:[],group:'',desired:true,metadata:{}};
+ f.state.fixtureProfiles.push({id:'invalid-self-fixture',name:'Self false',members:{['community:'+id]:false,'community:beta':false}});
+ try {
+  await f.runtime.start(false);
+  await f.runtime.applyFixture('invalid-self-fixture');
+  assert.equal(Boolean(f.api.plugins[id]),true,'partial profiles preserve self protection too');
+  assert.equal(f.api.enabledPlugins.has(id),true);
+  assert.equal(f.runtime.state.records['community:'+id].desired,true);
+  assert.equal(Boolean(f.api.plugins.beta),false,'the ordinary declared member still applies');
+ }finally{f.debug.dispose();f.runtime.dispose();}
+});

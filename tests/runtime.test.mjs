@@ -662,6 +662,60 @@ test('deferred reconciliation never loads a plugin and ignores membership, and a
   assert.equal(community.instance._loaded, false);
 });
 
+test('a deferred policy for the protected manager keeps its native startup, surfaces the conflict, and rejects the edit', async () => {
+  const id = 'aigility-plugin-manager';
+  const community = communityHost(id, true);
+  const state = makeState({ deferred: [{ id, delayMs: 50, enabled: true }] });
+  const harness = makeHarness({ state, community: community.api });
+  await harness.runtime.start(false);
+  assert.ok(state.protected.includes('community:aigility-plugin-manager'), 'the manager protects itself on load');
+  assert.equal(community.enabledIds.has(id), true, 'self protection includes retaining native startup');
+  assert.equal(community.instance._loaded, true, 'the manager keeps its own loaded instance');
+  assert.match(harness.runtime.local.recoveryReason, /protect|conflict/i, 'the contradictory policy is surfaced in recovery');
+  await assert.rejects(
+    harness.runtime.enqueue('reconcile-self', (tx) => tx.reconcileDeferred({ kind: 'community', id })),
+    /protect|manager|conflict/i,
+  );
+  assert.equal(community.enabledIds.has(id), true, 'a rejected edit leaves native autostart alone');
+  assert.equal(community.instance._loaded, true);
+  assert.equal(state.deferred[0].id, id, 'the imported policy is retained, not silently dropped');
+});
+
+test('an enabled deferred policy for any other protected plugin is refused before the host is touched', async () => {
+  const community = communityHost('keeper', true);
+  addCommunity(community, 'alpha', { enabled: true });
+  const state = makeState({
+    protected: ['community:keeper'],
+    deferred: [{ id: 'keeper', delayMs: 50, enabled: true }, { id: 'alpha', delayMs: 50, enabled: true }],
+  });
+  const harness = makeHarness({ state, community: community.api });
+  await harness.runtime.start(false);
+  assert.equal(community.enabledIds.has('keeper'), true, 'a protected ref keeps native autostart through start');
+  assert.equal(community.instance._loaded, true);
+  assert.equal(community.enabledIds.has('alpha'), false, 'a normal unprotected deferred plugin is still excluded');
+  assert.match(harness.runtime.local.recoveryReason, /keeper|protect|conflict/i);
+  await assert.rejects(
+    harness.runtime.enqueue('reconcile-keeper', (tx) => tx.reconcileDeferred({ kind: 'community', id: 'keeper' })),
+    /protect|conflict/i,
+  );
+  assert.equal(community.enabledIds.has('keeper'), true);
+  assert.equal(community.instance._loaded, true);
+});
+
+test('a core deferred policy is rejected before its persistent native flag is mutated', async () => {
+  const community = communityHost('alpha');
+  const state = makeState({ deferred: [{ id: 'recorder', delayMs: 50, enabled: true }] });
+  const harness = makeHarness({ state, community: community.api, core: { recorder: true } });
+  await harness.runtime.start(false);
+  assert.equal(harness.wrapperMap.get('recorder').enabled, true, 'core exclusion never fakes a nonpersistent deferment');
+  await assert.rejects(
+    harness.runtime.enqueue('reconcile-core', (tx) => tx.reconcileDeferred({ kind: 'core', id: 'recorder' })),
+    /core/i,
+  );
+  assert.equal(harness.wrapperMap.get('recorder').enabled, true, 'the rejected edit leaves the core native flag untouched');
+  assert.equal(harness.coreApis.some(([call]) => call === 'wrapper.disable'), false, 'no core disable was issued');
+});
+
 test('unrelated interrupted operations still reject diagnostic host mutations', async () => {
   const community = communityHost('alpha');
   const harness = makeHarness({ community: community.api });

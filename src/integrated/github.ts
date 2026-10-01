@@ -569,7 +569,8 @@ export class GithubManager {
             : job.source?.trackPrereleases
               ? await this.json<ReleaseJson[]>(`${API}/repos/${repo}/releases?per_page=${CHECK_RELEASE_PAGE_SIZE}&page=1`)
               : [await this.json<ReleaseJson>(`${API}/repos/${repo}/releases/latest`)];
-          const selected = candidates.find((release) => !release.draft && release.tag_name && (pinned || job.source?.trackPrereleases ? Boolean(release.prerelease || pinned) : !release.prerelease));
+          const eligible = candidates.filter((release) => !release.draft && release.tag_name && (pinned || !job.source?.trackPrereleases ? !release.prerelease || Boolean(pinned) : true));
+          const selected = eligible.reduce<ReleaseJson | undefined>((best, release) => best && compareVersions(normalizedTag(best.tag_name), normalizedTag(release.tag_name)) >= 0 ? best : release, undefined);
           if (!selected?.tag_name) { results[index] = { id: job.id, current: job.current, repo, error: 'No compatible release found' }; continue; }
           const manifestAsset = selected.assets?.find((asset) => asset.name === 'manifest.json')?.browser_download_url;
           if (!manifestAsset) { results[index] = { id: job.id, current: job.current, repo, proposed: selected.tag_name, error: 'Release is missing manifest.json' }; continue; }
