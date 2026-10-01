@@ -84,6 +84,7 @@ export class ManagerRuntime {
     private layoutReadySeen = false;
     private disposed = false;
     private startupPromise?: Promise<void>;
+    private previewSnapshots = new WeakMap<Change[], { id: string; fingerprint: string }>();
 
     constructor(private app: any, private plugin: any, state: State) {
         this.state = state;
@@ -166,12 +167,23 @@ export class ManagerRuntime {
     }
 
     previewProfile(id: string): Promise<Change[]> {
-        return this.enqueue('preview-profile', async () => this.computeProfile(id));
+        return this.enqueue('preview-profile', async () => {
+            const changes = this.computeProfile(id);
+            this.previewSnapshots.set(changes, { id, fingerprint: this.profileFingerprint(id) });
+            return changes;
+        });
     }
 
-    applyProfile(id: string): Promise<void> {
+    applyProfile(id: string, expectedPreview?: Change[]): Promise<void> {
         return this.enqueue(`apply-profile:${id}`, async () => {
-            await this.applyProfileInternal(id);
+            if (expectedPreview) {
+                await this.store.assertFresh();
+                const snapshot = this.previewSnapshots.get(expectedPreview);
+                if (!snapshot || snapshot.id !== id || snapshot.fingerprint !== this.profileFingerprint(id) || JSON.stringify(expectedPreview) !== JSON.stringify(this.computeProfile(id))) {
+                    throw new Error('La vista previa del perfil ya no está vigente o no corresponde a este perfil. Genera una nueva vista previa antes de aplicar.');
+                }
+            }
+            await this.applyProfileInternal(id, expectedPreview);
             const profile = this.state.deviceProfiles.find((candidate) => candidate.id === id);
             if (profile?.workspaceId && this.startupVerified && !this.isAutomationPaused()) {
                 await this.withPending(`workspace:${profile.workspaceId}`, async () => {
@@ -529,6 +541,7 @@ export class ManagerRuntime {
         const report = {
             schemaVersion: 1,
             generatedAt: new Date().toISOString(),
+            installation: { appId: this.app?.appId ?? null, vaultName: this.app?.vault?.getName?.() ?? null, localProfileKey: this.localKey, platform: typeof (globalThis as any).Platform?.isMobile === 'boolean' ? ((globalThis as any).Platform.isMobile ? 'mobile' : 'desktop') : null },
             profile: { boundProfileId, appliedProfileId },
             recovery: { reason: this.local.recoveryReason, operationPending: this.local.operationPending },
             plugins: this.list().map((item) => ({
@@ -591,7 +604,7 @@ export class ManagerRuntime {
         return Boolean(record.tags?.some((tag) => tags.has(tag)));
     }
 
-    private async applyProfileInternal(id: string): Promise<void> {
+    private async applyProfileInternal(id: string, expectedPreview?: Change[]): Promise<void> {
         const changes = this.computeProfile(id);
         this.scheduler.cancelAll();
         (this.local as any).appliedProfileId = id;
@@ -599,8 +612,9 @@ export class ManagerRuntime {
             this.persistLocal();
             return;
         }
+        if (expectedPreview && JSON.stringify(changes) !== JSON.stringify(expectedPreview)) throw new Error('La vista previa del perfil cambió. Genera una nueva vista previa antes de aplicar.');
         await this.withPending(`profile:${id}`, async () => {
-            await this.store.assertFresh();
+            if (!expectedPreview) await this.store.assertFresh();
             const applied: ProfileUndoEntry[] = [];
             for (const change of this.profileOrder(changes)) {
                 this.assertNoConcurrentPause();
@@ -732,6 +746,12 @@ export class ManagerRuntime {
             }
         }
         return changes;
+    }
+
+    private profileFingerprint(id: string): string {
+        const profile = this.state.deviceProfiles.find((candidate) => candidate.id === id);
+        if (!profile) throw new Error(`Device profile ${id} does not exist.`);
+        return JSON.stringify({ profile, records: this.state.records, tags: this.state.tags, observed: this.host.observe().map((item) => ({ ref: item.ref, installed: item.installed, compatible: item.compatible, nativeAutostart: item.nativeAutostart, loaded: item.loaded, enabled: this.host.isEnabled(item.ref) })) });
     }
 
     private profileOrder(changes: Change[]): Change[] {

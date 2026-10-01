@@ -241,7 +241,7 @@ export interface ManagerRuntime {
     enqueue<T>(label: string, operation: (tx: RuntimeTransaction) => Promise<T>): Promise<T>;
     save(): Promise<void>;
     previewProfile(id: string): Promise<Change[]>;
-    applyProfile(id: string): Promise<void>;
+    applyProfile(id: string, expectedPreview?: Change[]): Promise<void>;
     undoProfile(): Promise<void>;
     setEnabled(ref: PluginRef, enabled: boolean): Promise<void>;
     setTags(ref: PluginRef, tags: string[]): Promise<void>;
@@ -2110,7 +2110,7 @@ export class ManagerOptionsModal extends Modal {
                         try {
                             const changes = await this.ui.runtime.previewProfile(targetId);
                             new ProfileComparisonModal(this.app, changes, async () => {
-                                await this.ui.runtime.applyProfile(targetId);
+                                await this.ui.runtime.applyProfile(targetId, changes);
                             }).open();
                         } catch (err) {
                             this.ui.showNotice('Error al generar vista previa: ' + (err as Error).message);

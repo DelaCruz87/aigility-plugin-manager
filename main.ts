@@ -314,7 +314,7 @@ export default class AIgilityPluginManager extends Plugin {
 
     private async previewManualProfile(id: string): Promise<void> {
         const changes = await this.runtime.previewProfile(id);
-        new ProfileComparisonModal(this.app, changes, async () => this.runtime.applyProfile(id)).open();
+        new ProfileComparisonModal(this.app, changes, async () => this.runtime.applyProfile(id, changes)).open();
     }
 
     private safeCommandPart(id: string): string {
