@@ -1,5 +1,11 @@
 # Review Findings
 
+## Resolution ledger - 2026-10-01 15:14 Madrid
+
+Codex: las secciones posteriores conservan hallazgos históricos de esta sesión, no el estado vigente ni órdenes para recuperar código anterior. Los contratos 1-9 y 11-22 ahora tienen reparaciones y pruebas ejecutadas; el core diagnóstico usa el camino persistente real, las escrituras pasan por la cola y los diferidos no entran en arranque nativo. UI añade validación de políticas nuevas antes de reconciliar y selección activa de debugging; 58 pruebas UI aprobadas. Debugging y sus contratos integrados: 29 aprobadas, incluido desired=true sin carga ni programación.
+
+Pendiente: aceptación nativa de filtros/Opciones, perfiles/diferidos/debugging/betas, modo restringido y siguiente arranque, comandos actualizados y despliegue ENSO. El primer harness funcional y su reemplazo escrito en scratch fueron rechazados, aunque Ringer marcó PASS: los archivos entregados no acreditaban ejecución real segura. El instalador posterior sí instaló en Sandbox, con comprobación independiente instalada/habilitada/cargada; su checker repetido rechazó sobrescritura y marcó FAIL. Se mantienen ambas evidencias sin convertir stage en aceptación.
+
 ## Additional host gates - 2026-10-01
 
 - Core diagnostics: the independent integrated-contract check models wrapper.enable(false) updating both enabled and instance._loaded. The current runtime forwards loadNow=true and fails native readback. Keep this check unchanged; the runtime must use the real persisted core path and the session must restore its postimage.
