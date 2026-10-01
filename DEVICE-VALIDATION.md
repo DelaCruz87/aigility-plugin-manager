@@ -30,7 +30,7 @@ Date: 2026-10-01. Author: Codex. This is an execution ledger for the user-approv
 
 ## Shared Sandbox scope
 
-Último estado2026-10-01 20:55 Madrid:287source/checksPASS/build0.1.2exit0, Sandbox sigue0.1.0loaded; ninguna escritura nativa nueva. Se detectó y respaldó corrupción de46campos de identidad causada por el propio redactor del gestor, sin pérdida de notas. Sourcefix publicado y propuesta selectiva desde backups originales; el target sigue native/loadedtrue en lectura propia20:45. READY revisada debe recibir START para reparación/build, luego aceptación visual/funcional y siguiente arranque. Estado anterior de cuotas/CLI/WDA en párrafos previos es histórico y no configura una prohibición vigente.
+Snapshot histórico2026-10-01 20:55 Madrid, sustituido por el checkpoint siguiente:287source/checksPASS/build0.1.2exit0, Sandbox sigue0.1.0loaded; ninguna escritura nativa nueva. Se detectó y respaldó corrupción de46campos de identidad causada por el propio redactor del gestor, sin pérdida de notas. Sourcefix publicado y propuesta selectiva desde backups originales; el target sigue native/loadedtrue en lectura propia20:45. READY revisada debe recibir START para reparación/build, luego aceptación visual/funcional y siguiente arranque. Estado anterior de cuotas/CLI/WDA en párrafos previos es histórico y no configura una prohibición vigente.
 
 Según instrucción humana actual, las pruebas UI en Sandbox iPad pueden continuar cuando sus archivos hayan llegado realmente por Sync y el supervisor asigne la ventana. WDA18100 fue acreditado por su owner a las20:04; este proyecto no ha iniciado otro bridge ni ha escrito archivos móviles. La recuperación ENSO iPad sigue aplazada y no se infiere permiso para preparar fixtures allí directamente.
 
@@ -41,3 +41,7 @@ All human-review documents, source repositories, research and receipts live in t
 Global restricted mode, core toggles and vault reload require a fresh coordinated window from the active Sandbox owners. The manager-only build update and three own fixture plugins preserve every foreign plugin's native and loaded state. Temporary all-plugin protections used in Sandbox must never be copied into production ENSO.
 
 Snapshot 2026-10-01 18:32 Madrid: la fuente con archivo de descargados compila y la suite integrada aprueba263 pruebas; no se ha actualizado el build inicial instalado de Sandbox con esa función. La evaluación sincrónica del host volvió a responder, pero la lectura de data.json por su adapter no devolvió una respuesta verificable. La prueba nativa debe acreditar primero esa lectura antes de modificar archivos. Ante la incidencia móvil coordinada se mantienen en pausa los despliegues globales y cualquier intervención directa en iPad.
+
+## Current Mac Sandbox observation
+
+2026-10-01 21:50 Madrid, Codex.0.1.3 instalado, habilitado nativamente y cargado realmente en Mac Sandbox. El deploy comprueba hashes de3artifacts y preserva configuración,7perfiles/42fixtures,49community ajenos/30core y pausa de recuperación previa. No hay binding inferido ni reanudación automática. Aceptación UI preparada en un procedimiento independiente; aceptación funcional y siguiente arranque permanecen pendientes. Ninguna instalación o escritura iPad efectuada por este proyecto; los demás seis dispositivos no tienen prueba física acreditada.

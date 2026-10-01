@@ -18,6 +18,6 @@
   "never": "No toggles/profileApply/resume/updates/archive moves/fixtures/Sync/ENSO/iPad/Git/source during lease",
   "restoration": "Close only own manager modal, matching own ephemeralfilter postimages, prior rememberedSettingsTab+close, check exact manager data hash/local state/foreignnative+core/workspaceleaves",
   "capture": "Actual native Settings/browserWindow capturePage, clip only manager modal when in mainwindow; OSscreen remainslocked, no fabricatedphysicalproof",
-  "tests": "4offline UIguard/cleanup/serializationchecksPASS; deployed0.1.3/preservedconfig; full295PASS before4newchecks",
+  "tests": "299PASS fullsuite including4offline UIguard/cleanup/serializationchecks; deployed0.1.3 native/loaded andpreservedconfig; buildexit0",
   "phaseGuarantee": "Unique persisted pendingUI token, strictidentity, everygesture/action guarded, same tokenreadonly polling after timeout, no subsequent native action unknownpending"
 }

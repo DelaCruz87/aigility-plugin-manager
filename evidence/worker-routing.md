@@ -106,3 +106,11 @@ El supervisor recibió READY0.1.2 tras corregir3riesgos del verificador.18helper
 Native-smokeLuna p84723 compilation6PASS pero revisión REJECTEDporAPIsinventadas/cleanupnocorrecto; dos artifactsuntrackedpropiosretirados,nunca--run. GLMFlashcommunity-preflight183s ybuild-check-guards240.5s timeoutsinentrega. Luna p2304nofilesalusarRinger scratchCWDrelativo;configlocalcorrige -C source. ÚltimoLuna p10587TIMEOUT90.6s peroentregóguardas;root13helperchecksaprueban despuésde corregirliteralCASstring/object.
 
 Como lane de revisión/checks, Codex reescribe artifactdeverificaciónmanager-only con finallyselectivo, fullprofilehashes ydeadline120/reserve35;9testspuros/jobwrapperPASS. Suitefull277PASS/sourcebundle191f8c...49337 sin cambiosproducto desde6fd3c7e. No workersnativos niArchiveroundtrip nativo. READYrevisado d91394e,pendienteSTARTsupervisor. Codexquota compartida96%weeklyexpues­ta;sin nuevasinferenciasCodexlargas. No importecredit/invoiceinferido.
+
+## Native renderer correction and deployment - 2026-10-01 21:50 Madrid
+
+p31400 GLM5.3Flash FAIL TIMEOUT205.7s; checkerexit0 verificó61UI/290suite/build, pero la revisión encontró display aún envuelto en host nativo, montaje doble en renderTab->update y metadata incompleta. Dos nuevas regresiones fallaron. Se conserva FAIL de la unidad, no se acepta la entrega parcial. Tokens0 en Ringer es dato ausente tras timeout, no coste cero.
+
+p37875 Luna6low PASS75.3s1attempt, tokens_reported53931 extraídos de CLI Codex; coste monetario no disponible. Corrige lifecycle, conserva errores/retornos y completa4metadata0.1.3; root revisa y publica c28913a con63UI/292suite/build0. Tres nuevos checks de deploy elevan suite a295.
+
+p45303 native-executor determinista PASS1.2s, sin inferencia de modelo:0.1.3 enabled/loaded en Sandbox,3SHA y configuración completa preservados. La reparación46 ya efectuada en0.1.2 no se repite. RELEASE supervisor tras settle19:47:29Z; UI requiere otra ventana.

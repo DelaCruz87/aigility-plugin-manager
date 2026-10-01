@@ -62,7 +62,7 @@ Snapshot de campos tocados; operationPending antes de mutaciones; APIs verificad
 Spec/contrato; módulos; unit/build; Sandbox real; migración ENSO backup/readback; restart; matriz física según acceso.
 
 ### 5.2 Acceptance (11)
-- [x] AC-1 - npm test/build return 0; evidence/tests.txt/build.txt. Snapshot 2026-10-01 20:55 Madrid: 287 pruebas aprobadas, sin skips; producto0.1.2/_archive mantiene build exit0. Incluye checks de despliegue y harness; no equivalen a ejecución nativa. Revalidar después de cambios posteriores. La compilación no acredita aceptación nativa.
+- [x] AC-1 - npm test/build return 0; evidence/tests.txt/build.txt. Snapshot 2026-10-01 21:50 Madrid: 299 pruebas aprobadas, sin skips; producto0.1.3/_archive mantiene build exit0. Incluye checks de despliegue y harness; no equivalen a ejecución nativa. Revalidar después de cambios posteriores. La compilación no acredita aceptación nativa.
 - [ ] AC-2 - Migración tags/templates/core/deferred/fixtures; tests y receipt.
 - [ ] AC-3 - UI/sidebar en Sandbox; evidence/sandbox.json y screenshot.
 - [ ] AC-4 - Full/core/protected/incompatible/fixture/undo; tests + Sandbox.
@@ -86,7 +86,7 @@ Adapters falsos DOM-free; CLI con nombre de vault comprobado; screenshots; compa
 ### 5.5 Checkpoint
 2026-10-01 18:32 Madrid, Codex: módulos, comandos y archivo de descargados implementados; 263 pruebas/build aprobados. El Sandbox conserva instalado/habilitado/cargado el build inicial, anterior a esta ampliación; migración7perfiles/42fixtures preservada. Aceptación nativa funcional y siguiente arranque pendientes. No sustituir gestores ENSO hasta esa aceptación. Research de septiembre es histórico, no configuración actual.
 
-## Identity redaction recovery checkpoint
+## Historical identity redaction recovery checkpoint
 
 2026-10-01 20:55 Madrid, Codex. Eme autorizó continuar el desarrollo y deploy con plugins/_archive. La observación propia de Sandbox20:45 confirma instalado/cargado0.1.0, target enso-secret-placeholders nativo y cargado, binding local sin asignar y debugging inactivo. Se comprobó un fallo del gestor: la detección de nombres de campos secretos confundía IDs de plugins con propiedades de credenciales. Se conservaron4archivos byteexactos antes de cambios; el inventario identifica46campos afectados:1record,21fixturemembers,2backupstates y22mapaslegacy. No afecta a notas ni se presenta como incidente de integridad del vault.
 
@@ -96,7 +96,7 @@ Fuente0.1.2 publicada enb7f6472. Redacción distingue claves canónicas y mapas 
 - [x] Preparar reparación selectiva46campos desde los backups originales, manifest previo a migración y activación histórica contrastada con el host actual; no inventar booleanos ni restaurar State completo.
 - [x] Comprobar que la propuesta sólo cambia campos dañados; valores válidos y propiedades ajenas permanecen iguales.
 - [x] Corregir verificador: token distinto por fase, deadline host antes de cada mutación posterior a await, incluyendo rollback, y no reload con artifacts iguales.
-- [ ] Ejecutar la unidad coordinada de reparación/deploy0.1.2 en Sandbox. READY offline99dedf5 requiere START de la ventana compartida; todavía no hay nuevas escrituras host.
+- [x] Ejecutar reparación/deploy0.1.2 en Sandbox - PASS nativo19:20:08Z,46campos reparados selectivamente,7perfiles/42fixtures y49community/30core preservados. Receipt sandbox-build.json. READY consumida, no repetir reparación.
 - [ ] Aceptación funcional/visual y siguiente arranque. ENSO conserva sus gestores hasta completar esa evidencia.
 
 La copia de configuración y la propuesta detallada están en local-backups ignorados por Git; las receipts publicadas sólo contienen hashes, rutas de campos, tipos y resultados. Si el preimage cambia o el target ya no está activo, la unidad rechaza la reparación y requiere releer el estado. Rollback revierte únicamente postimages propios coincidentes antes de recargar el binario anterior; conserva ediciones manuales conflictivas. No cambia Sync, perfiles ajenos ni archivos iPad.
@@ -114,3 +114,15 @@ Verificar build marker y binding. Probar filtros/perfiles/core/deferred/recovery
 - [ ] AC-11 - Archivar reduce manifests de carpetas directamente dentro de plugins; restaurar conserva exactamente main/manifest/styles/data y archivos adicionales. Pruebas de conflictos, operaciones interrumpidas, perfil, betas, Sync y catálogo sintético >=723; prueba nativa sólo con fixtures propios.
 
 Contrato, fuente del host, backend/UI por Ringer, integración y tests/build completados en fuente. Pendientes prueba reversible en Sandbox con archivos propios y medición física iPad bajo las restricciones de DEVICE-VALIDATION.md. AC-11 permanece abierto hasta observar el traslado real y su restauración. No archivar automáticamente el catálogo real durante el desarrollo.
+
+## Current native deployment checkpoint
+
+2026-10-01 21:50 Madrid, Codex. La unidad0.1.2 reparó los46campos y verificó carga real sin cambios ajenos. La revisión posterior del código de Obsidian1.14.3 identificó que Community plugins se renderiza por renderTab, mientras la integración sólo interceptaba display. La fuente0.1.3 añade hooks de renderTab/update, reserva display para hosts anteriores, monta una vez durante refrescos anidados y conserva retornos, errores, estilos e identidades de métodos. Source c28913a,63UI/299suite y build0.
+
+Deploy0.1.3 pasó en Sandbox19:47:29.006Z. Sólo se escribieron main.js y manifest.json propios; styles.css ya coincidía. Version/build/native/_loaded y3SHA verificados. State completo,7perfiles de equipo/42de pruebas,49community ajenos/30core, protecciones y configuración local permanecieron iguales. Sin reparación repetida, traslados, cambios Sync/iPad ni sustitución en ENSO. Receipt sandbox-build-v013.json.
+
+- [x] Corregir y comprobar el lifecycle de la lista Community del host vigente.
+- [x] Desplegar0.1.3 en Mac Sandbox y verificar estado efectivo y preservación.
+- [ ] Aceptación UI nativa - procedimiento con guardas/capturas preparado; espera su turno coordinado, no acredita todavía la interfaz.
+- [ ] Aceptación funcional de perfiles, diferidos, debugging y betas - fixtures acotados pendientes de ejecución.
+- [ ] Siguiente arranque y migración ENSO - después de evidencia funcional; los gestores existentes siguen activos.
