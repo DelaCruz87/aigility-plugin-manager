@@ -25,7 +25,7 @@ const STUB = `
       async loadData() { const p = this.manifest.dir + '/data.json'; return await this.app.vault.adapter.exists(p) ? JSON.parse(await this.app.vault.adapter.read(p)) : null; }
     }
     export class PluginSettingTab { constructor(app, plugin) { this.app = app; this.plugin = plugin; this.containerEl = { empty() {} }; } }
-    export class Modal { constructor(app) { this.app = app; } }
+    export class Modal { constructor(app) { this.app = app; } open() { globalThis.__aigilityTestModal = this; } }
     export class Menu {}
     export class Setting {}
     export class Notice { constructor(message) { globalThis.__notices.push(String(message)); } }
@@ -141,7 +141,7 @@ async function collectConsole(fn) {
 test('schemaVersion 1 loads without legacy migration and registers stable manager/profile commands', async () => {
   globalThis.__notices = [];
   const state = makeState({
-    deviceProfiles: [{ id: 'macbook', name: 'MacBook', tagIds: [], applyAtStart: true }],
+    deviceProfiles: [{ id: 'macbook', name: 'MacBook', tagIds: [], applyAtStart: true }, { id: 'lenovo tab', name: 'Lenovo Tab', tagIds: [] }],
     fixtureProfiles: [{ id: 'fixture-a', name: 'Fixture A', members: {} }],
   });
   const host = makeHost({ initial: state });
@@ -150,10 +150,37 @@ test('schemaVersion 1 loads without legacy migration and registers stable manage
     assert.equal(plugin.runtime.state.schemaVersion, 1);
     assert.equal(host.files.has('.obsidian/plugins/aigility-plugin-manager/migration-backups/before-migration-any.json'), false);
     assert.deepEqual(plugin.commands.map((command) => command.id), [
-      'manager-options', 'manager-apply-profile', 'manager-undo', 'manager-resume',
-      'manager-profile-macbook-apply', 'manager-profile-fixture-a-apply',
+      'manager-options', 'manager-view', 'manager-apply-profile', 'manager-undo', 'restore-previous-command-state', 'manager-resume',
+      'manager-profile-macbook-apply', 'manager-profile-lenovo-tab-apply', 'manager-profile-fixture-a-apply',
     ]);
     assert.equal(plugin.managerBuild, 'aigility-plugin-manager/0.1.0');
+  } finally { plugin.onunload(); await cleanup(); }
+});
+
+test('bound and device profile commands preview first and apply only after modal confirmation', async () => {
+  globalThis.__notices = [];
+  const host = makeHost({ initial: makeState({
+    deviceProfiles: [{ id: 'macbook', name: 'MacBook', tagIds: [] }, { id: 'lenovo tab', name: 'Lenovo Tab', tagIds: [] }],
+  }) });
+  const { plugin, cleanup } = await start(host);
+  try {
+    const previews = [];
+    const applies = [];
+    plugin.runtime.previewProfile = async (id) => { previews.push(id); return [{ ref: { kind: 'community', id: 'sample' }, before: false, after: true, reason: 'test' }]; };
+    plugin.runtime.applyProfile = async (id) => { applies.push(id); };
+    plugin.runtime.local.deviceProfileId = 'macbook';
+    for (const [index, [commandId, profileId]] of [['manager-apply-profile', 'macbook'], ['manager-profile-lenovo-tab-apply', 'lenovo tab']].entries()) {
+      globalThis.__aigilityTestModal = undefined;
+      plugin.commands.find((command) => command.id === commandId).callback();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      assert.deepEqual(previews.at(-1), profileId, `${commandId} requests a preview`);
+      assert.equal(applies.length, index, `${commandId} does not apply before confirmation`);
+      assert.ok(globalThis.__aigilityTestModal, `${commandId} opens the comparison modal`);
+      await globalThis.__aigilityTestModal.onConfirm();
+      assert.deepEqual(applies.at(-1), profileId, `${commandId} applies its profile on confirmation`);
+    }
+    assert.deepEqual(previews, ['macbook', 'lenovo tab']);
+    assert.deepEqual(applies, ['macbook', 'lenovo tab']);
   } finally { plugin.onunload(); await cleanup(); }
 });
 
@@ -259,6 +286,27 @@ test('manager-options command opens the owned options modal instead of searching
     assert.equal(modalOpen, 1, 'manager-options opens the manager options modal');
     assert.equal(openedTabs, 0, 'no general settings tab is opened or searched');
     assert.equal(globalThis.__notices.some((message) => message.includes('Open Settings and select')), false, 'no false Notice');
+  } finally { plugin.onunload(); await cleanup(); }
+});
+
+test('manager-view opens the native community plugins settings tab and restore alias undoes the last profile', async () => {
+  globalThis.__notices = [];
+  const host = makeHost({ initial: makeState() });
+  const calls = [];
+  host.app.setting = { open() { calls.push('open'); }, openTabById(id) { calls.push(id); } };
+  const { plugin, cleanup } = await start(host);
+  try {
+    let undoCount = 0;
+    plugin.runtime.undoProfile = async () => { undoCount++; };
+    plugin.commands.find((command) => command.id === 'manager-view').callback();
+    assert.deepEqual(calls, ['open', 'community-plugins']);
+    plugin.commands.find((command) => command.id === 'restore-previous-command-state').callback();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert.equal(undoCount, 1);
+
+    host.app.setting = { open() { calls.push('open-without-tab-api'); } };
+    plugin.commands.find((command) => command.id === 'manager-view').callback();
+    assert.ok(globalThis.__notices.some((message) => message.includes('no se puede abrir la pestaña Community plugins')));
   } finally { plugin.onunload(); await cleanup(); }
 });
 

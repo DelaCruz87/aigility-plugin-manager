@@ -2,7 +2,7 @@ import { Notice, Plugin, PluginSettingTab } from 'obsidian';
 import { ManagerRuntime } from './src/integrated/runtime';
 import { GithubManager } from './src/integrated/github';
 import { DebugManager } from './src/integrated/debug';
-import { ManagerUI } from './src/integrated/ui';
+import { ManagerUI, ProfileComparisonModal } from './src/integrated/ui';
 import { installStartupGuards } from './src/integrated/guards';
 import { migrateLegacy } from './src/integrated/migration';
 import { collectObserved } from './src/integrated/adapter';
@@ -189,19 +189,32 @@ export default class AIgilityPluginManager extends Plugin {
     private registerCommands(): void {
         this.addCommand({ id: 'manager-options', name: 'Manager options', callback: () => this.openOptions() });
         this.addCommand({
+            id: 'manager-view', name: 'Open community plugins settings',
+            callback: () => {
+                const setting = (this.app as any).setting;
+                if (typeof setting?.open !== 'function' || typeof setting?.openTabById !== 'function') {
+                    new Notice('AIgility Plugin Manager: no se puede abrir la pestaña Community plugins en esta versión de Obsidian.');
+                    return;
+                }
+                setting.open();
+                setting.openTabById('community-plugins');
+            },
+        });
+        this.addCommand({
             id: 'manager-apply-profile', name: 'Apply bound manager profile',
             callback: () => {
                 const id = this.runtime.local.deviceProfileId;
                 if (!id) { new Notice('No manager profile is bound to this Obsidian app.'); return; }
-                void this.runtime.applyProfile(id).catch((error) => this.showError(error));
+                void this.previewManualProfile(id).catch((error) => this.showError(error));
             },
         });
         this.addCommand({ id: 'manager-undo', name: 'Undo last manager profile', callback: () => void this.runtime.undoProfile().catch((error) => this.showError(error)) });
+        this.addCommand({ id: 'restore-previous-command-state', name: 'Restore previous command state', callback: () => void this.runtime.undoProfile().catch((error) => this.showError(error)) });
         this.addCommand({ id: 'manager-resume', name: 'Resume manager recovery', callback: () => void this.runtime.resume().catch((error) => this.showError(error)) });
         for (const profile of this.runtime.state.deviceProfiles) {
             this.addCommand({
-                id: `manager-profile-${profile.id}-apply`, name: `Apply manager profile: ${profile.name}`,
-                callback: () => void this.runtime.applyProfile(profile.id).catch((error) => this.showError(error)),
+                id: `manager-profile-${this.safeCommandPart(profile.id)}-apply`, name: `Apply manager profile: ${profile.name}`,
+                callback: () => void this.previewManualProfile(profile.id).catch((error) => this.showError(error)),
             });
         }
         for (const fixture of this.runtime.state.fixtureProfiles) {
@@ -210,6 +223,15 @@ export default class AIgilityPluginManager extends Plugin {
                 callback: () => void this.runtime.applyFixture(fixture.id).catch((error) => this.showError(error)),
             });
         }
+    }
+
+    private async previewManualProfile(id: string): Promise<void> {
+        const changes = await this.runtime.previewProfile(id);
+        new ProfileComparisonModal(this.app, changes, async () => this.runtime.applyProfile(id)).open();
+    }
+
+    private safeCommandPart(id: string): string {
+        return id.replace(/[^A-Za-z0-9_-]/g, '-');
     }
 
     private logCommandMappings(): void {
