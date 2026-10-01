@@ -12,7 +12,7 @@ function fixture() {
     disablePluginAndSave: async id => { apiCalls.push(['disable', id]); enabledPlugins.delete(id); instance._loaded = false; },
     enablePlugin: async () => {}, saveConfig: async () => {}, setEnable: async () => true };
   let disk;
-  const adapter = { exists: async () => disk !== undefined, read: async () => disk, write: async (_p, value) => { disk = value; } };
+  const adapter = { getBasePath: () => '/Users/private/secret-vault', exists: async () => disk !== undefined, read: async () => disk, write: async (_p, value) => { disk = value; } };
   const app = { appId: 'test-app', vault: { adapter, configDir: '.obsidian', getName: () => 'Sandbox' }, plugins, internalPlugins: { plugins: {} }, workspace: { getActiveWorkspace: () => 'active' } };
   const state = { schemaVersion: 1, records: { 'community:alpha': { ref: { kind: 'community', id: 'alpha' }, name: 'alpha', version: '1', tags: ['on'], group: '', desired: false, metadata: {} } }, tags: [{ id: 'on', name: 'On' }], groups: [], deviceProfiles: [{ id: 'target', name: 'Target', tagIds: ['on'] }], fixtureProfiles: [], deferred: [], protected: [], profileBackups: [], githubSources: {}, settings: { staggerMs: 0, automaticUpdates: false }, legacyBpm: {} };
   disk = JSON.stringify(state);
@@ -45,5 +45,7 @@ test('effective report includes source app identity without vault path', async (
   const report = JSON.parse(h.files.get('.obsidian/plugins/aigility-plugin-manager/effective-state.json'));
   assert.equal(report.installation.appId, 'test-app');
   assert.equal(report.installation.vaultName, 'Sandbox');
-  assert.equal(JSON.stringify(report).includes('/vault'), false);
+  assert.equal('localProfileKey' in report.installation, false);
+  assert.equal(JSON.stringify(report).includes('/Users/private/secret-vault'), false);
+  assert.equal(JSON.stringify(report).includes(encodeURIComponent('/Users/private/secret-vault')), false);
 });

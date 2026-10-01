@@ -34,7 +34,7 @@ function fixture({ generations = true, mobile = false } = {}) {
           const state = current.get(id);
           if (enabled && id === 'community:a' && state.nativeAutostart === false && options.loadNow !== true) throw new Error('deferred load requires loadNow');
           state.desired = enabled;
-          if (ref.kind === 'community' && options.loadNow) { state.nativeAutostart = false; state.loaded = enabled; }
+          if (ref.kind === 'community' && options.loadNow) { state.loaded = enabled; }
           else { state.nativeAutostart = enabled; state.loaded = enabled; }
           if (generations) generation.set(id, generation.get(id) + 1);
           runtime.changes.push([id, enabled, options]);

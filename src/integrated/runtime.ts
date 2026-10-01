@@ -1,3 +1,4 @@
+import { Platform } from 'obsidian';
 import { collectObserved, createHostAdapter } from './adapter';
 import { DeferredScheduler } from './deferred';
 import { StateConflictError, RuntimeStore } from './store';
@@ -541,7 +542,7 @@ export class ManagerRuntime {
         const report = {
             schemaVersion: 1,
             generatedAt: new Date().toISOString(),
-            installation: { appId: this.app?.appId ?? null, vaultName: this.app?.vault?.getName?.() ?? null, localProfileKey: this.localKey, platform: typeof (globalThis as any).Platform?.isMobile === 'boolean' ? ((globalThis as any).Platform.isMobile ? 'mobile' : 'desktop') : null },
+            installation: { appId: this.app?.appId ?? null, vaultName: this.app?.vault?.getName?.() ?? null, platform: typeof Platform.isMobile === 'boolean' ? (Platform.isMobile ? 'mobile' : 'desktop') : null },
             profile: { boundProfileId, appliedProfileId },
             recovery: { reason: this.local.recoveryReason, operationPending: this.local.operationPending },
             plugins: this.list().map((item) => ({

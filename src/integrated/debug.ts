@@ -204,8 +204,13 @@ export class DebugManager {
       }
       const original = session.snapshot.plugins[id];
       if (actual.desired !== original.desired || actual.nativeAutostart !== original.nativeAutostart || actual.loaded !== original.loaded) {
-        try { await this.setOwned(id, original.desired, undefined, tx); }
+        try { await this.restoreSnapshot(id, original, tx); }
         catch (error) { errors.push(`${id}: ${(error as Error).message}`); continue; }
+      }
+      const restored = this.image(await this.findCurrent(mutation.ref, tx));
+      if (!this.sameImage(restored, original)) {
+        errors.push(`${id}: restauración incompleta (esperado desired=${original.desired}, nativeAutostart=${original.nativeAutostart}, loaded=${original.loaded}; observado desired=${restored.desired}, nativeAutostart=${restored.nativeAutostart}, loaded=${restored.loaded}).`);
+        continue;
       }
       delete session.owned[id];
     }
@@ -395,14 +400,18 @@ export class DebugManager {
   private async restoreSnapshot(id: string, image: { desired: boolean; nativeAutostart: boolean; loaded: boolean }, tx: any): Promise<void> {
     const ref = parsePluginKey(id)!;
     if (!image.nativeAutostart) {
-      const record = this.runtime.state.records?.[id];
-      if (record) record.desired = image.desired;
-      if (image.loaded && image.desired) await tx.setEnabled(ref, true, { loadNow: true, origin: 'debugging' });
-      else if (!image.loaded) await tx.setEnabled(ref, false, { loadNow: true, origin: 'debugging' });
-      await tx.save();
-      return;
+      if (image.loaded) await tx.setEnabled(ref, true, { loadNow: true, origin: 'debugging' });
+      else await tx.setEnabled(ref, false, { loadNow: true, origin: 'debugging' });
+    } else {
+      await tx.setEnabled(ref, image.loaded, { loadNow: true, origin: 'debugging' });
     }
-    await tx.setEnabled(ref, image.loaded, { loadNow: true, origin: 'debugging' });
+    const record = this.runtime.state.records?.[id];
+    if (record) record.desired = image.desired;
+    await tx.save();
+    const actual = this.image(await this.findCurrent(ref, tx));
+    if (!this.sameImage(actual, image)) {
+      throw new Error(`restauración incompleta (esperado desired=${image.desired}, nativeAutostart=${image.nativeAutostart}, loaded=${image.loaded}; observado desired=${actual.desired}, nativeAutostart=${actual.nativeAutostart}, loaded=${actual.loaded}).`);
+    }
   }
 
   private async refreshList(tx: any): Promise<EffectivePlugin[]> {
