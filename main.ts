@@ -59,10 +59,12 @@ export default class AIgilityPluginManager extends Plugin {
         const existingRaw = await this.readOptional(managerPath);
         const loaded = await this.loadData();
         let state: State;
+        let migratedFromLegacy = false;
         if (loaded?.schemaVersion === 1) {
             state = loaded as State;
             this.managerRuntimePreimage = existingRaw;
         } else {
+            migratedFromLegacy = true;
             const [bpmRaw, companionRaw, communityRaw, coreRaw] = await Promise.all([
                 this.readOptional(`.obsidian/plugins/${LEGACY_BPM_ID}/data.json`),
                 this.readOptional(`.obsidian/plugins/${LEGACY_COMPANION_ID}/data.json`),
@@ -104,8 +106,11 @@ export default class AIgilityPluginManager extends Plugin {
             new Notice('AIgility Plugin Manager: Better Manager Companion sigue cargado. La automatización está en pausa; el gestor no desactivará los gestores anteriores.');
         }
 
-        // Persist a baseline before runtime.start can apply profiles or schedule deferred plugins.
-        await this.runtime.save();
+        // Persist a baseline before runtime.start can apply profiles or schedule
+        // deferred plugins. An interrupted operation is never resolved here:
+        // runtime.save() throws while a pending marker exists, and that rejection
+        // would make the host unload the manager together with its recovery UI.
+        await this.establishBaseline(migratedFromLegacy);
         if (this.disposed) return;
         await this.runtime.start(wasLayoutReady);
         if (this.debug.session?.interrupted) {
@@ -127,6 +132,41 @@ export default class AIgilityPluginManager extends Plugin {
         this.removeGuards?.();
         this.removeGuards = undefined;
         this.runtime?.dispose();
+    }
+
+    /**
+     * Writes the startup baseline only when the write can be proven safe.
+     *
+     * Interrupted operation: the pending marker is the evidence that a previous
+     * mutation never reached its postimage, so nothing is written and nothing is
+     * cleared. The disk file keeps its exact preimage and the loaded state is not
+     * presented as saved; recovery happens only through the explicit Resume
+     * action, which re-reads disk instead of trusting memory. A first-run
+     * migration interrupted before its baseline write therefore still loads a
+     * recoverable UI, and Resume resolves it through the store's initialState
+     * because no canonical disk state exists yet.
+     *
+     * Baseline write conflict: the UI, its persistent recovery banner and the
+     * Resume action stay alive, the pending marker written before the failed
+     * operation keeps automation paused, and Resume performs the disk readback.
+     */
+    private async establishBaseline(migrated: boolean): Promise<void> {
+        const pending = this.runtime.local.operationPending;
+        if (pending) {
+            this.runtime.log('warn', 'Startup baseline skipped: an interrupted operation is pending recovery.', {
+                operationPending: pending,
+                migrated,
+                canonicalState: migrated ? 'absent' : 'on-disk',
+            });
+            new Notice(`AIgility Plugin Manager: la operación interrumpida "${pending}" mantiene la automatización en pausa. Revisa el estado y usa "Resume manager recovery" (Reanudar) para releer el disco.`);
+            return;
+        }
+        try {
+            await this.runtime.save();
+        } catch (error) {
+            this.runtime.log('error', 'Startup baseline write failed; the manager stays loaded in recovery and the loaded state is not presented as saved.', error);
+            new Notice(`AIgility Plugin Manager: no se pudo escribir la línea base (${String((error as any)?.message ?? error)}). Las automatizaciones siguen en pausa; "Resume manager recovery" relee el disco.`);
+        }
     }
 
     private async readOptional(path: string): Promise<string | null> {
@@ -183,11 +223,18 @@ export default class AIgilityPluginManager extends Plugin {
         }
     }
 
+    /**
+     * Host 1.14.3 keeps installed plugin tabs in setting.pluginTabs, not in
+     * setting.settingTabs, so searching the general tabs never matched this
+     * plugin and the command only produced a false Notice. The manager owns its
+     * own modal, so it is opened directly and no host tab lookup is involved.
+     */
     private openOptions(): void {
-        const setting = (this.app as any).setting;
-        const tab = setting?.settingTabs?.find((item: any) => item.id === this.manifest.id);
-        if (tab) setting.openTabById?.(this.manifest.id);
-        else new Notice('Open Settings and select AIgility Plugin Manager.');
+        if (!this.managerUI) {
+            new Notice('AIgility Plugin Manager: la interfaz no está disponible todavía.');
+            return;
+        }
+        this.managerUI.openOptionsModal();
     }
 
     private showError(error: unknown): void {

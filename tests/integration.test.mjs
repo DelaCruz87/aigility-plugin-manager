@@ -4,7 +4,7 @@ import { build } from 'esbuild';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.dirname(fileURLToPath(new URL('../package.json', import.meta.url)));
 const entry = path.join(root, 'main.ts');
@@ -15,10 +15,7 @@ globalThis.localStorage = {
   removeItem(key) { storage.delete(key); },
 };
 
-async function loadPluginClass() {
-  const dir = await mkdtemp(path.join(os.tmpdir(), 'aigility-integration-'));
-  const stubPath = path.join(dir, 'obsidian.mjs');
-  await writeFile(stubPath, `
+const STUB = `
     export class Plugin {
       constructor(app, manifest) { this.app = app; this.manifest = manifest; this.commands = []; this.cleanups = []; }
       addCommand(command) { this.commands.push(command); }
@@ -37,7 +34,17 @@ async function loadPluginClass() {
     export const apiVersion = '1.14.3';
     export function setIcon() {}
     export async function requestUrl() { throw new Error('network disabled in integration test'); }
-  `);
+`;
+
+/**
+ * The bundle is written as a real temporary .mjs module and imported by file
+ * URL, so a failing stack shows the source line instead of a giant base64
+ * data URL payload.
+ */
+async function loadPluginClass() {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'aigility-integration-'));
+  const stubPath = path.join(dir, 'obsidian.mjs');
+  await writeFile(stubPath, STUB);
   const result = await build({
     absWorkingDir: root,
     entryPoints: [entry],
@@ -48,7 +55,9 @@ async function loadPluginClass() {
     target: 'node22',
     alias: { obsidian: stubPath },
   });
-  const module = await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString('base64')}`);
+  const bundlePath = path.join(dir, 'bundle.mjs');
+  await writeFile(bundlePath, result.outputFiles[0].text);
+  const module = await import(pathToFileURL(bundlePath).href);
   return { PluginClass: module.default, cleanup: () => rm(dir, { recursive: true, force: true }) };
 }
 
@@ -59,7 +68,7 @@ function makeState(overrides = {}) {
   };
 }
 
-function makeHost({ layoutReady = false, initial = null, legacy = false } = {}) {
+function makeHost({ layoutReady = false, initial = null, legacy = false, loadingEnabled = true } = {}) {
   const files = new Map();
   const writes = [];
   const adapter = {
@@ -72,10 +81,14 @@ function makeHost({ layoutReady = false, initial = null, legacy = false } = {}) 
   const layoutCallbacks = [];
   const legacyBpm = { _loaded: true, onload() { throw new Error('Legacy lifecycle must not be called'); }, async loadData() { return {}; } };
   const legacyCompanion = { _loaded: legacy, onload() { throw new Error('Legacy lifecycle must not be called'); }, async loadData() { return {}; } };
+  // Host 1.14.3 semantics: app.plugins.isEnabled() is the global, zero-argument
+  // community-plugin loading gate. It carries no plugin id and is completely
+  // independent from the persisted native autostart set.
   const plugins = {
     manifests: {}, plugins: { 'better-plugins-manager': legacyBpm, 'better-plugins-manager-companion': legacyCompanion },
-    enabledPlugins: new Set(), isEnabled(id) { return this.enabledPlugins.has(id); },
-    async setEnable(enabled) { this.globalEnabled = enabled; },
+    enabledPlugins: new Set(), loadingEnabled,
+    isEnabled() { return this.loadingEnabled === true; },
+    async setEnable(enabled) { this.loadingEnabled = enabled === true; },
     async saveConfig() {},
   };
   const app = {
@@ -97,6 +110,32 @@ async function start(host) {
   const plugin = new PluginClass(host.app, host.manifest);
   await plugin.onload();
   return { plugin, cleanup };
+}
+
+test('interrupted operation does not prevent the manager from loading its manual recovery UI', async () => {
+  globalThis.__notices = []; storage.clear();
+  storage.set('aigility-plugin-manager:local:v1:test-app:vault', JSON.stringify({operationPending:'profile-apply:interrupted',recoveryReason:'interrupted'}));
+  const host=makeHost({layoutReady:true,initial:makeState()});
+  const {PluginClass,cleanup}=await loadPluginClass();
+  const plugin=new PluginClass(host.app,host.manifest);
+  try {
+    await assert.doesNotReject(()=>plugin.onload(),'the recovery latch must not make the plugin itself unloadable');
+    assert.equal(plugin.runtime.local.operationPending,'profile-apply:interrupted');
+    await plugin.runtime.resume();
+    assert.equal(plugin.runtime.local.operationPending,undefined);
+  } finally {plugin.onunload();await cleanup();storage.clear();}
+});
+
+async function collectConsole(fn) {
+  const captured = [];
+  const levels = ['info', 'warn', 'error'];
+  const originals = {};
+  for (const level of levels) {
+    originals[level] = console[level];
+    console[level] = (...args) => { captured.push(args.map((item) => String(item)).join(' ')); };
+  }
+  try { return { captured, result: await fn() }; }
+  finally { for (const level of levels) console[level] = originals[level]; }
 }
 
 test('schemaVersion 1 loads without legacy migration and registers stable manager/profile commands', async () => {
@@ -147,14 +186,27 @@ test('legacy migration stores exact local backups before schemaVersion 1 write a
   } finally { plugin.onunload(); await cleanup(); }
 });
 
-test('early load registers startup automation after baseline; late load skips it', async () => {
+test('early load starts unrestricted and runs layout-ready automation; late load skips it', async () => {
   globalThis.__notices = [];
   const early = makeHost({ initial: makeState() });
   const first = await start(early);
   try {
     const baselineAt = early.writes.indexOf('.obsidian/plugins/aigility-plugin-manager/data.json');
     assert.ok(baselineAt >= 0);
+    // The global host gate is enabled, so a normal early start must not latch a
+    // restricted pause. A per-id isEnabled() fake used to hide exactly this.
+    assert.equal(early.app.plugins.isEnabled(), true);
+    assert.equal(first.plugin.runtime.local.recoveryReason, undefined);
+    assert.equal(globalThis.__notices.some((message) => message.includes('plugin loading is disabled')), false);
     assert.equal(early.layoutCallbacks.length, 2, 'one guard lifecycle hook and one early runtime startup hook');
+
+    let automationRuns = 0;
+    const realResume = first.plugin.runtime.resumeAutomation.bind(first.plugin.runtime);
+    first.plugin.runtime.resumeAutomation = async () => { automationRuns++; return realResume(); };
+    for (const callback of early.layoutCallbacks) callback();
+    await first.plugin.runtime.enqueue('integration-test-barrier', async () => undefined);
+    assert.ok(automationRuns >= 1, 'early load runs startup automation when layout readiness arrives');
+    assert.ok(early.writes.includes('.obsidian/plugins/aigility-plugin-manager/effective-state.json'), 'unpaused automation completes its effective-state report');
   } finally { first.plugin.onunload(); await first.cleanup(); }
 
   const late = makeHost({ layoutReady: true, initial: makeState() });
@@ -169,6 +221,71 @@ test('early load registers startup automation after baseline; late load skips it
     await second.plugin.runtime.enqueue('integration-test-barrier', async () => undefined);
     assert.equal(automationRuns, 0, 'late-load recovery latch prevents startup automation when layout callbacks fire');
   } finally { second.plugin.onunload(); await second.cleanup(); }
+});
+
+test('global plugin loading gate drives the restricted pause, independent of the native autostart set', async () => {
+  globalThis.__notices = [];
+  const host = makeHost({ initial: makeState(), loadingEnabled: false });
+  // A non-empty native autostart set must not make the global gate look enabled.
+  host.app.plugins.enabledPlugins.add('community-one');
+  const { plugin, cleanup } = await start(host);
+  try {
+    assert.equal(host.app.plugins.isEnabled(), false);
+    assert.equal(plugin.runtime.local.recoveryReason, 'Obsidian plugin loading is disabled.');
+  } finally { plugin.onunload(); await cleanup(); }
+});
+
+test('manager-options command opens the owned options modal instead of searching general setting tabs', async () => {
+  globalThis.__notices = [];
+  const host = makeHost({ initial: makeState() });
+  // Host 1.14.3 keeps installed plugin tabs in setting.pluginTabs. The manager
+  // tab is therefore absent from setting.settingTabs, which used to produce a
+  // Notice instead of opening Opciones.
+  let openedTabs = 0;
+  host.app.setting = {
+    settingTabs: [{ id: 'general' }, { id: 'community-plugins' }],
+    pluginTabs: [{ id: 'aigility-plugin-manager', name: 'AIgility' }],
+    open() {},
+    openTabById() { openedTabs++; },
+  };
+  const { plugin, cleanup } = await start(host);
+  try {
+    let modalOpen = 0;
+    plugin.managerUI.openOptionsModal = () => { modalOpen++; };
+    const command = plugin.commands.find((item) => item.id === 'manager-options');
+    assert.ok(command, 'manager-options is registered');
+    assert.equal(typeof command.callback, 'function');
+    command.callback();
+    assert.equal(modalOpen, 1, 'manager-options opens the manager options modal');
+    assert.equal(openedTabs, 0, 'no general settings tab is opened or searched');
+    assert.equal(globalThis.__notices.some((message) => message.includes('Open Settings and select')), false, 'no false Notice');
+  } finally { plugin.onunload(); await cleanup(); }
+});
+
+test('guard diagnostics reach plugin.runtime and remain visible for incompatible host signatures', async () => {
+  globalThis.__notices = [];
+  const host = makeHost({ initial: makeState() });
+  const { captured, result } = await collectConsole(async () => {
+    const started = await start(host);
+    // The two queue guards are compatibility-gated on layout readiness, so the
+    // registered callbacks must fire before their diagnostics exist.
+    for (const callback of host.layoutCallbacks) callback();
+    await started.plugin.runtime.enqueue('integration-test-barrier', async () => undefined);
+    return started;
+  });
+  const { plugin, cleanup } = result;
+  try {
+    assert.equal(plugin.managerRuntime, undefined, 'the manager runtime is published only as plugin.runtime');
+    assert.ok(plugin.runtime, 'plugin.runtime exists when guards are installed');
+    const diagnostics = plugin.guardDiagnostics;
+    assert.deepEqual(Object.keys(diagnostics).sort(), ['linkResolverSchedule', 'relatedLinkBatch', 'startupCache']);
+    for (const diagnostic of Object.values(diagnostics)) {
+      assert.equal(diagnostic.active, false, `${diagnostic.id} keeps native behavior on this host`);
+      assert.ok(typeof diagnostic.reason === 'string' && diagnostic.reason.length > 0, `${diagnostic.id} reports a compatibility reason`);
+    }
+    assert.ok(captured.some((line) => line.includes('Runtime guard startupCache')), 'guard report is logged through plugin.runtime');
+    assert.ok(globalThis.__notices.some((message) => message.includes('startupCache')), 'guard reason stays visible to the user');
+  } finally { plugin.onunload(); await cleanup(); }
 });
 
 test('unload synchronously disposes UI, debug, guards, then runtime without legacy lifecycle calls', async () => {
