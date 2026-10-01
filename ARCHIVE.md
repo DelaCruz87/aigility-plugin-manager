@@ -51,4 +51,6 @@ La integración muestra archived=true e installed=false en el informe. El perfil
 
 ## Requested path update
 
+Estado actual2026-10-01 20:55 Madrid: fuente0.1.2 publicada,287pruebas/buildexit0. La ruta sigue plugins/_archive. Se retiró READY0.1.1 por un bug comprobado de redacción de IDs en State; evidence/redaction-checkpoint.md detalla corrección y recuperación selectiva46campos. READY0.1.2 está preparada para una ventana coordinada de reparación/deploy del propio gestor, sin mover carpetas de plugins. La aceptación del archivo y su restauración reales permanece pendiente.
+
 2026-10-01 19:06 Madrid, Codex: cambio explícito a plugins/_archive y versión0.1.1, fuente6fd3c7e. RingerGLM5.3Flash PASS177.6s con263pruebas/build exit0. No existía archivo previo en Sandbox ni se habían trasladado plugins reales; no se migra ninguna carpeta ajena. Readback previo al deploy: Sandbox0.1.0loaded,50community/30core,7profiles/42fixtures, SyncInstalledcommunitypluginlist activada. La prueba del traslado debe comprobar primero el bloqueo por Sync; no modificar Sync ni eludir esa guarda para hacer pasar una prueba.

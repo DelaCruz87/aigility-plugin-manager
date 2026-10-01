@@ -89,6 +89,20 @@ Ringerarchive-path-v011 GLM5.3Flash PASS1/177.6s, ocho archivos exactamente scop
 
 ## Deploy check review - 2026-10-01 20:00 Madrid
 
+Snapshot histórico, sustituido para decisión operativa por el checkpoint siguiente; no usar la cuota observada entonces como límite actual.
+
+## Identity redaction fix - 2026-10-01 20:55 Madrid
+
+p77000 redaction-v012 Luna6medium entregó6archivos en176.2s/71001tokens_reportedCLI. Root amplió la regresión durante la unidad al encontrar plainpluginStates dañados en el backup real; checker posterior FAIL frente al PASS anterior que el worker citó. Se conserva FAIL como resultado de la unidad, sin atribuirlo a un rechazo de modelo ni afirmar aceptación final.
+
+p80132 redaction-map-v012 Luna6low PASS92.5s/34004tokens_reported. Source en main.ts/migration.ts preserva claves de identidad y sigue redactando credenciales en valores; root revisó diff y ejecutó la regresión de ciclo completo. Source0.1.2 publicada b7f6472. Full287PASS después de añadir6checks de reparación, buildexit0. Sin fallback ni Git/native/iPad por workers.
+
+p88655 read-executor PASS0.5s es observación determinista del runtime, no inferencia. El lint advirtió un brief corto interpretado como pointer; el run no se repitió y sólo hizo lecturas. Se corrige el brief para futuras ejecuciones. La lectura comprobó la misma corrupción en memoria, target nativo/cargado true, binding unset y debugfalse. No se expusieron credenciales.
+
+El supervisor recibió READY0.1.2 tras corregir3riesgos del verificador.18helperchecks cubren plazos tras awaits, token propio de rollback, reparación selectiva/rollback con cambios concurrentes y conservación de protecciones. El permiso de continuar AFK y cuota restablecida son instrucciones actuales comunicadas por supervisor; la unidad nativa sigue pendiente de su ventana compartida, no de otra aprobación rutinaria de Eme.
+
+### Historical 20:00 detail
+
 Native-smokeLuna p84723 compilation6PASS pero revisión REJECTEDporAPIsinventadas/cleanupnocorrecto; dos artifactsuntrackedpropiosretirados,nunca--run. GLMFlashcommunity-preflight183s ybuild-check-guards240.5s timeoutsinentrega. Luna p2304nofilesalusarRinger scratchCWDrelativo;configlocalcorrige -C source. ÚltimoLuna p10587TIMEOUT90.6s peroentregóguardas;root13helperchecksaprueban despuésde corregirliteralCASstring/object.
 
 Como lane de revisión/checks, Codex reescribe artifactdeverificaciónmanager-only con finallyselectivo, fullprofilehashes ydeadline120/reserve35;9testspuros/jobwrapperPASS. Suitefull277PASS/sourcebundle191f8c...49337 sin cambiosproducto desde6fd3c7e. No workersnativos niArchiveroundtrip nativo. READYrevisado d91394e,pendienteSTARTsupervisor. Codexquota compartida96%weeklyexpues­ta;sin nuevasinferenciasCodexlargas. No importecredit/invoiceinferido.
