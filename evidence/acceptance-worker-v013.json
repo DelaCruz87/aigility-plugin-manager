@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-01T20:21:40.816516+00:00",
+  "source": "SQLite mode=ro same2conversation IDs andCLIshutdownlogs, no resume/cancel",
+  "ringerRun": "aigility-plugin-manager-20261001T200517Z-p63698",
+  "ringerVerdict": "BothFAIL checkerrelativepath notfound; preserve verdict",
+  "uiWorker": "188.1s partial CLIprinttimeoutturninprogress, no success claim; source ownership adjudicated after exactrole/db IDLE/notFullyIdle0+samebackendshutdown",
+  "profileWorker": "94.3s rc0/final6PASS claim; parent independently6PASS behavioral helpers",
+  "tokenUsage": "Not available in Ringeroutput; do not infer zero cost",
+  "conversations": [
+    {
+      "conversationId": "f784dc40-9d51-4c67-9633-004f7921606d",
+      "role": "ui",
+      "status": "CASCADE_RUN_STATUS_IDLE",
+      "notFullyIdle": false,
+      "killed": false,
+      "steps": 94,
+      "lastModified": "2026-10-01 20:08:25.286582+00:00",
+      "exactRoleInFirstFiveSteps": true
+    },
+    {
+      "conversationId": "a6b54c97-51aa-4479-9793-39b227638a69",
+      "role": "profile",
+      "status": "CASCADE_RUN_STATUS_IDLE",
+      "notFullyIdle": false,
+      "killed": false,
+      "steps": 45,
+      "lastModified": "2026-10-01 20:06:51.152364+00:00",
+      "exactRoleInFirstFiveSteps": true
+    }
+  ],
+  "parentAdjudication": "UIpartial9checksPASS but rejectfocuspostimage/tokenreplacement defects; rootchecks lane corrected,23purefault/semantic checksPASS acrossUI17/profile6. No nativeexecution, no sourceproduct change"
+}
