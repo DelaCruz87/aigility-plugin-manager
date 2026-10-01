@@ -5,7 +5,7 @@ const MANAGER = 'aigility-plugin-manager';
 const VAULT = 'Sandbox', BASE = '/Users/eme/Obsidian/Sandbox', APP_ID = 'd137282e82167d84';
 const clone = value => value === undefined ? undefined : structuredClone(value);
 
-export async function runOwnedProfileCases(app, globals, job, { deadline, now = Date.now, onStep = () => {}, manualFixtureProfileId=null }) {
+export async function runOwnedProfileCases(app, globals, job, { deadline, now = Date.now, onStep = () => {}, beforeStep=()=>{}, manualFixtureProfileId=null }) {
   const manager = app?.plugins?.plugins?.[MANAGER];
   const rt = manager?.runtime;
   const nativePlugins=app?.plugins;
@@ -34,6 +34,7 @@ export async function runOwnedProfileCases(app, globals, job, { deadline, now = 
   host.setEnabled = ownWrapper;
   const record = async (name, original, args) => {
     identity();
+    await beforeStep({name,args:clone(args)});identity();
     let value, failure;
     try { value = await original.apply(rt, args); } catch (error) { failure = error; }
     const postimage = {
@@ -41,6 +42,7 @@ export async function runOwnedProfileCases(app, globals, job, { deadline, now = 
       native: Object.fromEntries(IDS.map(id => [id, nativePlugins.enabledPlugins.has(id)])),
       loaded: Object.fromEntries(IDS.map(id => [id, nativePlugins.plugins[id]?._loaded === true])),
       projection: ownProjection(rt.state), local: clone(rt.local),
+      generations:Object.fromEntries(IDS.map(id=>[id,rt.getMutationGeneration?.({kind:"community",id})??0])),
     };
     job.postimages ??= [];
     const step = { name, settled: true, postimage, ...(failure ? { error: failure?.message || String(failure) } : {}) };

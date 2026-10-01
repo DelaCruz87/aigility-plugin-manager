@@ -1,0 +1,50 @@
+✔ normal cases use real runtime operations and record every postimage (12.070208ms)
+✔ held host await expires and next native call is refused (21.884ms)
+✔ foreign reference is refused before underlying host method (0.867458ms)
+✔ manager replacement after await refuses next operation (0.534ms)
+✔ foreign later wrapper is preserved and conflict reported (0.805708ms)
+✔ rejected partial operation records settled postimage (1.308458ms)
+✔ serialized component executes and refuses changed job token (4.48125ms)
+(node:93901) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ component runs actual ManagerRuntime tags, preview, full profile, undo and partial fixture with native-shaped APIs (12.727875ms)
+✔ expiry inside actual host await preserves settled native postimage and prevents next native call (29.263167ms)
+✔ invalid manual fixture scope rejects before installing any host wrapper (0.933833ms)
+✔ whole controller runs actual runtime cases and restores state/local/native/manifest/files without foreign operations (60.159417ms)
+✔ existing namespace refuses before any fixture or foreign mutation (0.759334ms)
+✔ expiry during awaited initial read stops fixture setup and preserves foreign state (21.803625ms)
+✔ serialized whole controller executes with injected native-shaped app, not merely case body (8.978709ms)
+✔ actual serialized durable phase writer leaves a parseable owned receipt and preserves lease metadata (483.651167ms)
+✔ later manual owned tag edit is preserved and prevents fixture file deletion (6.023ms)
+✔ later manual fixture file edit survives cleanup and is reported, without foreign rollback (4.920542ms)
+✔ durable baseline and each case intent precede native mutation, and every cleanup delete has persisted intent (17.932834ms)
+✔ incomplete fixture write reports exact residue and removes only temporary foreign protections (0.96025ms)
+✔ invalid deadlines refuse before creating job or mutation (0.690708ms)
+✔ native serialization resolves Electron remote inside injected host and pins primary window through awaits (11.036917ms)
+✔ pending UI owner prevents a profile job before any native or file operation (0.264708ms)
+✔ independent readback checks actual whole runtime, local/native/core, workspace and namespaces (3.453333ms)
+✔ independent readback refuses manager replacement after an awaited namespace read (6.284292ms)
+✔ exact two fixture folders removed nonrecursively while foreign file survives (4.232209ms)
+✔ extra file or subfolder refuses namespace before any deletion (0.658ms)
+✔ manual file edit in planned await is preserved before file deletion (0.239041ms)
+✔ late foreign file before rmdir survives with no recursive deletion (0.305542ms)
+✔ expiry during held read prevents every subsequent remove (0.109584ms)
+✔ partial removal followed by drift preserves remaining owned and foreign files (0.141125ms)
+✔ malformed or duplicate namespace rejected before adapter calls (0.203958ms)
+✔ manifest slot removal requires exact object identity and both native and loaded OFF (0.133292ms)
+✔ serialized helpers compile without module closure dependencies (0.174375ms)
+✔ profile lease is 180 seconds from ACK with 60 reserved and refuses invalid/late windows (5.205458ms)
+✔ unsettled or cleanup-pending cannot be reported as completed (0.226ms)
+✔ command timeout dispatches only once and reads the same pending operation until durable settled (0.385792ms)
+✔ unresolved job stays pending without retries or rollback, including poll failure (0.369375ms)
+✔ predecessor durable pending receipts are preserved and block the next run (7.460834ms)
+✔ success requires actual 11 steps, counters, all cleanup fields and no wrapper conflict (1.435458ms)
+✔ imported runner without lease authorization refuses before native CLI or any files (0.47975ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1210.585583

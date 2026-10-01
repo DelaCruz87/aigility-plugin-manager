@@ -1,0 +1,33 @@
+{
+  "status": "ready-offline-profiles-v013",
+  "at": "2026-10-01T22:12:38.393357+00:00",
+  "vault": "Sandbox",
+  "basePath": "/Users/eme/Obsidian/Sandbox",
+  "appId": "d137282e82167d84",
+  "version": "0.1.3",
+  "files": {
+    "main.js": "bb45ba99633a121255a3a25a46619e2b0119bedcc97c5f0ca068280e11ae4b2a",
+    "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "checkFiles": {
+    "checks/sandbox-profiles-v013.check.mjs": "d7807bba1f9247c3b62edb7308c056367d3e4a6fa486e826cc1fb0eed7b7417d",
+    "checks/profile-controller-v013.mjs": "e949b4dac8c113a663fe5090b1e77bbab1a54eb11f6eec8d24c3ba76a6f1f055",
+    "checks/profile-cases-v013.mjs": "817200651f0b0629ee53cdd3beee08cfc3bd387d00a3c8d7796fccda34588f3d",
+    "checks/profile-fixture-plan.mjs": "68b03e67e845cd56db304aab7b9a62d048096b2ad6d9f161b5796f7e88bf59bd",
+    "checks/profile-file-cleanup-v013.mjs": "4dc19203e3095e6c75b2dc7685153fecc04486ab716d6ed7ac3e82247db634ff",
+    "checks/sandbox-ui-v013.check.mjs": "b08a061ae4136bcfc5d13f94bd18dd8174be472c94262b9553d5734facceeb71",
+    "scripts/sandbox-community.mjs": "b4a444766c066c808a0e60f2451a0af3383f3ca6bd306569e760e1ece0d8d730"
+  },
+  "totalSeconds": 180,
+  "actionSeconds": 120,
+  "cleanupSeconds": 60,
+  "tests": "40 offline PASS through deterministic Ringer. Actual ManagerRuntime with native-shaped simulated APIs; not native acceptance. Product299/build0 unchanged.",
+  "scope": "Only two owned community fixtures aigility-manager-fixture-a/b; four files each via vault adapter. Protect all foreign community/core IDs freshly without toggling them. Add own tag/full profile/partial profile; eleven preview/apply/undo/tag/manual-partial steps while recovery remains paused and unbound; relative loads A3/B3. Restore only matching owned postimages and own-added protections. Delete only exact verified files, then rmdir(false), then exact owned manifest objects. Independent same-job readback verifies full runtime State/local/foreign/core/workspace/Settings and namespace absence.",
+  "never": "No global resume, core/foreign toggles, UI actions, archive moves, Sync changes, ENSO/mobile files, reload/restart, product source or Git during lease. No loadManifests globally.",
+  "receipt": "Exclusive evidence/native-profiles-v013/<leaseId>.receipt.json wx/file+parent-directory fsync BEFORE first CLI. Unique native token registered before first await; durable baseline, operation/case intents, postimages and delete journal. Unknown CLI result only polls same job, no replay or concurrent rollback.",
+  "failurePolicy": "A partial file creation failure is reported and preserved as residue, never recursive cleanup. Unknown native result stays pending and prevents next run. Parent independent readback failure is verification-pending; no claimed PASS/release. Manual edits are preserved and cause FAIL.",
+  "leaseInputs": "AIGILITY_SANDBOX_PROFILES_AUTHORIZED=1; AIGILITY_PROFILE_LEASE_ID; AIGILITY_PROFILE_ACK_UTC; AIGILITY_PROFILE_START_BY epochms. Total/action start at ACK. Requires fresh explicit START/ACK after full review.",
+  "command": "node checks/sandbox-profiles-v013.check.mjs",
+  "nativeExecuted": false
+}
