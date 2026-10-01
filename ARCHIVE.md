@@ -4,11 +4,11 @@ Date: 2026-10-01. Author: Codex. Context: ampliación del plan aprobada directam
 
 ## Decision and evidence
 
-El archivo vive dentro de la carpeta de configuración efectiva, en plugins/.aigility-archive. Esa carpeta contenedora no tiene manifest.json. Cada plugin mantiene su nombre original debajo de ella. El catálogo nativo de Obsidian 1.14.3 lista únicamente las carpetas directamente dentro de plugins y lee su manifest.json; no recorre sus descendientes.
+El archivo vive dentro de la carpeta de configuración efectiva, en plugins/_archive. Esa carpeta contenedora no tiene manifest.json. Cada plugin mantiene su nombre original debajo de ella. El catálogo nativo de Obsidian 1.14.3 lista únicamente las carpetas directamente dentro de plugins y lee su manifest.json; no recorre sus descendientes.
 
 Se descarta añadir un punto a cada carpeta activa: el loader no contiene un filtro de nombres ocultos, y cambiar el nombre mientras el ID sigue igual puede romper onExternalSettingsChange. La [documentación del manifest](https://docs.obsidian.md/Reference/Manifest) exige correspondencia entre ID y carpeta para ese comportamiento. Archivar no libera espacio de almacenamiento ni reduce el trabajo de plugins que siguen activos; reduce los manifests disponibles para el catálogo y su interfaz.
 
-La [documentación de Sync](https://obsidian.md/help/sync/settings) distingue la lista activa y la instalación/configuración de community plugins. El filtro local inspeccionado excluye segmentos con punto, incluso dentro de la carpeta de configuración. El traslado de archivos originales puede transmitir borrados cuando Installed community plugin list está activada. Para mantener el archivo específico de un equipo, desactivar esa opción en Sync de ese equipo; el gestor no cambia Sync automáticamente.
+La [documentación de Sync](https://obsidian.md/help/sync/settings) distingue la lista activa y la instalación/configuración de community plugins. La ruta _archive fue elegida expresamente por Eme a las19:00 del2026-10-01. El filtro Sync local inspeccionado sólo acepta archivos de plugin a profundidad plugins/id/archivo; los archivos bajo plugins/_archive/id/archivo quedan a una profundidad distinta. El nombre _archive no es una garantía genérica de carpeta oculta. El traslado de archivos originales puede transmitir borrados cuando Installed community plugin list está activada. Para mantener el archivo específico de un equipo, desactivar esa opción en Sync de ese equipo; el gestor no cambia Sync automáticamente.
 
 Esa opción también afecta data.json del propio gestor. Al desactivarla en un equipo, la sincronización automática de las definiciones por ese archivo deja de estar disponible allí. Los backups/exportaciones de perfiles permiten su transferencia explícita; no se presenta el archivo local como un protocolo nuevo de sincronización de perfiles.
 
@@ -26,7 +26,7 @@ Exportar ArchiveManager desde src/integrated/archive.ts. Constructor(runtime, ap
 - recover(): Promise<void> recupera sólo una operación pendiente explícitamente: verifica carpeta activa y archivada, manifest e identidad; conserva ambas si hay conflicto; finaliza el índice según la ubicación observada, deja el plugin apagado y mantiene la pausa del runtime hasta su reanudación explícita. No hace rename automático ni sobrescribe una carpeta nueva.
 - needsRecovery(): boolean consulta el journal ya leído en memoria, sin iniciar lecturas de archivos desde el render de la UI.
 
-ArchiveEntry: id, name, version, minAppVersion?, isDesktopOnly?, archivedAt. Índice {schemaVersion:1, installationId:app.appId, entries:ArchiveEntry[], pending?:{id,operation,phase,entry:ArchiveEntry}} en plugins/.aigility-archive/index.json. No manifiesto en el contenedor. Nunca guardar tokens ni copiar configuración al índice. Usar vault.configDir efectivo y rechazar IDs con slash, backslash, punto inicial, segmentos .. o identidad manifest distinta.
+ArchiveEntry: id, name, version, minAppVersion?, isDesktopOnly?, archivedAt. Índice {schemaVersion:1, installationId:app.appId, entries:ArchiveEntry[], pending?:{id,operation,phase,entry:ArchiveEntry}} en plugins/_archive/index.json. No manifiesto en el contenedor. Nunca guardar tokens ni copiar configuración al índice. Usar vault.configDir efectivo y rechazar IDs con slash, backslash, punto inicial, segmentos .. o identidad manifest distinta.
 
 ## Mutation contract
 
@@ -48,3 +48,7 @@ La integración muestra archived=true e installed=false en el informe. El perfil
 ## Source checkpoint
 
 2026-10-01 18:32 Madrid, Codex: npm test aprueba263 pruebas, sin fallos ni skips; npm run build termina exit0. Código de archivo publicado en39344da. evidence/archive-validation.json identifica los archivos comprobados. Son pruebas de fuente con adapters de prueba; ninguna carpeta real ha sido archivada o restaurada. El Sandbox conserva el build inicial anterior y ENSO conserva los dos gestores. No declarar listo para uso exclusivo.
+
+## Requested path update
+
+2026-10-01 19:06 Madrid, Codex: cambio explícito a plugins/_archive y versión0.1.1, fuente6fd3c7e. RingerGLM5.3Flash PASS177.6s con263pruebas/build exit0. No existía archivo previo en Sandbox ni se habían trasladado plugins reales; no se migra ninguna carpeta ajena. Readback previo al deploy: Sandbox0.1.0loaded,50community/30core,7profiles/42fixtures, SyncInstalledcommunitypluginlist activada. La prueba del traslado debe comprobar primero el bloqueo por Sync; no modificar Sync ni eludir esa guarda para hacer pasar una prueba.

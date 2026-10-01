@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-10-01T19:06:00+02:00",
+  "sourceCommit": "6fd3c7e",
+  "sourceVersion": "0.1.1",
+  "archivePath": "<vault.configDir>/plugins/_archive",
+  "runId": "aigility-plugin-manager-20261001T170225Z-p70323",
+  "engine": "glm-plan",
+  "model": "glm-5.3-flash",
+  "status": "pass",
+  "verdict": "PASS",
+  "checkExitCode": 0,
+  "testsPassed": 263,
+  "buildExitCode": 0,
+  "nativeDeployed": false,
+  "nativeArchiveValidated": false,
+  "ipadTouched": false,
+  "sourceSha256": {
+    "src/integrated/archive.ts": "254dfa75ba8b21c341c5c7d26350e3657c46d8dfe7d35d3b7bced6071d8cb844",
+    "src/integrated/github.ts": "d1d19fef05c71dcc72df3b739d1c85cf0afa3499fdef76e35f7a5f0c5b4a38a5",
+    "tests/archive.test.mjs": "e1838b208655be716cc91009f057fe013f7c77e9790e021a6fc3850fe44674cf",
+    "tests/archive-guards.test.mjs": "1f83152409df0e7583da339ae03ea0520b2678fb414698e2d689b575b9854087",
+    "manifest.json": "071dad04f950c83e28a4867b94be41eef0d32d26f74f917b277584ef616a2db1",
+    "package.json": "b6289178830d338f097914091dbafa2c7a83ec83dbf75dcf2a0d6faf6a299b25",
+    "package-lock.json": "9ef89fc112912a8b206c6ae0d56b633c88c52475cfea35a92efc38d1770853c1",
+    "versions.json": "9a31459be144018daad93f476d7765e18e8763a95d6daa7ffeb46b3a1f456ec1"
+  },
+  "compiledSha256": {
+    "main.js": "191f8c24329698fd99756e891383930f0dc11f6e6b47ea2a31b00e6a03e49337",
+    "manifest.json": "071dad04f950c83e28a4867b94be41eef0d32d26f74f917b277584ef616a2db1",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "checkOutput": "Archive route and build version checks passed npm notice run aigility-plugin-manager@0.1.1 test npm notice run node --test tests/*.test.mjs tests/*check.mjs ✔ approved migration contract: full catalog, explicit fixtures, equipment tags and effective deferred state (101.609709ms) ✔ restricted detection reads the global zero-argument isEnabled and never passes an id (2.108209ms) ✔ loaded state and native autostart are independent fields (0.803875ms) ✔ deferred activation never persists native ids and never calls saveConfig (0.215166ms) ✔ deferred activation refuses while the id is still in native autostart (0.73075ms) ✔ enabling requires a real loaded instance, native flag alone is a readback failure (0.40225ms) ✔ persistent enable persists the native id and the load readback (0.278084ms) ✔ loadNow keeps the host native state untouched, exactly like a deferred load (0.256667ms) ✔ deferred exclusion deletes the id and persists without unloading a delayed instance (0.361792ms) ✔ deferred exclusion unloads only when recovery or the off path asks for it (0.437541ms) ✔ core toggles use wrapper enable(false)/disable(false) and save the core config (0.851666ms) ✔ core deferred exclusion disables the wrapper and persists the core config (0.184542ms) ✔ workspace application uses the core Workspaces instance and never app.workspace (0.264334ms) ✔ workspace readback failure is reported when the host exposes no loadWorkspace (0.101584ms) ✔ legacy workspace clones d into t and m only when the ids are absent (0.488334ms) ✔ legacy workspace clone rolls back when saveData fails (0.157458ms) ✔ compatibility uses the public apiVersion export, not fabricated app version fields (0.110417ms) ✔ compatibility rejects a host without a public version authority (16.448ms) ✔ desktop-only manifests are judged against Platform, not against app fields (134.500667ms) ✔ native manual toggles are reported, including calls that return to the same value (0.77425ms) ✔ self suppression spans synchronous"
+}

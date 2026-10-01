@@ -82,3 +82,7 @@ Usuarios autorizaron Ringer GLM5.3/5.3Flash, agy Gemini3.8Flash y Codex Luna6. U
 | archive-ui-beta-guards / final-refresh | Codex Luna6 | Guardas y refresco UI entregados | 2 guardas GitHub reales; índice desactualizado detectado antes de instalación y dentro de rollback en cola |
 
 El primer backend compilable falló checks independientes de Sync, protección, recuperación y prefijo de transacción. Se repararon esas condiciones por Ringer y se conservaron los casos. Errores iniciales de loader/test UI (ruta extensionless, count6 y orden de pestañas) se corrigieron en los checks, contrastándolos con la UI real de7secciones. Última suite263PASS/build exit0. Ninguna carpeta real trasladada, ningún despliegue del archivo, ninguna escritura iPad.
+
+## Requested archive path - 2026-10-01 19:06 Madrid
+
+Ringerarchive-path-v011 GLM5.3Flash PASS1/177.6s, ocho archivos exactamente scoped. Ruta _archive ymetadata0.1.1 comprobados por checker;263tests/build0. El warning de generate_session_title no impidió entrega. Ringeroutput4440tokens; modelUsageinput59244/output4889/cache354176/costUSD0.595533/costBasisunknown son métricas declaradas, no factura. Sin pruebas nativas ni operaciones Sync/iPad.
