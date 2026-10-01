@@ -37,7 +37,7 @@ export function pendingDeploymentIds(globals){return Object.entries(globals).fil
 export function jobBody(key,phase,body,deadline){return `const __deploymentJob=globalThis[${J(key)}]??{id:${J(key)},startedAt:new Date().toISOString()};globalThis[${J(key)}]=__deploymentJob;__deploymentJob.phase=${J(phase)};__deploymentJob.status='pending';try{if(Date.now()>=${deadline})throw Error('Deployment deadline exceeded');${body};__deploymentJob.result=value;__deploymentJob.status='complete';}catch(error){__deploymentJob.status='failed';__deploymentJob.error=String(error);throw error;}`;}
 export function reloadBody(key,phase,deadline){
  const gate=`if(Date.now()>=${deadline})throw Error('Deployment deadline exceeded before next reload mutation');`;
- return jobBody(key,phase,`${gate}await app.plugins.disablePlugin(${J(MANAGER_ID)});${gate}await app.plugins.loadManifests();${gate}await app.plugins.enablePlugin(${J(MANAGER_ID)});value={loaded:app.plugins.plugins[${J(MANAGER_ID)}]?._loaded===true};`,deadline);
+ return jobBody(key,phase,`${gate}await app.plugins.disablePlugin(${J(MANAGER_ID)});${gate}await app.plugins.loadManifest(${J('.obsidian/plugins/'+MANAGER_ID)});${gate}await app.plugins.enablePlugin(${J(MANAGER_ID)});value={loaded:app.plugins.plugins[${J(MANAGER_ID)}]?._loaded===true};`,deadline);
 }
 
 export async function run(){

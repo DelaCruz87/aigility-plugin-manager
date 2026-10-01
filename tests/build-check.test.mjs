@@ -15,7 +15,7 @@ test('reload deadline checked after disable prevents subsequent native mutations
  let now=100;
  const app={plugins:{
    async disablePlugin(){calls.push('disable');now=201;},
-   async loadManifests(){calls.push('manifests');},
+   async loadManifest(folder){assert.equal(folder,'.obsidian/plugins/aigility-plugin-manager');calls.push('manifests');},
    async enablePlugin(){calls.push('enable');},plugins:{},
  }};
  const run=new FakeAsync('app','globalThis','Date','let value;'+reloadBody('aigility-manager-deploy:forward','forward-reload',200)+'return value;');
@@ -28,7 +28,7 @@ test('reload deadline checked after manifest load prevents enabling after expiry
  let now=100;
  const app={plugins:{
    async disablePlugin(){calls.push('disable');},
-   async loadManifests(){calls.push('manifests');now=201;},
+   async loadManifest(folder){assert.equal(folder,'.obsidian/plugins/aigility-plugin-manager');calls.push('manifests');now=201;},
    async enablePlugin(){calls.push('enable');},plugins:{},
  }};
  const run=new FakeAsync('app','globalThis','Date','let value;'+reloadBody('aigility-manager-deploy:forward','forward-reload',200)+'return value;');
@@ -39,7 +39,7 @@ test('rollback uses its own pending token while forward is already settled',asyn
  const FakeAsync=Object.getPrototypeOf(async function(){}).constructor;
  const globals={'aigility-manager-deploy:forward':{status:'complete'}};
  let release;const held=new Promise(r=>release=r);
- const app={plugins:{async disablePlugin(){await held;},async loadManifests(){},async enablePlugin(){},plugins:{'aigility-plugin-manager':{_loaded:true}}}};
+ const app={plugins:{async disablePlugin(){await held;},async loadManifest(folder){},async enablePlugin(){},plugins:{'aigility-plugin-manager':{_loaded:true}}}};
  const run=new FakeAsync('app','globalThis','let value;'+reloadBody('aigility-manager-deploy:rollback','rollback-reload',Date.now()+10000)+'return value;');
  const pending=run(app,globals);
  assert.deepEqual(pendingDeploymentIds(globals),['aigility-manager-deploy:rollback']);

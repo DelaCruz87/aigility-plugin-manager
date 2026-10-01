@@ -21,7 +21,7 @@
     }
   },
   "sourceCommit": "b7f6472",
-  "checkSha256": "6b8e40934b040c2578e2b9faf7fd381deed00d1cce3f8950859666c0cf14d975",
+  "checkSha256": "b44762c07c87e6c634265b2cd7384f93c371c6c2eb359b4ad19373dcad49d091",
   "recoveryCheckSha256": "67c50c97db945d4d225c8a458bc283960d11eb8897142e5c8cf4f8e4c601eecb",
   "command": "AIGILITY_SANDBOX_RUN_AUTHORIZED=1 node checks/sandbox-build.check.mjs",
   "durationSeconds": 120,
@@ -34,10 +34,11 @@
     "nonRepairStateVerified": "Canonical full state content excluding temporary protected list, actual native/community/core sets unchanged",
     "rollback": "Reverse only matching own repair postimages before loading old module; preserve manual conflicting values, no whole-state restore"
   },
-  "asyncGuarantee": "Unique pending token per phase; host deadline before each disable/loadManifests/enable including rollback; poll current token only after timeout, never another toggle while pending",
+  "asyncGuarantee": "Unique pending token per phase; host deadline before each disable/ownloadManifest/enable including rollback; poll current token only after timeout, never another toggle while pending",
   "foreignEnablementPreserved": true,
   "syncChanges": false,
   "ipadChanges": false,
   "tests": "287PASS full suite including12deploy+6recovery helpers; compile0.1.2exit0; no native write or deploy this unit yet",
-  "helperCommit": "cc33dc1"
+  "helperCommit": "cc33dc1",
+  "manifestReload": "Only loadManifest(.obsidian/plugins/aigility-plugin-manager); host1.14.3 source verified at asaroffset3634889, never rebuild foreign manifest catalog"
 }
