@@ -1,0 +1,39 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {runProfileHost,profileHostBody} from '../checks/profile-host-v013.check.mjs';
+
+const A='aigility-manager-fixture-a',B='aigility-manager-fixture-b',MANAGER='aigility-plugin-manager';
+const clone=x=>structuredClone(x);
+function fixture({hold=false,replace=false,fail=false,foreignProtection=false,existing=false,manualFile=false,laterWrapper=false}={}) {
+ const state={records:{},tags:[],deviceProfiles:[],fixtureProfiles:[],deferred:[],profileBackups:[],protected:['community:base'],githubSources:{},undo:null};
+ const local={recoveryReason:'operator-recovery'};
+ const plugins={manifests:{[MANAGER]:{id:MANAGER,version:'0.1.3'}},plugins:{},enabledPlugins:new Set(),setEnabled:async(ref,on)=>{const id=ref.id;if(on){plugins.enabledPlugins.add(id);plugins.plugins[id]={_loaded:true};}else{plugins.enabledPlugins.delete(id);delete plugins.plugins[id];}return true;},async loadManifest(path){const id=path.split('/').at(-1);plugins.manifests[id]={id};return plugins.manifests[id];},async disablePlugin(id){plugins.enabledPlugins.delete(id);delete plugins.plugins[id];}};
+ const files=new Map();
+ const adapter={getBasePath:()=>'/Users/eme/Obsidian/Sandbox',exists:async p=>existing&&(p.endsWith('/aigility-manager-fixture-a')||p.endsWith('/manifest.json')),mkdir:async p=>files.set(p+'/',null),write:async(p,v)=>files.set(p,v),read:async p=>files.get(p),list:async d=>({files:[...files.keys()].filter(p=>p.startsWith(d+'/')&&!p.slice(d.length+1).includes('/')),folders:[...files.keys()].filter(p=>p.startsWith(d+'/')&&p.slice(d.length+1).includes('/')).map(p=>p.split('/').slice(0,-1).join('/'))}),remove:async d=>{for(const p of [...files.keys()])if(p===d+'/'||p.startsWith(d+'/'))files.delete(p);}};
+ const app={appId:'d137282e82167d84',vault:{getName:()=> 'Sandbox',adapter},plugins,internalPlugins:{plugins:{core1:{id:'core1'}}},workspace:{activeLeaf:{id:'leaf'},containerEl:{ownerDocument:globalThis.document}}};
+ const manager={_loaded:true,manifest:{version:'0.1.3'}};plugins.plugins[MANAGER]=manager;
+ const rt={state,local,async refresh(){return state;},list(){return Object.keys(state.records).map(k=>{const r=state.records[k];return {...r,nativeAutostart:plugins.enabledPlugins.has(r.ref.id),loaded:plugins.plugins[r.ref.id]?._loaded===true};});},async enqueue(_label,fn){return fn({refresh:async()=>state,save:async()=>{}});},async persist(){},async setEnabled(ref,on){if(fail&&on)throw Error('simulated native failure');if(hold&&on){hold=false;await new Promise(r=>setTimeout(r,35));}if(replace)plugins.plugins[MANAGER]={_loaded:true,manifest:{version:'0.1.3'}};const r=state.records['community:'+ref.id];if(r)r.desired=on;await plugins.setEnabled(ref,on);if(foreignProtection)state.protected.push('community:later');},async previewProfile(id){assert.equal(id,'aigility-host-test');return [{ref:{kind:'community',id:A},before:false,after:true},{ref:{kind:'community',id:B},before:plugins.enabledPlugins.has(B),after:false}];},async applyProfile(_id,preview){for(const c of preview)await this.setEnabled(c.ref,c.after);state.undo={profileId:'aigility-host-test'};},async undoProfile(){for(const id of [A,B])await this.setEnabled({kind:'community',id},id===B);state.undo=null;},async setTags(ref,tags){state.records['community:'+ref.id].tags=tags;},async applyFixture(){await this.setEnabled({kind:'community',id:A},true);await this.setEnabled({kind:'community',id:B},false);}};
+ manager.runtime=rt;
+ // Alias the fixture API used by the tested pure case body.
+ rt.setEnabled=rt.setEnabled.bind(rt);
+ const globals={}; if(existing) state.tags.push({id:'aigility-test-tag'});
+ return {app,rt,globals,files,plugins,state};
+}
+const deadline=()=>({actionDeadline:Date.now()+2000,cleanupDeadline:Date.now()+5000});
+
+test('inert serialization compiles and normal lifecycle performs real profile calls and undo',async()=>{
+ const f=fixture();let apply=0,undo=0;const p=f.rt.applyProfile.bind(f.rt),u=f.rt.undoProfile.bind(f.rt);f.rt.applyProfile=async(...a)=>{apply++;return p(...a);};f.rt.undoProfile=async(...a)=>{undo++;return u(...a);};
+ const body=profileHostBody('compile-only',Date.now()+1000,Date.now()+2000);assert.doesNotThrow(()=>new Function('return ('+body+')'));
+ // Product case body consumes the documented runtime methods; install these aliases in the fake.
+ f.rt.applyProfile=f.rt.applyProfile.bind(f.rt);f.rt.applyFixture=async()=>{await f.rt.setEnabled({kind:'community',id:A},true);await f.rt.setEnabled({kind:'community',id:B},false);};
+ const result=await runProfileHost(f.app,f.globals,'normal',deadline());
+ assert.equal(result.status,'complete',JSON.stringify(result));assert.equal(apply,2);assert.equal(undo,2);assert.equal(f.plugins.manifests[MANAGER].version,'0.1.3');assert.equal(f.files.size,0);
+});
+
+test('existing owned namespace refuses before file writes',async()=>{const f=fixture({existing:true});const r=await runProfileHost(f.app,f.globals,'existing',deadline());assert.equal(r.status,'failed');assert.equal(f.files.size,0);});
+
+test('expiry after held awaited operation prevents subsequent mutation',async()=>{const f=fixture({hold:true});const d={actionDeadline:Date.now()+15,cleanupDeadline:Date.now()+2000};const r=await runProfileHost(f.app,f.globals,'expiry',d);assert.equal(r.status,'failed');assert.match(r.error,/deadline/i);});
+
+test('current manager replacement after await refuses further actions',async()=>{const f=fixture({replace:true});const r=await runProfileHost(f.app,f.globals,'replace',deadline());assert.equal(r.status,'failed');assert.match(r.error,/manager instance changed/i);});
+
+test('failed operation still attempts cleanup and reports drift conflicts',async()=>{const f=fixture({fail:true});const r=await runProfileHost(f.app,f.globals,'failure',deadline());assert.equal(r.status,'failed');assert.ok(r.cleanup);});

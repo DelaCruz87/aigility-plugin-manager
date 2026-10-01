@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-01T21:13:31.988535+00:00",
+  "runId": "aigility-plugin-manager-20261001T210800Z-p35583",
+  "ringerVerdict": "TIMEOUT",
+  "elapsedSeconds": 240.4,
+  "parentVerdict": "REJECTED - not ready for native execution",
+  "files": {
+    "checks/profile-host-v013.check.mjs": "092653de13e8a32e35782eef5675c56777aa9c79e899740d31195d53e667910d",
+    "tests/profile-host-v013.test.mjs": "fcce8606af8812f46f7ff1cac5eb10469fcda5c1dac53f570f569b711d835fbc"
+  },
+  "findings": [
+    "Uses nonexistent native app.plugins.setEnabled instead of rt.host.setEnabled; fake shares invented API.",
+    "Fixture records and device profile miss canonical name/version/group/metadata and tagIds fields.",
+    "Unique pending job registered after asynchronous namespace reads instead of before first await.",
+    "profileHostBody serializes case body rather than lifecycle controller and retains free actionDeadline variable.",
+    "Postimages captured only after all cases, so failure cleanup is stale; guarded cleanup omits cleanup=true.",
+    "Five test definitions fail normal lifecycle and omit requested manual-file/protection/wrapper fault execution."
+  ],
+  "nativeCalls": 0,
+  "fixturesCreated": 0,
+  "productSourceChanged": false,
+  "preservation": "Exact rejected worker bytes retained in evidence/rejected/profile-host-v013/*.txt, removed from executable checks/tests after backend settled TIMEOUT. Not normative or native acceptance. Next worker owns different small component files."
+}

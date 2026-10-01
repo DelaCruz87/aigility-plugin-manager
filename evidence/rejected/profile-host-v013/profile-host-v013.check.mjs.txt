@@ -1,0 +1,123 @@
+import { fixtureFiles, ownProjection, purgeOwned, protectionCleanup, buildCasesBody } from './profile-fixture-plan.mjs';
+
+const IDS = ['aigility-manager-fixture-a', 'aigility-manager-fixture-b'];
+const TAG = 'aigility-test-tag', PROFILE = 'aigility-host-test', PARTIAL = 'aigility-host-partial';
+const VAULT = 'Sandbox', BASE = '/Users/eme/Obsidian/Sandbox', APP_ID = 'd137282e82167d84', MANAGER = 'aigility-plugin-manager';
+const clone = x => x === undefined ? undefined : structuredClone(x);
+const equal = (a,b) => JSON.stringify(a) === JSON.stringify(b);
+const digest = async s => [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
+
+async function controller(app, globals, key, deadlines, helpers) {
+ const jobKey = 'aigility-manager-profile:' + key;
+ let job, rt, ownWrapper, previousWrapper, baseline, expectedProjection, ownUndo, lastPost, operationSettled=true, failure;
+ const files = Object.fromEntries(IDS.map(id=>[id,fixtureFiles(id)]));
+ const paths = IDS.flatMap(id=>Object.keys(files[id]).map(name=>`.obsidian/plugins/${id}/${name}`));
+ const preimages={}, intended={}, written=[];
+ const phase = p => { if(job) job.phase=p; };
+ const gate = (cleanup=false) => {
+  if(globals[jobKey]!==job || job?.token!==key) throw Error('job identity/token changed');
+  if(app.plugins?.plugins?.[MANAGER]!==helpers.manager) throw Error('current manager instance changed');
+  if(Date.now() >= (cleanup?deadlines.cleanupDeadline:deadlines.actionDeadline)) throw Error((cleanup?'cleanup':'action')+' deadline exceeded');
+ };
+ async function guarded(label, fn, cleanup=false) {
+  gate(cleanup); operationSettled=false;
+  try { const v=await fn(); operationSettled=true; gate(cleanup); return v; }
+  catch(e) { operationSettled=true; throw Error(label+': '+(e?.message||String(e))); }
+ }
+ const localFields=['appliedProfileId','operationPending','recoveryReason','deviceProfileId'];
+ const localSnap=()=>Object.fromEntries(localFields.map(k=>[k,clone(rt.local[k]??null)]));
+ const stateSnap=()=>clone(rt.state);
+ const projection=()=>ownProjection(rt.state);
+ const observe=()=>({desired:Object.fromEntries(IDS.map(id=>[id,rt.list().find(x=>x.ref.kind==='community'&&x.ref.id===id)?.desired??null])),native:Object.fromEntries(IDS.map(id=>[id,app.plugins.enabledPlugins.has(id)])),loaded:Object.fromEntries(IDS.map(id=>[id,app.plugins.plugins[id]?._loaded===true]))});
+ async function saveState(label, mutate) { await guarded(label,()=>rt.enqueue('profile-host-'+label,async tx=>{const s=await tx.refresh();mutate(s);await tx.save();})); expectedProjection=projection(); ownUndo=clone(rt.state.undo); }
+ async function capture(label) { const x={label,observed:observe(),projection:projection(),local:localSnap()}; job.captures.push(x); lastPost=x; return x; }
+ function requireNamespacesAbsent(state) {
+  if(state.records&&IDS.some(id=>Object.hasOwn(state.records,'community:'+id))) throw Error('fixture record namespace already exists');
+  for(const [field,pred] of [['tags',x=>x?.id===TAG],['deviceProfiles',x=>x?.id===PROFILE],['fixtureProfiles',x=>x?.id===PARTIAL],['deferred',x=>IDS.includes(x?.id)],['profileBackups',x=>x?.profileId===PROFILE]]) if((state[field]??[]).some(pred)) throw Error('owned '+field+' namespace already exists');
+  if(state.githubSources&&IDS.some(id=>Object.hasOwn(state.githubSources,'community:'+id))) throw Error('owned github source namespace already exists');
+ }
+ async function cleanup() {
+  if(!job) return;
+  phase('cleanup'); job.status='pending';
+  const errors=[];
+  const attempt=async(name,fn)=>{try{gate(true);await fn();gate(true);job.restoration[name]='restored';}catch(e){job.restoration[name]='conflict';errors.push(name+': '+(e?.message||String(e)));}};
+  if(!operationSettled){job.status='pending';job.cleanup={pending:true,reason:'owned operation has not settled'};return;}
+  await attempt('fixtures',async()=>{
+   const current=observe();
+   for(const id of IDS){const expected=lastPost?.observed?.loaded?.[id]; if(current.loaded[id]!==expected) throw Error('fixture load state changed manually: '+id);}
+   for(const id of IDS){if(app.plugins.plugins[id]?._loaded) await guarded('unload '+id,()=>app.plugins.disablePlugin(id),true);}
+  });
+  await attempt('state',async()=>{
+   if(expectedProjection){await guarded('state purge',()=>rt.enqueue('profile-host-cleanup',async tx=>{const s=await tx.refresh();const freshProjection=ownProjection(s);if(!equal(freshProjection,expectedProjection))throw Error('own state changed since postimage');const clean=purgeOwned(s,baseline,expectedProjection);Object.keys(s).forEach(k=>delete s[k]);Object.assign(s,clean);await tx.save();}));}
+  });
+  await attempt('undo',async()=>{if(ownUndo!==undefined&&equal(rt.state.undo,ownUndo)){rt.state.undo=clone(baseline.undo);await rt.persist();}});
+  await attempt('protections',async()=>{if(job.protections){await guarded('protection cleanup',()=>rt.enqueue('profile-host-protection-cleanup',async tx=>{const s=await tx.refresh();s.protected=protectionCleanup(job.protections.baseline,job.protections.added,s.protected);await tx.save();}));}});
+  await attempt('local',async()=>{if(job.localPost){const patch={};for(const k of localFields)if(!equal(rt.local[k]??null,job.localPost[k])&& !equal(rt.local[k]??null,job.localBefore[k]))job.conflicts.push('local:'+k);else if(!equal(job.localBefore[k],job.localPost[k]))patch[k]=job.localBefore[k];for(const [k,v] of Object.entries(patch))v===null?delete rt.local[k]:rt.local[k]=clone(v);if(Object.keys(patch).length)rt.persistLocal();}});
+  await attempt('host-wrapper',async()=>{if(app.plugins.setEnabled===ownWrapper)app.plugins.setEnabled=previousWrapper;else if(app.plugins.setEnabled!==previousWrapper)job.conflicts.push('host wrapper replaced');});
+  await attempt('files',async()=>{
+   for(const path of paths) if(written.includes(path)){const current=await app.vault.adapter.read(path);if(await digest(current)!==intended[path])throw Error('fixture file manually edited: '+path);}
+   for(const id of IDS){const dir=`.obsidian/plugins/${id}`;const listing=await app.vault.adapter.list(dir);if(listing.files.length!==4||listing.folders.length)throw Error('unexpected fixture folder contents: '+id);}
+   for(const id of IDS)await app.vault.adapter.remove(`.obsidian/plugins/${id}`);
+  });
+  job.cleanup={pending:false,errors,conflicts:job.conflicts,restoration:job.restoration};
+  if(errors.length||job.conflicts.length||job.error) {job.status='failed';job.phase='cleanup-failed';job.error??=errors.join('; ');} else {job.status='complete';job.phase='complete';}
+ }
+ try {
+  if(Object.hasOwn(globals,jobKey)) throw Error('same job key already exists');
+  if(Object.entries(globals).some(([k,v])=>k.startsWith('aigility-manager-profile:')&&v?.status==='pending')) throw Error('another profile job pending');
+  const manager=app.plugins?.plugins?.[MANAGER];
+  if(!manager||manager._loaded!==true||manager.manifest?.version!=='0.1.3')throw Error('manager v0.1.3 must be loaded');
+  if(app.vault?.getName?.()!==VAULT||app.vault.adapter.getBasePath()!==BASE||app.appId!==APP_ID)throw Error('Sandbox identity mismatch');
+  if(typeof document!=='undefined'&&app.workspace.containerEl?.ownerDocument!==document)throw Error('workspace document mismatch');
+  rt=manager.runtime;
+  if(!rt||!rt.local?.recoveryReason||rt.local.deviceProfileId||rt.local.operationPending||rt.state.debug?.active)throw Error('runtime recovery/operation/debug precondition failed');
+  if(app.setting?.containerEl?.isShown?.())throw Error('Settings is open');
+  const workspace={leaf:app.workspace.activeLeaf,container:app.workspace.containerEl};
+  const foreign=Object.fromEntries(Object.entries(app.plugins.manifests).filter(([id])=>!IDS.includes(id)).map(([id,m])=>[id,clone(m)]));
+  const core=clone(app.internalPlugins.plugins),native=[...app.plugins.enabledPlugins],loaded=Object.fromEntries(Object.entries(app.plugins.plugins).map(([id,p])=>[id,p?._loaded===true])), protectedBefore=[...rt.state.protected],localBefore=localSnap(), stateBefore=stateSnap();
+  const ownDirs=await Promise.all(IDS.map(id=>app.vault.adapter.exists(`.obsidian/plugins/${id}`)));
+  if(ownDirs.some(Boolean))throw Error('owned fixture folder already exists');
+  for(const path of paths)if(await app.vault.adapter.exists(path))throw Error('owned fixture file already exists: '+path);
+  requireNamespacesAbsent(stateBefore);
+  job={id:jobKey,token:key,status:'pending',phase:'preflighted',createdAt:new Date().toISOString(),captures:[],restoration:{},conflicts:[],workspaceBefore:workspace};
+  globals[jobKey]=job; helpers.manager=manager; baseline=stateBefore;
+  const workspaceBefore=workspace, foreignBefore=foreign, coreBefore=core;
+  // Register before any asynchronous operation, then revalidate identity after every await.
+  await guarded('initial state refresh',()=>rt.refresh());
+  requireNamespacesAbsent(rt.state);
+  phase('install-files');
+  for(const id of IDS){gate();await app.vault.adapter.mkdir(`.obsidian/plugins/${id}`);gate();for(const [name,contents] of Object.entries(files[id])){gate();const path=`.obsidian/plugins/${id}/${name}`;preimages[path]=null;intended[path]=await digest(contents);job.files={preimages,intended,written};gate();await app.vault.adapter.write(path,contents);written.push(path);gate();}}
+  // Re-read each exact manifest directory after files exist; never invoke a global scan.
+  for(const id of IDS){const obj=await guarded('load exact manifest '+id,()=>app.plugins.loadManifest(`.obsidian/plugins/${id}`));helpers.manifestObjects[id]=app.plugins.manifests[id]??obj;}
+  const records={};for(const id of IDS)records['community:'+id]={ref:{kind:'community',id},desired:false,tags:id===IDS[0]?[TAG]:[],groups:[],settings:{}};
+  await saveState('install-state',s=>{s.records??={};Object.assign(s.records,records);s.tags??=[];s.tags.push({id:TAG,name:TAG});s.deviceProfiles??=[];s.deviceProfiles.push({id:PROFILE,name:PROFILE,members:{['community:'+IDS[0]]:true,['community:'+IDS[1]]:false},applyAtStart:false,workspaceId:null});s.fixtureProfiles??=[];s.fixtureProfiles.push({id:PARTIAL,name:PARTIAL,members:{['community:'+IDS[0]]:true}});});
+  job.localBefore=localBefore;
+  const beforeProtection=[...rt.state.protected];
+  const refs=[...Object.keys(foreign).map(id=>'community:'+id),...Object.keys(core).map(id=>'core:'+id)];
+  const additions=refs.filter(x=>!beforeProtection.includes(x)&&!beforeProtection.includes(x.slice(x.indexOf(':')+1)));
+  job.protections={baseline:beforeProtection,added:additions,post:[...beforeProtection,...additions]};
+  await saveState('protect-foreign',s=>{s.protected=[...new Set([...s.protected,...additions])];});
+  job.localPost=localSnap();
+  previousWrapper=app.plugins.setEnabled;
+  ownWrapper=async function(ref,...args){if(!IDS.includes(ref?.id))throw Error('foreign toggle refused');gate();const result=await previousWrapper.call(this,ref,...args);gate();return result;};
+  app.plugins.setEnabled=ownWrapper;
+  // Run existing real runtime cases. Only the two exact fixture IDs may cross host enable boundary.
+  const body=profileHostBody(key,deadlines.actionDeadline,deadlines.cleanupDeadline);
+  const cases=new Function('app','rt','globalThis','crypto','TextEncoder',`return (${body});`)(app,rt,globals,crypto,TextEncoder).call({app,rt});
+  phase('profile-cases');
+  const result=await guarded('profile cases',()=>cases());job.result=result;
+  await capture('cases-settled');
+  if(!equal(Object.fromEntries(Object.entries(app.plugins.manifests).filter(([id])=>!IDS.includes(id)).map(([id,m])=>[id,m])),foreignBefore)||!equal(app.internalPlugins.plugins,coreBefore)||!equal([...app.plugins.enabledPlugins].filter(id=>!IDS.includes(id)),native.filter(id=>!IDS.includes(id)))||!equal(Object.fromEntries(Object.entries(app.plugins.plugins).filter(([id])=>!IDS.includes(id)).map(([id,p])=>[id,p?._loaded===true])),Object.fromEntries(Object.entries(loaded).filter(([id])=>!IDS.includes(id)))))throw Error('foreign/core native or loaded state changed');
+  if(app.workspace.activeLeaf!==workspaceBefore.leaf||app.workspace.containerEl!==workspaceBefore.container)throw Error('workspace changed');
+ } catch(e) { failure=e; if(job){job.error=e?.stack||e?.message||String(e);job.failedPhase=job.phase;} }
+ finally { if(job){job.error??=failure?.message;await cleanup();} }
+ return job??{id:jobKey,status:'failed',phase:'preflight-failed',error:failure?.message||String(failure)};
+}
+
+export async function runProfileHost(app, globals, key, deadlines, helpers={}) { return controller(app,globals,key,deadlines,helpers); }
+
+export function profileHostBody(key,actionDeadline,cleanupDeadline) {
+ return `async()=>{const fixtureFiles=${fixtureFiles.toString()},ownProjection=${ownProjection.toString()},purgeOwned=${purgeOwned.toString()},protectionCleanup=${protectionCleanup.toString()},buildCasesBody=${buildCasesBody.toString()};`+
+ `const FIXTURE_IDS=${JSON.stringify(IDS)};const TAG=${JSON.stringify(TAG)},PROFILE=${JSON.stringify(PROFILE)},PARTIAL=${JSON.stringify(PARTIAL)};`+
+ `const app=this.app,rt=this.rt;return await new Function('app','rt','globalThis','crypto','TextEncoder','return ('+buildCasesBody({deadline:actionDeadline})+')')(app,rt,globalThis,crypto,TextEncoder)();}`;
+}
