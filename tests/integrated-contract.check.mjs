@@ -70,3 +70,14 @@ test('real core wrapper diagnostics account for native persistence and restore t
   assert.equal(wrapper.enabled,false,'the session restores the core native state it changed');
  }finally{f.debug.dispose();f.runtime.dispose();}
 });
+test('a diagnostic origin alone cannot bypass an unrelated interrupted-operation recovery latch', {timeout:3000}, async()=>{
+ const f=fixture();
+ try {
+  await f.runtime.start(false);
+  f.runtime.local.operationPending='profile-apply:interrupted';
+  f.runtime.pause('Interrupted operation: profile-apply:interrupted');
+  await assert.rejects(f.runtime.enqueue('attempt-diagnostic-bypass',tx=>tx.setEnabled({kind:'community',id:'alpha'},false,{loadNow:true,origin:'debugging'})),/paused|pending|recovery/i);
+  assert.equal(Boolean(f.api.plugins.alpha),true,'recovery must preserve the host until explicit acknowledgement');
+  assert.equal(f.runtime.local.operationPending,'profile-apply:interrupted');
+ }finally{f.debug.dispose();f.runtime.dispose();}
+});
