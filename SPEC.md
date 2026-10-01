@@ -88,3 +88,14 @@ Adapters falsos DOM-free; CLI con nombre de vault comprobado; screenshots; compa
 
 ## 6. Delivery & Acceptance Runbook
 Verificar build marker y binding. Probar filtros/perfiles/core/deferred/recovery/debug/beta rollback. Matriz macbook, zenbook, iphone, ipad, s24, lenovo tab, boox tab mini c: distinguir pruebas físicas, emuladas y pendientes por acceso. Referencias de vault en documentos usan wikilinks sin alias; hidden/external files usan links navegables. No editar AGENTS/REMEMBER ni index.md.
+
+## 7. Downloaded Plugin Archive
+
+2026-10-01, Codex. Ampliación solicitada directamente por Eme en chat: conservar plugins descargados y su configuración sin mantener todos sus manifests en el catálogo nativo.
+
+- [ ] FR-13 - Requirement.open - Archivar/restaurar carpetas community completas mediante vault.adapter.rename, con índice local, identidad comprobada y sin reinstalación. Sólo archivar plugins apagados en estado deseado, nativo, real y programado; conservar tags, grupos, versiones, fuentes y pins. Excluir core, gestor y protecciones.
+- [ ] FR-14 - Requirement.open - Opciones incluye Descargados, búsqueda y páginas de 50; distingue disponible en archivo de instalado en catálogo. Restaurar manualmente deja el plugin apagado; aplicar un perfil restaura sus miembros archivados compatibles dentro de la misma cola antes de activarlos.
+- [ ] FR-15 - Requirement.open - Comprobar Sync antes de mover: la exclusión del archivo oculto no impide que el borrado de la ubicación activa se propague. Con Installed community plugin list sincronizada, exigir su desactivación local para archivo por equipo. Estado de Sync desconocido requiere diagnóstico, nunca una garantía inventada.
+- [ ] AC-11 - Archivar reduce manifests de carpetas directamente dentro de plugins; restaurar conserva exactamente main/manifest/styles/data y archivos adicionales. Pruebas de conflictos, operaciones interrumpidas, perfil, betas, Sync y catálogo sintético >=723; prueba nativa sólo con fixtures propios.
+
+Plan incremental: contrato y fuente del host; backend y UI por Ringer; integración con perfiles/betas; tests/build; prueba reversible en Sandbox con archivos propios; medir iPad cuando su acceso físico esté disponible. No archivar automáticamente el catálogo real durante el desarrollo.
