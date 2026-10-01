@@ -1,5 +1,5 @@
 {
-  "status": "ready-offline",
+  "status": "ready-offline-revised",
   "scope": "Sandbox manager-only build update; no fixture creation in this unit",
   "vault": "Sandbox",
   "basePath": "/Users/eme/Obsidian/Sandbox",
@@ -28,5 +28,11 @@
   "syncChanges": false,
   "ipadChanges": false,
   "rollback": "restore only matching written artifacts and reload old manager if own operation settled; never repeat pending enable",
-  "sourceCommit": "6fd3c7e"
+  "sourceCommit": "6fd3c7e",
+  "checkSha256": "3e8f59f29e8f0ae650660033d3e642772b47f673ceb8ef31daefb802a5abbe57",
+  "cleanupReserveSeconds": 35,
+  "managerStateWrites": "temporary protection additions plus explicit pause marker; finally removes only own additions and restores only matching local postimage, preserving concurrent edits",
+  "profilePreservation": "canonical hashes of complete deviceProfiles and fixtureProfiles before/after/final, not count-only",
+  "checks": "9 deployment helper/job tests and 13 community guard tests pass; no native executed",
+  "asyncGuarantee": "read pending global token before start; protection/reload/cleanup phases persisted, inspect same operation after timeout; no second toggle before settled"
 }
