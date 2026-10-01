@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-01T21:30:04.061872+00:00",
+  "runId": "aigility-plugin-manager-20261001T211453Z-p43282",
+  "ringerVerdict": "PASS",
+  "elapsedSeconds": 177.5,
+  "tokensReportedCLI": 75301,
+  "cost": "unavailable; no savings inferred",
+  "originalWorkerChecks": 7,
+  "parentInitialVerdict": "REJECTED despite checkerPASS - fake reproduced invented app.plugins.setEnabled API, runtime.list binding and tag selection assumptions",
+  "parentCorrections": "Root checks lane changed boundary to rt.host.setEnabled, bound actual runtime.list with original this, observed native state via app.plugins, kept only owned postimages, and fixed fake to use canonical tag membership/native-shaped APIs. Added execution of actual ManagerRuntime source. In recovery, direct public toggles correctly reject; explicit own fixture-profile path makes temporary manual fixture mutations without resuming automation, restores its definition by CAS. No product source edits.",
+  "parentChecks": 10,
+  "parentVerdict": "Accepted offline small case component; no setup/controller/file cleanup or native execution yet",
+  "nativeCalls": 0,
+  "fixturesCreated": 0,
+  "files": {
+    "checks/profile-cases-v013.mjs": "a0f0012f31141d4b45533ce04700d6496bb23bcd0c160fa841eed03edd5c8c69",
+    "tests/profile-cases-v013.test.mjs": "317983dc729f5cc854a33cee9fe0d5bfa24f5d0c0db2c5c58cad7d0958c1ed9a"
+  },
+  "coverage": [
+    "Actual ManagerRuntime full profiles/preview/tag edits/undo/partial profile against simulated native APIs, recovery remains paused.",
+    "Held native host await expires after one settled mutation; records postimage and prevents next call.",
+    "Exact host wrapper restoration and later foreign replacement preserved.",
+    "Foreign refs rejected before host, manager/job identity changes abort, serialized whole component executes.",
+    "Invalid manual profile scope rejected before installing wrapper."
+  ],
+  "futureController": "Must own two fixture folders plus exact metadata namespace, durable phase/receipt before dispatch, fresh queue saves, cleanup reserve and CAS restoration; no real host use of this component without supervisor lease."
+}

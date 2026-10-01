@@ -1,0 +1,57 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { runOwnedProfileCases, profileCasesBody } from '../checks/profile-cases-v013.mjs';
+
+const A='aigility-manager-fixture-a', B='aigility-manager-fixture-b', MANAGER='aigility-plugin-manager';
+function fixture({hostDelay=false,hold=false,foreign=false,replace=false,lateWrapper=false,rejectPartial=false,drift=false}={}) {
+ const job={id:'job'},globals={job};
+ const state={records:{['community:'+A]:{ref:{kind:'community',id:A},desired:false,tags:['aigility-test-tag']},['community:'+B]:{ref:{kind:'community',id:B},desired:false,tags:[]}},tags:[{id:'aigility-test-tag'}],deviceProfiles:[{id:'aigility-host-test',tagIds:['aigility-test-tag']}],fixtureProfiles:[{id:'aigility-host-partial',members:{['community:'+A]:true}}],deferred:[],profileBackups:[],undo:null};
+ const app={appId:'d137282e82167d84',vault:{getName:()=> 'Sandbox',adapter:{getBasePath:()=>'/Users/eme/Obsidian/Sandbox'}},plugins:{enabledPlugins:new Set(),plugins:{},manifests:{},async setEnabled(ref,on){if(hostDelay){hostDelay=false;await new Promise(r=>setTimeout(r,20));}if(![A,B].includes(ref.id)){this.foreignCalls++;return;}if(on){this.enabledPlugins.add(ref.id);this.plugins[ref.id]={_loaded:true};globals['aigility-host-count:'+ref.id]=(globals['aigility-host-count:'+ref.id]||0)+1;}else{this.enabledPlugins.delete(ref.id);delete this.plugins[ref.id];}this.calls.push(ref.id+':'+on);},calls:[],foreignCalls:0}};
+ const mgr={_loaded:true,manifest:{version:'0.1.3'}};app.plugins.plugins[MANAGER]=mgr;
+ const count=id=>globals['aigility-host-count:'+id]||0;
+ const undoStack=[];const rt={state,local:{marker:'initial'},list(){return Object.values(state.records).map(r=>({...r,nativeAutostart:app.plugins.enabledPlugins.has(r.ref.id),loaded:app.plugins.plugins[r.ref.id]?._loaded===true}));},async setEnabled(ref,on){if(hold){hold=false;await new Promise(r=>setTimeout(r,20));}state.records['community:'+ref.id].desired=on;await rt.host.setEnabled(foreign?{...ref,id:'foreign-plugin'}:ref,on);},async previewProfile(profileId){this.previewCalls=(this.previewCalls||0)+1;const profile=this.state.deviceProfiles.find(p=>p.id===profileId);return Object.values(this.state.records).map(r=>({ref:r.ref,before:app.plugins.enabledPlugins.has(r.ref.id),after:r.tags.some(t=>profile.tagIds.includes(t))})).filter(c=>c.before!==c.after);},async applyProfile(_id,preview){this.profileCalls=(this.profileCalls||0)+1;undoStack.push(Object.fromEntries([A,B].map(id=>[id,app.plugins.enabledPlugins.has(id)])));for(const c of preview)await this.setEnabled(c.ref,c.after);state.undo={undo:true};},async undoProfile(){this.undoCalls=(this.undoCalls||0)+1;const snap=undoStack.pop();for(const id of [A,B])await this.setEnabled({kind:'community',id},snap[id]);state.undo=null;},async setTags(ref,tags){state.records['community:'+ref.id].tags=tags;},async applyFixture(){this.partialCalls=(this.partialCalls||0)+1;await this.setEnabled({kind:'community',id:A},true);if(rejectPartial)throw Error('partial rejected');}};
+ rt.host={setEnabled:app.plugins.setEnabled.bind(app.plugins)};delete app.plugins.setEnabled;const originalList=rt.list;rt.list=function(){assert.equal(this,rt,'Actual runtime.list requires original runtime this');return originalList.call(rt);};
+ mgr.runtime=rt;
+ if(replace){const old=rt.setEnabled;rt.setEnabled=async(...args)=>{const v=await old.apply(rt,args);app.plugins.plugins[MANAGER]={_loaded:true,manifest:{version:'0.1.3'}};return v;};}
+ if(lateWrapper){const old=rt.setEnabled;let n=0;rt.setEnabled=async(...args)=>{const v=await old.apply(rt,args);if(++n===1)rt.host.setEnabled=async()=>{throw Error('foreign replacement active');};return v;};}
+ return {app,rt,job,globals,count,drift};
+}
+const options=()=>({deadline:Date.now()+1500});
+
+test('normal cases use real runtime operations and record every postimage',async()=>{const f=fixture();const beforeA=f.count(A),beforeB=f.count(B);const result=await runOwnedProfileCases(f.app,f.globals,f.job,options());assert.equal(result.counterDeltas.a,3);assert.equal(result.counterDeltas.b,3);assert.equal(f.rt.profileCalls,2);assert.equal(f.rt.undoCalls,2);assert.equal(f.rt.partialCalls,1);assert.equal(f.app.plugins.foreignCalls,0);assert.equal(f.job.postimages.length,11);assert.ok(f.job.postimages.every(x=>x.settled&&x.postimage.projection));assert.equal(f.count(A)-beforeA,3);assert.equal(f.count(B)-beforeB,3);assert.equal(f.app.plugins.setEnabled,undefined);assert.equal(f.rt.previewCalls,2);});
+test('held host await expires and next native call is refused',async()=>{const f=fixture({hold:true});await assert.rejects(runOwnedProfileCases(f.app,f.globals,f.job,{deadline:Date.now()+8}),/deadline/);assert.equal(f.app.plugins.calls.length,0);});
+test('foreign reference is refused before underlying host method',async()=>{const f=fixture({foreign:true});await assert.rejects(runOwnedProfileCases(f.app,f.globals,f.job,options()),/foreign toggle refused/);assert.equal(f.app.plugins.foreignCalls,0);});
+test('manager replacement after await refuses next operation',async()=>{const f=fixture({replace:true});await assert.rejects(runOwnedProfileCases(f.app,f.globals,f.job,options()),/manager instance changed/);});
+test('foreign later wrapper is preserved and conflict reported',async()=>{const f=fixture({lateWrapper:true});await assert.rejects(runOwnedProfileCases(f.app,f.globals,f.job,options()),/foreign/);assert.equal(f.job.wrapperConflict,true);});
+test('rejected partial operation records settled postimage',async()=>{const f=fixture({rejectPartial:true});await assert.rejects(runOwnedProfileCases(f.app,f.globals,f.job,options()),/partial rejected/);assert.ok(f.job.postimages.some(x=>x.name==='applyFixture'&&x.settled&&x.postimage.native[A]===true&&x.error));});
+test('serialized component executes and refuses changed job token',async()=>{const f=fixture();const body=profileCasesBody('job',Date.now()+1200);const invoke=new Function('app','globalThis',`return (${body});`)(f.app,f.globals);const result=await invoke.call({});assert.equal(result.counterDeltas.a,3);const g=fixture();const serialized=profileCasesBody('job',Date.now()+1200);const fn=new Function('app','globalThis',`return (${serialized});`)(g.app,g.globals);const old=g.rt.setEnabled;let changed=false;g.rt.setEnabled=async(...args)=>{const v=await old.apply(g.rt,args);if(!changed){changed=true;g.globals.job={id:'drifted'};}return v;};await assert.rejects(fn(),/job identity changed/);});
+
+import {importModule} from '../test.config.mjs';
+const {ManagerRuntime}=await importModule('src/integrated/runtime.ts');
+test('component runs actual ManagerRuntime tags, preview, full profile, undo and partial fixture with native-shaped APIs',async()=>{
+ const priorStorage=globalThis.localStorage,values=new Map();
+ globalThis.localStorage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,String(v)),removeItem:k=>values.delete(k)};
+ const globals={['actual-runtime']:{id:'actual-runtime'}},files=new Map(),nativeCalls=[];
+ const ref=id=>({kind:'community',id});
+ const state={schemaVersion:1,records:Object.fromEntries([A,B].map(id=>['community:'+id,{ref:ref(id),name:id,version:'1.0.0',tags:id===A?['aigility-test-tag']:[],group:'',desired:false,metadata:{}}])),tags:[{id:'aigility-test-tag',name:'Test'}],groups:[],deviceProfiles:[{id:'aigility-host-test',name:'Test',tagIds:['aigility-test-tag'],applyAtStart:false}],fixtureProfiles:[{id:'aigility-host-partial',name:'Partial',members:{['community:'+A]:true}}],deferred:[],profileBackups:[],protected:['community:'+MANAGER],githubSources:{},settings:{staggerMs:0,automaticUpdates:false},legacyBpm:{}};
+ const manifests=Object.fromEntries([A,B,MANAGER].map(id=>[id,{id,name:id,version:id===MANAGER?'0.1.3':'1.0.0',minAppVersion:'1.0.0'}]));
+ const manager={_loaded:true,manifest:{...manifests[MANAGER],dir:'.obsidian/plugins/'+MANAGER},logger:{error(){},warn(){},info(){},debug(){}}};
+ const plugins={manifests,plugins:{[MANAGER]:manager},enabledPlugins:new Set([MANAGER]),isEnabled:()=>true,getPlugin(id){return this.plugins[id];},async enablePluginAndSave(id){nativeCalls.push(['on',id]);this.enabledPlugins.add(id);this.plugins[id]={_loaded:true,manifest:manifests[id]};globals['aigility-host-count:'+id]=(globals['aigility-host-count:'+id]??0)+1;},async disablePluginAndSave(id){nativeCalls.push(['off',id]);this.enabledPlugins.delete(id);delete this.plugins[id];}};
+ const app={appId:'d137282e82167d84',manifest:{version:'1.14.3'},plugins,internalPlugins:{plugins:{}},vault:{configDir:'.obsidian',getName:()=> 'Sandbox',adapter:{getBasePath:()=> '/Users/eme/Obsidian/Sandbox',exists:async p=>files.has(p),read:async p=>files.get(p),write:async(p,v)=>files.set(p,v)}}};
+ files.set(manager.manifest.dir+'/data.json',JSON.stringify(state));
+ const rt=new ManagerRuntime(app,manager,state);manager.runtime=rt;rt.pause('Acceptance recovery remains paused');
+ const originalHost=rt.host.setEnabled;
+ try{
+  assert.equal(app.plugins.setEnabled,undefined);
+  await assert.rejects(()=>rt.setEnabled(ref(B),true),/automation is paused/);assert.equal(nativeCalls.length,0);
+  const result=await runOwnedProfileCases(app,globals,globals['actual-runtime'],{deadline:Date.now()+5000,manualFixtureProfileId:'aigility-host-partial'});
+  assert.deepEqual(result.counterDeltas,{a:3,b:3});assert.equal(globals['actual-runtime'].postimages.length,11);assert.equal(rt.host.setEnabled,originalHost);
+  assert.equal(globals['actual-runtime'].manualTogglesViaFixture,3);assert.deepEqual(rt.state.fixtureProfiles[0].members,{['community:'+A]:true});
+  assert.equal(rt.local.recoveryReason,'Acceptance recovery remains paused');assert.equal(rt.local.deviceProfileId,undefined);
+  assert.equal(rt.list().find(r=>r.ref.id===A).loaded,false);assert.equal(rt.list().find(r=>r.ref.id===B).loaded,false);
+  assert.equal(nativeCalls.every(([,id])=>[A,B].includes(id)),true);assert.equal(plugins.plugins[MANAGER],manager);
+ }finally{rt.dispose();globalThis.localStorage=priorStorage;}
+});
+
+test('expiry inside actual host await preserves settled native postimage and prevents next native call',async()=>{const f=fixture({hostDelay:true});const original=f.rt.host.setEnabled;await assert.rejects(()=>runOwnedProfileCases(f.app,f.globals,f.job,{deadline:Date.now()+8}),/deadline/);assert.equal(f.app.plugins.calls.length,1);assert.equal(f.job.postimages[0].postimage.native[B],true);assert.equal(f.job.postimages[0].settled,true);assert.equal(f.rt.host.setEnabled,original);});
+test('invalid manual fixture scope rejects before installing any host wrapper',async()=>{const f=fixture(),original=f.rt.host.setEnabled;await assert.rejects(()=>runOwnedProfileCases(f.app,f.globals,f.job,{...options(),manualFixtureProfileId:'foreign-profile'}),/outside owned scope/);assert.equal(f.rt.host.setEnabled,original);assert.equal(f.app.plugins.calls.length,0);});

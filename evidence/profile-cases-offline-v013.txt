@@ -1,0 +1,20 @@
+✔ normal cases use real runtime operations and record every postimage (7.281208ms)
+✔ held host await expires and next native call is refused (22.309334ms)
+✔ foreign reference is refused before underlying host method (0.747125ms)
+✔ manager replacement after await refuses next operation (0.195625ms)
+✔ foreign later wrapper is preserved and conflict reported (0.614875ms)
+✔ rejected partial operation records settled postimage (0.472583ms)
+✔ serialized component executes and refuses changed job token (5.267625ms)
+(node:58630) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ component runs actual ManagerRuntime tags, preview, full profile, undo and partial fixture with native-shaped APIs (7.208042ms)
+✔ expiry inside actual host await preserves settled native postimage and prevents next native call (22.224166ms)
+✔ invalid manual fixture scope rejects before installing any host wrapper (0.238708ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 205.224833
