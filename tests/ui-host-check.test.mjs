@@ -206,7 +206,7 @@ test('the actual serialized host abort with preexisting unapproved Settings perf
   vault:{getName:()=> 'Sandbox',adapter:{getBasePath:()=> '/Users/eme/Obsidian/Sandbox',read:async()=> '{}'}},
   plugins:{plugins:{'aigility-plugin-manager':plugin},manifests:{},enabledPlugins:new Set(['aigility-plugin-manager'])},
   internalPlugins:{plugins:{}},workspace:{containerEl:{ownerDocument:doc},activeLeaf:{id:'prior'},iterateAllLeaves(){}},
-  setting:{doc,modalEl:{isConnected:true},lastTabId:'voiceink-companion',open(){uiActions++;},close(){uiActions++;},openTabById(){uiActions++;}}};
+  setting:{doc,settingTabs:[],pluginTabs:[{id:'voiceink-companion'}],modalEl:{isConnected:true},lastTabId:'voiceink-companion',open(){uiActions++;},close(){uiActions++;},openTabById(){uiActions++;}}};
  const window={id:1,isFocused:()=>false};
  const req=name=>name==='@electron/remote'?{getCurrentWindow:()=>window,BrowserWindow:{getAllWindows:()=>[window]}}:name==='child_process'?{execFileSync:()=> 'com.apple.loginwindow'}:testRequire(name);
  const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
@@ -215,8 +215,15 @@ test('the actual serialized host abort with preexisting unapproved Settings perf
  assert.equal(result.status,'failed');assert.match(result.error,/Preexisting Settings/);assert.equal(uiActions,0);
  assert.equal(app.setting.modalEl.isConnected,true);assert.equal(app.setting.lastTabId,'voiceink-companion');
  assert.deepEqual(result.cleanupNotRequired,['filters','settings']);assert.equal(result.restoration.filters,true);assert.equal(result.restoration.settings,true);
+ app.vault.adapter.read=async()=>{app.setting.lastTabId='appearance';return '{}';};
+ const driftFn=new AsyncFunction('app','globalThis','document','require','let value;'+uiBody('preflight-drift',Date.now()+1000,Date.now()+2000,'a.png','b.png','snapshot-current')+'return value;');
+ const drift=await driftFn(app,{},doc,req);assert.equal(drift.status,'failed');assert.match(drift.error,/ownership changed/);assert.equal(uiActions,0);assert.equal(app.setting.lastTabId,'appearance');
 });
 
 import {selectSettingsWindow} from '../checks/sandbox-ui-v013.check.mjs';
 test('Settings window selection binds primary-document modal to the exact primary window',()=>{const doc={},main={id:1},aux={id:8,getTitle:()=> 'Settings - Sandbox - Obsidian'};assert.equal(selectSettingsWindow(doc,doc,main,[aux],1),main);assert.throws(()=>selectSettingsWindow(doc,doc,main,[aux],8),/replaced/);});
 test('detached Settings document refuses missing, ambiguous or replaced exact-title windows',()=>{const primary={},settings={},main={id:1},aux={id:8,getTitle:()=> 'Settings - Sandbox - Obsidian'};assert.equal(selectSettingsWindow(settings,primary,main,[aux],8),aux);assert.throws(()=>selectSettingsWindow(settings,primary,main,[],null),/missing/);assert.throws(()=>selectSettingsWindow(settings,primary,main,[aux,{...aux,id:9}],null),/ambiguous/);assert.throws(()=>selectSettingsWindow(settings,primary,main,[aux],9),/replaced/);});
+
+import {settingsBaselineGate} from '../checks/sandbox-ui-v013.check.mjs';
+test('Settings baseline before first mutation rejects changed doc/modal/tab/connected after preflight await',async()=>{const doc={},modal={isConnected:true},settings={doc,modalEl:modal,lastTabId:'voiceink-companion'},b={doc,modal,tab:'voiceink-companion',connected:true};settingsBaselineGate(settings,b);await Promise.resolve();modal.isConnected=false;assert.throws(()=>settingsBaselineGate(settings,b),/connected state changed/);modal.isConnected=true;settings.modalEl={isConnected:true};assert.throws(()=>settingsBaselineGate(settings,b),/ownership changed/);});
+test('explicit snapshot-current scope supports a nonempty prior tab without closing it',()=>{assert.equal(settingsOwnershipPlan(true,'appearance','snapshot-current').close,false);assert.throws(()=>settingsOwnershipPlan(true,'','snapshot-current'),/outside approved/);});

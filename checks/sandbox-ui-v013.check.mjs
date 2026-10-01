@@ -52,8 +52,12 @@ export function casSettingsDecision(beforeTab,ownedTab,currentTab,ownedDoc,curre
 }
 
 export function settingsOwnershipPlan(connected,tab,approvedPreexistingTab){
- if(connected){if(!approvedPreexistingTab||tab!==approvedPreexistingTab)throw Error('Preexisting Settings tab is outside approved scope');return {open:false,close:false,restoreTab:tab};}
+ if(connected){const snapshotApproved=approvedPreexistingTab==='snapshot-current'&&typeof tab==='string'&&tab.length>0;if(!snapshotApproved&&(!approvedPreexistingTab||tab!==approvedPreexistingTab))throw Error('Preexisting Settings tab is outside approved scope');return {open:false,close:false,restoreTab:tab};}
  return {open:true,close:true,restoreTab:tab};
+}
+export function settingsBaselineGate(settings,baseline){
+ layoutOwnershipGate(settings,{doc:baseline.doc,modal:baseline.modal,tab:baseline.tab});
+ if((settings.modalEl?.isConnected===true)!==baseline.connected)throw Error('Settings connected state changed during preflight');
 }
 export function selectSettingsWindow(settingsDoc,primaryDoc,mainWindow,windows,expectedId){
  const matches=settingsDoc===primaryDoc?[mainWindow]:windows.filter(w=>w.getTitle()==='Settings - Sandbox - Obsidian');
@@ -162,7 +166,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  const cores=()=>Object.entries(app.internalPlugins.plugins).map(([id,w])=>({id,enabled:w.enabled,loaded:w.instance?._loaded===true})).sort((a,b)=>a.id.localeCompare(b.id));
  const prior={filter:structuredClone(ui.filterCriteria),sidebar:structuredClone(ui.sidebarFilterCriteria),tab:settings.lastTabId,leaf:app.workspace.activeLeaf,leaves:[],foreign:foreign(),core:cores(),local:JSON.stringify(P.runtime.local)};
  app.workspace.iterateAllLeaves(l=>prior.leaves.push(l.id));
- prior.settingsConnected=settings.modalEl?.isConnected===true;
+ prior.settingsConnected=settings.modalEl?.isConnected===true;prior.settingsDoc=settings.doc;prior.settingsModal=settings.modalEl;
  const dataPath=P.manifest.dir+'/data.json';
  prior.dataHash=digest(await adapter.read(dataPath));gate();
 
@@ -216,10 +220,12 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  try{
   gate();check('Correct Sandbox identity',app.vault.getName()==='Sandbox'&&adapter.getBasePath()==='/Users/eme/Obsidian/Sandbox'&&app.appId==='d137282e82167d84');
   check('Native loaded0.1.3',P._loaded&&P.manifest.version==='0.1.3');
+  settingsBaselineGate(settings,{doc:prior.settingsDoc,modal:prior.settingsModal,tab:prior.tab,connected:prior.settingsConnected});
+  if(prior.settingsConnected&&!([...settings.settingTabs,...settings.pluginTabs].some(t=>t.id===prior.tab)))throw Error('Preexisting Settings tab is no longer registered');
   settingsPlan=settingsOwnershipPlan(prior.settingsConnected,prior.tab,approvedPreexistingTab);check('Settings ownership preflight',true,{preexisting:prior.settingsConnected,priorTab:prior.tab,openedByUs:settingsPlan.open});
   check('No previous manager modal',!q('.aigility-options-modal'));
   check('Recovery remains paused',!!P.runtime.local.recoveryReason&&!P.runtime.local.deviceProfileId&&!P.runtime.local.operationPending&&!P.runtime.state.debug?.active);
-  gate();uiStarted=true;if(settingsPlan.open)settings.open();ownedSettingsTab=settings.lastTabId;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsDoc=settings.doc;await wait(()=>settings.doc?.querySelector('.vertical-tab-content'),'Settings document');
+  gate();settingsBaselineGate(settings,{doc:prior.settingsDoc,modal:prior.settingsModal,tab:prior.tab,connected:prior.settingsConnected});uiStarted=true;if(settingsPlan.open)settings.open();ownedSettingsTab=settings.lastTabId;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsDoc=settings.doc;await wait(()=>settings.doc?.querySelector('.vertical-tab-content'),'Settings document');
   sd=settings.doc;pinnedSettingsWinId=settingsWindow().id;rememberOwnFocus();pinnedSettingsDoc=settings.doc;pinnedSettingsModalEl=settings.modalEl;
   gate();settings.openTabById('community-plugins');ownedSettingsTab='community-plugins';await wait(()=>sd.querySelector('.aigility-manager-root'),'integrated Community list');
   ownedSettingsTab='community-plugins';
@@ -323,7 +329,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
 }
 
 export function uiBody(key,deadline,cleanupDeadline,communityImage,downloadImage,approvedPreexistingTab){
- return `const selectSettingsWindow=${selectSettingsWindow.toString()};const settingsOwnershipPlan=${settingsOwnershipPlan.toString()};const restoreOwnedSettings=${restoreOwnedSettings.toString()};const primaryDocumentGate=${primaryDocumentGate.toString()};const layoutOwnershipGate=${layoutOwnershipGate.toString()};const registerUIJob=${registerUIJob.toString()};const validateUIIdentity=${validateUIIdentity.toString()};const focusDecision=${focusDecision.toString()};const uiGate=${uiGate.toString()};
+ return `const settingsBaselineGate=${settingsBaselineGate.toString()};const selectSettingsWindow=${selectSettingsWindow.toString()};const settingsOwnershipPlan=${settingsOwnershipPlan.toString()};const restoreOwnedSettings=${restoreOwnedSettings.toString()};const primaryDocumentGate=${primaryDocumentGate.toString()};const layoutOwnershipGate=${layoutOwnershipGate.toString()};const registerUIJob=${registerUIJob.toString()};const validateUIIdentity=${validateUIIdentity.toString()};const focusDecision=${focusDecision.toString()};const uiGate=${uiGate.toString()};
 const matchingRestore=${matchingRestore.toString()};
 const waitClosed=${waitClosed.toString()};
 const casSettingsDecision=${casSettingsDecision.toString()};
