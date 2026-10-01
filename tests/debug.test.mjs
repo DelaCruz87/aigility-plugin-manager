@@ -97,6 +97,41 @@ test('default candidate universe excludes every installed but inactive plugin', 
   assert.equal(f.runtime.changes.length, 0);
 });
 
+test('default set excludes desired-only plugins that are neither loaded, native nor scheduled', async () => {
+  const { DebugManager } = await importModule('src/integrated/debug.ts');
+  const f = fixture();
+  f.runtime.addPlugin({ ref: { kind: 'community', id: 'inert' }, name: 'Inert', version: '1', installed: true, compatible: true, nativeAutostart: false, loaded: false, desired: true, tags: [], group: '', scheduled: false });
+  const manager = new DebugManager(f.runtime, f.app, f.plugin);
+  await manager.start();
+  assert.equal(manager.session.candidates.includes('community:inert'), false, 'desired alone cannot enter a real diagnostic run');
+  assert.equal(manager.session.experimentUniverse.includes('community:inert'), false, 'inactive unselected plugin stays outside isolation mutations');
+  assert.equal(manager.session.originals['community:inert'], undefined);
+  assert.deepEqual(manager.session.candidates, ['community:a', 'community:b', 'core:sync']);
+});
+
+test('explicit selection still admits an installed compatible but inactive plugin', async () => {
+  const { DebugManager } = await importModule('src/integrated/debug.ts');
+  const f = fixture();
+  f.runtime.addPlugin({ ref: { kind: 'community', id: 'inert' }, name: 'Inert', version: '1', installed: true, compatible: true, nativeAutostart: false, loaded: false, desired: true, tags: [], group: '', scheduled: false });
+  const manager = new DebugManager(f.runtime, f.app, f.plugin);
+  await manager.start([{ kind: 'community', id: 'inert' }]);
+  assert.deepEqual(manager.session.candidates, ['community:inert']);
+  assert.equal(manager.session.experimentUniverse.includes('community:inert'), true, 'explicit opt-in keeps the plugin in the universe');
+  assert.equal(manager.session.originals['community:inert'], true);
+});
+
+test('default set includes scheduled-and-desired plugins and skips scheduled-but-undesired ones', async () => {
+  const { DebugManager } = await importModule('src/integrated/debug.ts');
+  const f = fixture();
+  f.runtime.addPlugin({ ref: { kind: 'community', id: 'pending' }, name: 'Pending', version: '1', installed: true, compatible: true, nativeAutostart: false, loaded: false, desired: true, tags: [], group: '', scheduled: true });
+  f.runtime.addPlugin({ ref: { kind: 'community', id: 'parked' }, name: 'Parked', version: '1', installed: true, compatible: true, nativeAutostart: false, loaded: false, desired: false, tags: [], group: '', scheduled: true });
+  const manager = new DebugManager(f.runtime, f.app, f.plugin);
+  await manager.start();
+  assert.deepEqual(manager.session.candidates, ['community:a', 'community:b', 'core:sync', 'community:pending']);
+  assert.equal(manager.session.experimentUniverse.includes('community:pending'), true);
+  assert.equal(manager.session.experimentUniverse.includes('community:parked'), false);
+});
+
 test('selected experiment switches every active outsider off and tests a disabled deferred candidate', async () => {
   const { DebugManager } = await importModule('src/integrated/debug.ts');
   const f = fixture();

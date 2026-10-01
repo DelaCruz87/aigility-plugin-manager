@@ -55,7 +55,12 @@ export class DebugManager {
     const list = await this.refreshList(tx);
     if ((this.runtime.state.debug as DebugSession | undefined)?.active) throw new Error('Hay una sesión de debugging persistida; reanúdala o finalízala explícitamente.');
     const protectedIds = new Set<string>([...(this.runtime.state.protected ?? []), `community:${this.plugin?.manifest?.id ?? 'aigility-plugin-manager'}`]);
-    const selected = refs ?? list.filter((item) => item.installed && item.compatible && (item.desired || item.nativeAutostart || item.loaded) && !protectedIds.has(key(item.ref)) && !protectedIds.has(item.ref.id)).map((item) => item.ref);
+    // Default set = the SAFE ACTIVE set, matching the UI default selection:
+    // installed, compatible and actually active (loaded, native autostart, or
+    // scheduled-and-desired). A bare desired=true record that is neither
+    // loaded, native nor scheduled is inert state, not a diagnostic subject;
+    // opting one in stays possible by passing an explicit refs array.
+    const selected = refs ?? list.filter((item) => item.installed && item.compatible && DebugManager.isActuallyActive(item) && !protectedIds.has(key(item.ref)) && !protectedIds.has(item.ref.id)).map((item) => item.ref);
     const valid = new Map(list.map((item) => [key(item.ref), item]));
     const candidates = [...new Set(selected.map((ref) => key(ref)))].filter((id) => {
       const item = valid.get(id);
@@ -68,7 +73,7 @@ export class DebugManager {
       id: createId(), startedAt: new Date().toISOString(), active: true, interrupted: false,
       pausedReasonPrevious: this.runtime.local?.recoveryReason, candidates, suspects: [...candidates], originals, owned: {},
       experimentUniverse: list.filter((item) => item.installed && !protectedIds.has(key(item.ref)) && !protectedIds.has(item.ref.id)
-        && (candidates.includes(key(item.ref)) || item.desired || item.nativeAutostart || item.loaded)).map((item) => key(item.ref)),
+        && (candidates.includes(key(item.ref)) || DebugManager.isActuallyActive(item))).map((item) => key(item.ref)),
       snapshot: {
         plugins: Object.fromEntries(list.map((item) => {
           const id = key(item.ref);
@@ -419,6 +424,15 @@ export class DebugManager {
     if (!stored?.active || stored.id !== previous.id) throw new Error('La sesión persistida cambió; actualiza su estado antes de continuar.');
     this.session = { ...stored, interrupted: previous.interrupted || stored.interrupted };
     this.ensureAdvanced();
+  }
+
+  /**
+   * Actually active = loaded, native autostart, or scheduled-and-desired.
+   * `desired` on its own is inert state (parked, off, or never scheduled) and
+   * never makes a plugin a default diagnostic subject.
+   */
+  private static isActuallyActive(item: EffectivePlugin): boolean {
+    return Boolean(item.loaded || item.nativeAutostart || (item.scheduled && item.desired));
   }
 
   private image(item: EffectivePlugin): PluginImage {

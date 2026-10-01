@@ -111,3 +111,16 @@ test('a partial fixture cannot disable the protected manager through an explicit
   assert.equal(Boolean(f.api.plugins.beta),false,'the ordinary declared member still applies');
  }finally{f.debug.dispose();f.runtime.dispose();}
 });
+
+test('default debugging excludes desired-only plugins that are neither loaded nor scheduled', {timeout:3000}, async()=>{
+ const f=fixture();f.api.enabledPlugins.delete('alpha');delete f.api.plugins.alpha;
+ try {
+  await f.runtime.start(false);
+  await f.debug.start();
+  assert.equal(f.runtime.state.records['community:alpha'].desired,true,'desired-only baseline remains meaningful');
+  assert.equal(f.debug.session.candidates.includes('community:alpha'),false,'desired state alone cannot opt an inactive plugin into a real diagnostic run');
+  assert.equal(f.debug.session.experimentUniverse.includes('community:alpha'),false,'inactive unselected plugin must stay outside isolation mutations');
+  assert.equal(f.debug.session.candidates.includes('community:beta'),true);
+  await f.debug.finish();
+ }finally{f.debug.dispose();f.runtime.dispose();}
+});
