@@ -18,6 +18,7 @@ import type {
     State,
     Tag,
 } from './types';
+import { parseKey } from './types';
 
 export const MIGRATION_SCHEMA_VERSION = 1;
 
@@ -102,17 +103,21 @@ function cloneIfPossible<T>(value: unknown): T | undefined {
 
 // Removes secret material in place on a CLONE; only the redaction marker ever
 // reaches State, reports or git.
-function redactSecrets(node: unknown): void {
+function redactSecrets(node: unknown, identityKeyMode: 'canonical' | 'plain' | null = null): void {
     if (Array.isArray(node)) {
-        for (const item of node) redactSecrets(item);
+        for (const item of node) redactSecrets(item, identityKeyMode);
         return;
     }
     if (!isPlainObject(node)) return;
     for (const key of Object.keys(node)) {
-        if (SECRET_KEY_PATTERN.test(key)) {
+        const preserveIdentityKey = parseKey(key) !== null || identityKeyMode === 'plain';
+        if (SECRET_KEY_PATTERN.test(key) && !preserveIdentityKey) {
             node[key] = REDACTED;
         } else {
-            redactSecrets(node[key]);
+            const childIdentityKeyMode = key === 'records' || key === 'members'
+                ? 'canonical'
+                : key === 'githubSources' || key === 'pluginStates' ? 'plain' : null;
+            redactSecrets(node[key], childIdentityKeyMode);
         }
     }
 }

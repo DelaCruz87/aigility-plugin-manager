@@ -188,7 +188,7 @@ test('bound and device profile commands preview first and apply only after modal
 test('legacy migration stores exact local backups before schemaVersion 1 write and redacts persisted State', async () => {
   globalThis.__notices = [];
   const host = makeHost();
-  const bpmRaw = JSON.stringify({ Plugins: [{ id: 'community-one', name: 'One', enabled: true }], GITHUB_TOKEN: 'local-secret' });
+  const bpmRaw = JSON.stringify({ Plugins: [{ id: 'community-one', name: 'One', enabled: true }], GITHUB_TOKEN: 'local-secret', COMMAND_PROFILES: [{id:'raw-identity-regression',name:'Raw',pluginStates:{'secret-placeholders':false,'token-counter':true}}] });
   const companionRaw = JSON.stringify({ profiles: { desktop: { 'community-one': true } } });
   const communityRaw = JSON.stringify(['community-one']);
   const coreRaw = JSON.stringify({ 'file-explorer': true });
@@ -209,9 +209,53 @@ test('legacy migration stores exact local backups before schemaVersion 1 write a
     assert.ok(host.writes.indexOf(backupPath) < host.writes.indexOf(statePath), 'backup write precedes integrated State write');
     assert.equal(host.files.get(statePath).includes('local-secret'), false);
     assert.equal(plugin.runtime.state.legacyBpm.GITHUB_TOKEN, '[redacted]');
+    assert.equal(plugin.runtime.state.legacyBpm.COMMAND_PROFILES[0].pluginStates['secret-placeholders'], false);
+    assert.equal(plugin.runtime.state.legacyBpm.COMMAND_PROFILES[0].pluginStates['token-counter'], true);
     assert.equal(plugin.runtime.state.schemaVersion, 1);
     assert.equal(host.app.plugins.plugins['better-plugins-manager']._loaded, true);
   } finally { plugin.onunload(); await cleanup(); }
+});
+
+test('credential redaction preserves plugin identities through load save refresh and list', async () => {
+  globalThis.__notices = []; storage.clear();
+  const ids = ['enso-secret-placeholders', 'token-counter', 'password-tools'];
+  const records = Object.fromEntries(ids.map(id => ['community:' + id, {
+    ref: { kind: 'community', id }, name: id, version: '1.0.0', tags: ['ipad'], group: 'tools',
+    desired: false, metadata: { actualSecret: 'metadata-secret', preserved: 'ok' },
+  }]));
+  const members = Object.fromEntries(ids.map(id => ['community:' + id, false]));
+  const host = makeHost({ layoutReady: true, initial: makeState({
+    records, fixtureProfiles: [{id:'credential-name-regression',name:'Fixture',members}],
+    githubSources: Object.fromEntries(ids.map(id => [id, {repo:'owner/'+id,trackPrereleases:true}])),
+    debug: {active:false,originals:members,owned:{},snapshot:{plugins:records}},
+    profileBackups: [{profileId:'credential-name-regression',members,backups:{tablet:{pluginStates:Object.fromEntries(ids.map(id=>[id,false]))}}}],
+    legacyBpm: {GITHUB_TOKEN:'legacy-secret',nested:{authorization:'auth-secret',normal:'ok'},COMMAND_PROFILES:[{id:'test',pluginStates:Object.fromEntries(ids.map(id=>[id,false]))}]},
+  })});
+  for (const id of ids) host.app.plugins.manifests[id] = {id,name:id,version:'1.0.0',isDesktopOnly:false};
+  const {plugin,cleanup} = await start(host);
+  try {
+    await plugin.runtime.enqueue('credential-name-regression-save',async tx => {await tx.refresh();await tx.save();});
+    await plugin.runtime.refresh();
+    const persisted = JSON.parse(host.files.get('.obsidian/plugins/aigility-plugin-manager/data.json'));
+    for(const id of ids) {
+      const k='community:'+id;
+      assert.deepEqual(persisted.records[k].ref,{kind:'community',id});
+      assert.equal(persisted.fixtureProfiles[0].members[k],false);
+      assert.equal(persisted.githubSources[id].repo,'owner/'+id);
+      assert.equal(persisted.debug.originals[k],false);
+      assert.deepEqual(persisted.debug.snapshot.plugins[k].ref,{kind:'community',id});
+      assert.equal(persisted.profileBackups[0].members[k],false);
+      assert.equal(persisted.profileBackups[0].backups.tablet.pluginStates[id],false);
+      assert.equal(persisted.legacyBpm.COMMAND_PROFILES[0].pluginStates[id],false);
+      assert.equal(plugin.runtime.list().some(item=>item.ref.id===id),true);
+      assert.equal(persisted.records[k].metadata.actualSecret,'[redacted]');
+    }
+    assert.equal(persisted.legacyBpm.GITHUB_TOKEN,'[redacted]');
+    assert.equal(persisted.legacyBpm.nested.authorization,'[redacted]');
+    assert.equal(persisted.legacyBpm.nested.normal,'ok');
+    assert.equal(JSON.stringify(persisted).includes('metadata-secret'),false);
+    assert.equal(JSON.stringify(persisted).includes('legacy-secret'),false);
+  } finally {plugin.onunload();await cleanup();storage.clear();}
 });
 
 test('early load starts unrestricted and runs layout-ready automation; late load skips it', async () => {

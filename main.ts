@@ -7,18 +7,28 @@ import { installStartupGuards } from './src/integrated/guards';
 import { migrateLegacy } from './src/integrated/migration';
 import { collectObserved } from './src/integrated/adapter';
 import { ArchiveManager } from './src/integrated/archive';
+import { parseKey } from './src/integrated/types';
 import type { State } from './src/integrated/types';
 
 const LEGACY_BPM_ID = 'better-plugins-manager';
 const LEGACY_COMPANION_ID = 'better-plugins-manager-companion';
 const SECRET_KEY = /token|secret|password|api[-_]?key|credential|authorization/i;
 
-function redactDeep(value: unknown): unknown {
-    if (Array.isArray(value)) return value.map(redactDeep);
+function redactDeep(value: unknown, identityKeyMode: 'canonical' | 'plain' | null = null): unknown {
+    if (Array.isArray(value)) return value.map((item) => redactDeep(item, identityKeyMode));
     if (!value || typeof value !== 'object') return value;
     const result: Record<string, unknown> = {};
-    for (const [key, item] of Object.entries(value as Record<string, unknown>)) result[key] = SECRET_KEY.test(key) ? '[redacted]' : redactDeep(item);
+    for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+        const preserveKey = parseKey(key) !== null || identityKeyMode === 'plain';
+        result[key] = SECRET_KEY.test(key) && !preserveKey ? '[redacted]' : redactDeep(item, childIdentityKeyMode(key));
+    }
     return result;
+}
+
+function childIdentityKeyMode(key: string): 'canonical' | 'plain' | null {
+    if (key === 'records' || key === 'members') return 'canonical';
+    if (key === 'githubSources' || key === 'pluginStates') return 'plain';
+    return null;
 }
 
 function attachRedactingSerialization(state: State): State {
