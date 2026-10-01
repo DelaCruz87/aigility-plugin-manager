@@ -1,0 +1,73 @@
+{
+  "at": "2026-10-01T21:00:58.130Z",
+  "windowId": 1,
+  "job": {
+    "id": "aigility-manager-ui:PM-MAC-UI-013-R3",
+    "status": "failed",
+    "phase": "cleanup",
+    "startedAt": "2026-10-01T20:59:56.252Z",
+    "checks": [
+      {
+        "label": "Correct Sandbox identity",
+        "pass": true
+      },
+      {
+        "label": "Native loaded0.1.3",
+        "pass": true
+      },
+      {
+        "label": "Settings initially closed",
+        "pass": false
+      },
+      {
+        "label": "Foreign plugins unchanged",
+        "pass": true
+      },
+      {
+        "label": "Manager data unchanged",
+        "pass": true
+      },
+      {
+        "label": "Local recovery/profile unchanged",
+        "pass": true
+      },
+      {
+        "label": "Workspace and leaf unchanged",
+        "pass": true
+      }
+    ],
+    "restoration": {
+      "ownModal": true,
+      "filters": true,
+      "settings": false,
+      "errors": [
+        {
+          "label": "settings",
+          "error": "Error: CAS mismatch on Settings tab/doc/modalEl"
+        }
+      ],
+      "focus": true,
+      "foreign": true,
+      "data": true,
+      "local": true,
+      "workspace": true
+    },
+    "focusBefore": {
+      "electron": null,
+      "os": "com.apple.loginwindow"
+    },
+    "error": "Error: Settings initially closed",
+    "focusAfter": {
+      "electron": null,
+      "os": "com.apple.loginwindow"
+    },
+    "finishedAt": "2026-10-01T20:59:56.731Z"
+  },
+  "settings": {
+    "connected": true,
+    "tab": "voiceink-companion"
+  },
+  "loaded": true,
+  "version": "0.1.3",
+  "pending": []
+}
