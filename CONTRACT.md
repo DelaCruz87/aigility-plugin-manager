@@ -23,3 +23,9 @@ Use Node test runner tests/*.test.mjs and esbuild bundling with tests/obsidian-s
 ## Ownership and deployment
 
 Every worker is not alone; never revert other changes or git stage/commit/push. Worker only writes its declared files and scratch notes. No ENSO/Sandbox config modification until dedicated runtime testing task. Existing manager/plugin files read-only as material. Work directly primary nested repo. Report actual implementation/tests and unsupported host assumptions candidly. Avoid no-op controls and mock success. Notes prose Spanish, headings/file names English, ASCII hyphen, vault wikilinks absolute no aliases, never edit index.md/AGENTS/REMEMBER.
+
+## Host API verification
+
+2026-10-01, Obsidian Sandbox CLI, host1.14.3: app.internalPlugins.enable() takes NO ID and rehydrates ALL core config. NEVER call internalPlugins.enable(id,boolean) for a toggle. Use app.internalPlugins.plugins[id].enable(false) or .disable(false), then app.internalPlugins.saveConfig(); read .enabled and .instance. Wrapper enable(false) triggers load and requestSaveConfig without user side effects. disable(false) skips detachLeavesOfType. Core host config object booleans, do not replace with enabled array. This supersedes tentative API phrasing above.
+
+Legacy BPM GITHUB_TOKEN is empty at current observation, but migration must still recursively redact credential-shaped keys if future nonempty; full recovery backup stays local in installed manager directory and never committed. app.secretStorage is the token owner for new data.
