@@ -1,0 +1,516 @@
+{
+  "at": "2026-10-01T18:35:19.672870+00:00",
+  "source": "Sandbox/.obsidian/plugins/aigility-plugin-manager",
+  "backups": {
+    "data.json": {
+      "sha256": "19f80761dbbd1f78f6a6975d3f4b95367bdfd0f7640c1d04c8e7f3a53485f09b",
+      "bytes": 438218,
+      "mtimeNs": 1790874544973069692
+    },
+    "manifest.json": {
+      "sha256": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa",
+      "bytes": 236,
+      "mtimeNs": 1790859571390023133
+    },
+    "main.js": {
+      "sha256": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada",
+      "bytes": 1055571,
+      "mtimeNs": 1790859571379262246
+    },
+    "styles.css": {
+      "sha256": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e",
+      "bytes": 9410,
+      "mtimeNs": 1790859571396506540
+    }
+  },
+  "invalidRecords": [
+    "community:enso-secret-placeholders"
+  ],
+  "identityCollisionPaths": [
+    {
+      "path": [
+        "records",
+        "community:enso-secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        13,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        14,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        15,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        16,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        17,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        18,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        19,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        20,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        21,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        22,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        23,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        24,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        25,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        26,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        27,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        28,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        29,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        30,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        31,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        32,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "fixtureProfiles",
+        33,
+        "members",
+        "community:secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "profileBackups",
+        0,
+        "backups",
+        "desktop",
+        "pluginStates",
+        "enso-secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "profileBackups",
+        0,
+        "backups",
+        "tablet",
+        "pluginStates",
+        "enso-secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        13,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        14,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        15,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        16,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        17,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        18,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        19,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        20,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        21,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        22,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        23,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        24,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        25,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        26,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        27,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        28,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        29,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        30,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        31,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        32,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_PROFILES",
+        33,
+        "pluginStates",
+        "secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    },
+    {
+      "path": [
+        "legacyBpm",
+        "COMMAND_LAST_STATE",
+        "pluginStates",
+        "enso-secret-placeholders"
+      ],
+      "type": "str",
+      "redacted": true
+    }
+  ],
+  "installedVersion": "0.1.0",
+  "backupPath": "evidence/local-backups/pre-redaction-20261001T183519Z"
+}

@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-01T18:45:05.497Z",
+  "loaded": true,
+  "build": "aigility-plugin-manager/0.1.0",
+  "recordType": "string",
+  "recordRef": null,
+  "fixturesWithInvalidMembers": [
+    "lab-base",
+    "lab-pencil",
+    "lab-canvas",
+    "lab-spatial",
+    "lab-tasks",
+    "lab-agents-llm",
+    "lab-agent-consoles",
+    "lab-apis-mcp",
+    "lab-knowledge-automation",
+    "lab-off",
+    "lab-work-systems",
+    "lab-aigility-app",
+    "lab-documents",
+    "tsk-inline",
+    "tsk-tasknotes",
+    "tsk-operon",
+    "tsk-gtd",
+    "tsk-boards",
+    "tsk-bases",
+    "tsk-life",
+    "tsk-capture"
+  ],
+  "local": {
+    "deviceProfileId": null,
+    "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+    "appliedProfileId": null,
+    "operationPending": null
+  },
+  "target": {
+    "native": true,
+    "loaded": true
+  },
+  "debug": false
+}
