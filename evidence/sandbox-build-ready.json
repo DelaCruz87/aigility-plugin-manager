@@ -1,17 +1,18 @@
 {
-  "status": "ready-offline-revised",
-  "scope": "Sandbox manager-only build update; no fixture creation in this unit",
+  "status": "ready-offline-v012",
+  "version": "0.1.2",
+  "at": "2026-10-01T18:50:00.692155+00:00",
+  "scope": "Sandbox only: selective recovery of46 proven identity fields then manager-only build update; no fixture creation/archive move/UI/focus",
   "vault": "Sandbox",
   "basePath": "/Users/eme/Obsidian/Sandbox",
   "appId": "d137282e82167d84",
-  "version": "0.1.1",
   "files": {
     "main.js": {
-      "source": "191f8c24329698fd99756e891383930f0dc11f6e6b47ea2a31b00e6a03e49337",
+      "source": "d3c7878c44a5e137d26726ca1cdeffe7c8ad92359a93d46f48fb8030d1cb448c",
       "installed": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada"
     },
     "manifest.json": {
-      "source": "071dad04f950c83e28a4867b94be41eef0d32d26f74f917b277584ef616a2db1",
+      "source": "0d271ec8231a4e08c5175d2de387e2c61d6d4974c3b71e2a41487e72ccf707ab",
       "installed": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa"
     },
     "styles.css": {
@@ -19,20 +20,24 @@
       "installed": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
     }
   },
+  "sourceCommit": "b7f6472",
+  "checkSha256": "6b8e40934b040c2578e2b9faf7fd381deed00d1cce3f8950859666c0cf14d975",
+  "recoveryCheckSha256": "67c50c97db945d4d225c8a458bc283960d11eb8897142e5c8cf4f8e4c601eecb",
   "command": "AIGILITY_SANDBOX_RUN_AUTHORIZED=1 node checks/sandbox-build.check.mjs",
   "durationSeconds": 120,
-  "backup": "evidence/local-backups/sandbox-build-<timestamp>",
-  "touches": "only manager artifacts and temporary protections in manager state, reload only manager",
+  "cleanupReserveSeconds": 35,
+  "backup": "Ignored local-backups; exact4 manager files before mutation, source original legacy files stay untouched",
+  "repair": {
+    "count": 46,
+    "source": "Byteexact original migration backups + target manifest with timestamp before migration + explicit original native activation + live native/loaded true",
+    "expectedStateHash": "19f80761dbbd1f78f6a6975d3f4b95367bdfd0f7640c1d04c8e7f3a53485f09b",
+    "nonRepairStateVerified": "Canonical full state content excluding temporary protected list, actual native/community/core sets unchanged",
+    "rollback": "Reverse only matching own repair postimages before loading old module; preserve manual conflicting values, no whole-state restore"
+  },
+  "asyncGuarantee": "Unique pending token per phase; host deadline before each disable/loadManifests/enable including rollback; poll current token only after timeout, never another toggle while pending",
   "foreignEnablementPreserved": true,
-  "settingsOrFocusChanges": false,
   "syncChanges": false,
   "ipadChanges": false,
-  "rollback": "restore only matching written artifacts and reload old manager if own operation settled; never repeat pending enable",
-  "sourceCommit": "6fd3c7e",
-  "checkSha256": "3e8f59f29e8f0ae650660033d3e642772b47f673ceb8ef31daefb802a5abbe57",
-  "cleanupReserveSeconds": 35,
-  "managerStateWrites": "temporary protection additions plus explicit pause marker; finally removes only own additions and restores only matching local postimage, preserving concurrent edits",
-  "profilePreservation": "canonical hashes of complete deviceProfiles and fixtureProfiles before/after/final, not count-only",
-  "checks": "9 deployment helper/job tests and 13 community guard tests pass; no native executed",
-  "asyncGuarantee": "read pending global token before start; protection/reload/cleanup phases persisted, inspect same operation after timeout; no second toggle before settled"
+  "tests": "287PASS full suite including12deploy+6recovery helpers; compile0.1.2exit0; no native write or deploy this unit yet",
+  "helperCommit": "cc33dc1"
 }
