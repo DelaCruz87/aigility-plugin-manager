@@ -50,3 +50,23 @@ test('real runtime and DebugManager load a deferred candidate without native aut
  assert.equal(f.api.enabledPlugins.has('beta'),false);
  }finally{f.debug.dispose();f.runtime.dispose();}
 });
+test('real core wrapper diagnostics account for native persistence and restore the original off state', {timeout:3000}, async()=>{
+ const f=fixture();
+ const wrapper={enabled:false,instance:{_loaded:false,manifest:{id:'audio-recorder',name:'Audio recorder'}},
+  async enable(user){assert.equal(user,false);this.enabled=true;this.instance._loaded=true;},
+  async disable(user){assert.equal(user,false);this.enabled=false;this.instance._loaded=false;}};
+ f.app.internalPlugins.plugins['audio-recorder']=wrapper;
+ f.app.internalPlugins.getPluginById=id=>f.app.internalPlugins.plugins[id];
+ f.app.internalPlugins.saveConfig=async()=>{};
+ f.state.records['core:audio-recorder']={ref:{kind:'core',id:'audio-recorder'},name:'Audio recorder',version:'',tags:[],group:'',desired:false,metadata:{}};
+ try {
+  await f.runtime.start(false);
+  await f.debug.start([{kind:'core',id:'audio-recorder'}]);
+  await f.debug.testSingle({kind:'core',id:'audio-recorder'});
+  assert.equal(wrapper.instance._loaded,true,'the real wrapper must load the selected core candidate');
+  assert.equal(wrapper.enabled,true,'core wrapper enable inherently changes native state');
+  await f.debug.finish();
+  assert.equal(wrapper.instance._loaded,false,'an originally off core candidate returns off');
+  assert.equal(wrapper.enabled,false,'the session restores the core native state it changed');
+ }finally{f.debug.dispose();f.runtime.dispose();}
+});

@@ -20,6 +20,18 @@ Export types in src/integrated/types.ts. PluginRef {kind:'community'|'core',id:s
 
 Use Node test runner tests/*.test.mjs and esbuild bundling with tests/obsidian-stub.mjs alias. No production vault mutations. All services use injectable/fake host IO or obsidian requestUrl stub, so tests execute failure branches, timer cancellation, host readback and conflict detection. Include at least723 installed IDs for catalog memory test. Build typechecks only integrated graph plus root main entry; preserve old source directory attributed but not active.
 
+## Transaction revision
+
+2026-10-01, Codex review: enqueue delivers a direct transaction with save(), refresh(), setEnabled(ref, enabled, options) and writeEffectiveState(). Callers mutate freshly refreshed entities by stable ID and use the transaction methods inside the same queue slot. Public save()/enqueue() must never be nested in that callback. This replaces the early tentative UI-edit-then-save wording above. A file changed after refresh must fail the preimage check, preserving the external change.
+
+Deferred editing requires a transaction-level reconcileDeferred(ref) operation: cancel scheduled loads, exclude the native ID, retain desired policy and membership, and keep the instance off while recovery is paused. No core deferred implementation may claim a native exclusion that the host cannot represent.
+
+Diagnostics temporarily use nonpersistent community loading while preserving desired/native policy. Core wrapper enable/disable changes the native flag as part of its host operation. Core experiments must record that real postimage and restore their own changes through the wrapper, rather than asserting that the native flag stayed unchanged.
+
+Interrupted startup must retain the loaded manager and its recovery controls. A pending-operation marker prevents startup baseline writes and automatic application. Only an explicit resume re-reads the current disk and acknowledges the abandoned operation; onload never clears it.
+
+Sandbox acceptance is a separate host gate. Staging, a loaded instance or enumerable runtime fields alone do not prove a feature. Receipts must contain executed profile, deferred, diagnosis and restoration assertions. Restricted-mode/reload tests wait for the shared Sandbox window. Restoration compares recorded postimages and never adopts the current file hash as its own expected postimage.
+
 ## Ownership and deployment
 
 Every worker is not alone; never revert other changes or git stage/commit/push. Worker only writes its declared files and scratch notes. No ENSO/Sandbox config modification until dedicated runtime testing task. Existing manager/plugin files read-only as material. Work directly primary nested repo. Report actual implementation/tests and unsupported host assumptions candidly. Avoid no-op controls and mock success. Notes prose Spanish, headings/file names English, ASCII hyphen, vault wikilinks absolute no aliases, never edit index.md/AGENTS/REMEMBER.

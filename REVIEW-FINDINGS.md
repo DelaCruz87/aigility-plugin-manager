@@ -1,5 +1,12 @@
 # Review Findings
 
+## Additional host gates - 2026-10-01
+
+- Core diagnostics: the independent integrated-contract check models wrapper.enable(false) updating both enabled and instance._loaded. The current runtime forwards loadNow=true and fails native readback. Keep this check unchanged; the runtime must use the real persisted core path and the session must restore its postimage.
+- Deferred policy editing: UI needs a real direct transaction reconcileDeferred(ref). The native exclusion must occur even for a newly created policy and the loaded instance must remain off during recovery. UI writes must call this at a point consistent with the runtime contract.
+- Interrupted main startup: unconditional baseline save previously rejected a pending marker and unloaded the only recovery UI. The eight integration tests now pass with baseline establishment skipping the pending write and preserving explicit resume.
+- Sandbox harness: the first implementation staged the manager without functional acceptance and restored files after replacing its expected hash with the live hash. Both are rejected. The replacement must execute real host cases and preserve foreign changes through recorded postimage checks.
+
 2026-10-01, Codex. Active review while modules are being implemented. Findings below are reproduced against actual host contracts; fix before any deployment. They are not evidence of a finished module.
 
 ## Runtime adapter - confirmed by executed tests
