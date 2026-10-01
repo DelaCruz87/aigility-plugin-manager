@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-10-01T18:32:00+02:00",
+  "author": "Codex",
+  "sessionId": "01a0f6b6-f3c0-7882-9361-4badf10965d1",
+  "sourceCommit": "39344da",
+  "tests": {
+    "command": "npm test",
+    "passed": 263,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "exitCode": 0
+  },
+  "scope": "source tests and simulated adapters; no native archive operation",
+  "nativeArchiveValidated": false,
+  "ipadValidated": false,
+  "archiveBuildDeployed": false,
+  "exclusiveReady": false,
+  "sourceSha256": {
+    "main.ts": "04b74f8871294bda67021a17afc1c62e3cc75e7f2cdbabf56c8450797c4af6c8",
+    "src/integrated/adapter.ts": "98dca3df7673900650110232ee96cf0ba2f24544f115c6775e74b5fe0e804d29",
+    "src/integrated/github.ts": "1aed2c3dffd2191aebd6f737a2809678719daf5958f1da1fb04ca36a5032ec4e",
+    "src/integrated/runtime.ts": "5a523d2c1100a3ecc1a0aa93591e2030941f734a63cff9475328a75f4d019a7a",
+    "src/integrated/types.ts": "36c8355ec9321b59e22e2b39bb5030a3ba185aae765eb054be63cd42bd4fe0b9",
+    "src/integrated/ui.ts": "e2d47266050581ed7c30d284ba3fd46ca68af3bcb42203764cb18de31ee73ea4",
+    "src/integrated/archive.ts": "428b513b2f626d8b40b4d5ce6da0c95d59af36e420ea0096fc30b9954e57a400",
+    "src/integrated/archive-ui.ts": "e4c529b890706238ad63bcc6d6ab0f08827c77314dd9b81149f1ec7121e9bbc9",
+    "tests/ui.test.mjs": "e45c53dde128b50aaaf42593c1347c80abc985fb6180b5254120bbb0c13288fc",
+    "tests/archive.test.mjs": "01e5aa8a71a2d1bbfb324f0be16ad15766a79bc0bd6b2a00b10776918cc3e7b5",
+    "tests/archive-ui.test.mjs": "793917c30d8d695a02e4671c224ed7bfbe6b4267b6cff6d012520aa3715ffab6",
+    "tests/archive-integration.test.mjs": "638d71569fd8c84acff1a12ae39fb599ba92ce8d5edfe7a6ec386151c67d700b",
+    "tests/archive-guards.test.mjs": "cb2693e0f22ef48fe471138132904613f15fd35836d2706def5464b13c9a27a2"
+  },
+  "compiledSha256": {
+    "main.js": "bf8dc29af504aa5d785efa6480ca90707515a04ff87fdca8f649e7eb16140cec",
+    "manifest.json": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  }
+}

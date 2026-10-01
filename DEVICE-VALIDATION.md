@@ -9,7 +9,7 @@ Date: 2026-10-01. Author: Codex. This is an execution ledger for the user-approv
 | macbook | macbook | Desktop | Created; Apply at start true | Initial Sandbox installation loaded on Mac; functional acceptance and next startup pending | Sandbox unset intentionally; ENSO migration pending |
 | zenbook | zenbook | Desktop | Created; Apply at start true | No accessible device session verified | Pending explicit assignment on that installation |
 | iphone | iphone | Mobile | Created; Apply at start true | No connected iPhone verified | Pending explicit assignment on that installation |
-| ipad | ipad | Tablet | Created; Apply at start true | Physical iPad connected; Obsidian closed and unlock pending in Filetree session; this manager not deployed there | Pending explicit assignment on that installation |
+| ipad | ipad | Tablet | Created; Apply at start true | Initial connection observed; later vault-integrity incident under supervision; no recovery or current vault state verified by this project; manager not deployed there | Pending explicit assignment on that installation |
 | s24 | s24 | Mobile | Created; Apply at start true | adb reported no connected Android devices | Pending explicit assignment on that installation |
 | lenovo tab | lenovo tab | Tablet | Created; Apply at start true | No connected tablet verified | Pending explicit assignment on that installation |
 | boox tab mini c | boox tab mini c | Tablet | Created; Apply at start true | No connected tablet verified | Pending explicit assignment on that installation |
@@ -30,6 +30,10 @@ Date: 2026-10-01. Author: Codex. This is an execution ledger for the user-approv
 
 ## Shared Sandbox scope
 
+2026-10-01 18:15 Madrid, Codex: corrección humana transmitida por el supervisor de integridad. Este proyecto no realiza copy/write/rename/move/delete directamente en el iPad, incluidos vaults, .obsidian y fixtures, sin petición explícita de Eme para esa operación. El estado de Obsidian Sync no convierte una escritura directa en autorización. Los cambios ordinarios llegan por Sync. Una prueba de la opción de archivo en iPad requiere una operación explícitamente solicitada allí y evidencia física; no usar AFC o devicectl para preparar carpetas por inferencia. Este proyecto no ha escrito archivos del iPad.
+
 All human-review documents, source repositories, research and receipts live in the ENSO project. Sandbox contains only installed runtime files, technical migration backups and disposable agent test fixtures. This project has not created Tasks/ or review labs in Sandbox. If note fixtures become necessary, create them under Agent Testing/AIgility Plugin Manager/ with owner and README instructions, then move any review material into the ENSO project through Obsidian.
 
 Global restricted mode, core toggles and vault reload require a fresh coordinated window from the active Sandbox owners. The manager-only build update and three own fixture plugins preserve every foreign plugin's native and loaded state. Temporary all-plugin protections used in Sandbox must never be copied into production ENSO.
+
+Snapshot 2026-10-01 18:32 Madrid: la fuente con archivo de descargados compila y la suite integrada aprueba263 pruebas; no se ha actualizado el build inicial instalado de Sandbox con esa función. La evaluación sincrónica del host volvió a responder, pero la lectura de data.json por su adapter no devolvió una respuesta verificable. La prueba nativa debe acreditar primero esa lectura antes de modificar archivos. Ante la incidencia móvil coordinada se mantienen en pausa los despliegues globales y cualquier intervención directa en iPad.

@@ -10,6 +10,8 @@ Se descarta añadir un punto a cada carpeta activa: el loader no contiene un fil
 
 La [documentación de Sync](https://obsidian.md/help/sync/settings) distingue la lista activa y la instalación/configuración de community plugins. El filtro local inspeccionado excluye segmentos con punto, incluso dentro de la carpeta de configuración. El traslado de archivos originales puede transmitir borrados cuando Installed community plugin list está activada. Para mantener el archivo específico de un equipo, desactivar esa opción en Sync de ese equipo; el gestor no cambia Sync automáticamente.
 
+Esa opción también afecta data.json del propio gestor. Al desactivarla en un equipo, la sincronización automática de las definiciones por ese archivo deja de estar disponible allí. Los backups/exportaciones de perfiles permiten su transferencia explícita; no se presenta el archivo local como un protocolo nuevo de sincronización de perfiles.
+
 ## Module contract
 
 Exportar ArchiveManager desde src/integrated/archive.ts. Constructor(runtime, app, plugin). API:
@@ -21,8 +23,10 @@ Exportar ArchiveManager desde src/integrated/archive.ts. Constructor(runtime, ap
 - archive(id): Promise<void> y restore(id): Promise<void> usan runtime.enqueue, tx.refresh/save/writeEffectiveState. La restauración manual deja desired/native/loaded false.
 - restoreInTransaction(id): Promise<void> restaura los archivos y refresca manifests sin entrar otra vez en la cola ni cambiar desired. Sólo para aplicación explícita de perfil, ya protegida por operationPending del runtime.
 - fingerprint(): string permite incluir el índice en el contrato de la vista previa.
+- recover(): Promise<void> recupera sólo una operación pendiente explícitamente: verifica carpeta activa y archivada, manifest e identidad; conserva ambas si hay conflicto; finaliza el índice según la ubicación observada, deja el plugin apagado y mantiene la pausa del runtime hasta su reanudación explícita. No hace rename automático ni sobrescribe una carpeta nueva.
+- needsRecovery(): boolean consulta el journal ya leído en memoria, sin iniciar lecturas de archivos desde el render de la UI.
 
-ArchiveEntry: id, name, version, minAppVersion?, isDesktopOnly?, archivedAt. Índice {schemaVersion:1, installationId:app.appId, entries:ArchiveEntry[], pending?:{id,operation,phase}} en plugins/.aigility-archive/index.json. No manifiesto en el contenedor. Nunca guardar tokens ni copiar configuración al índice. Usar vault.configDir efectivo y rechazar IDs con slash, backslash, punto inicial, segmentos .. o identidad manifest distinta.
+ArchiveEntry: id, name, version, minAppVersion?, isDesktopOnly?, archivedAt. Índice {schemaVersion:1, installationId:app.appId, entries:ArchiveEntry[], pending?:{id,operation,phase,entry:ArchiveEntry}} en plugins/.aigility-archive/index.json. No manifiesto en el contenedor. Nunca guardar tokens ni copiar configuración al índice. Usar vault.configDir efectivo y rechazar IDs con slash, backslash, punto inicial, segmentos .. o identidad manifest distinta.
 
 ## Mutation contract
 
@@ -35,8 +39,12 @@ La integración muestra archived=true e installed=false en el informe. El perfil
 ## Validation checklist
 
 - [x] Fuente del loader y Sync inspeccionada; documentación oficial contrastada.
-- [ ] Backend: carpeta completa, apagado/protección, ID, conflictos, journal, Sync, índice externo y catálogo723.
-- [ ] UI: Descargados, búsqueda, páginas50, acciones simples y errores visibles.
-- [ ] Integración: perfil preview sin mutación, restore y activación en cola; GitHub sin sobrescritura.
-- [ ] Sandbox: fixture propia, hashes de configuración y archivos adicionales, manifiestos antes/después, restauración apagada.
-- [ ] iPad: medición física pendiente del desbloqueo y acceso ya solicitado por la sesión propietaria.
+- [x] Backend: 12 pruebas independientes de carpeta completa, apagado/protección, ID, conflictos, journal, Sync, índice externo y runtime real; catálogo723 verificado también en UI.
+- [x] UI: 7 pruebas de Descargados, búsqueda/filtros, páginas50, catálogo723, acciones, refresco y recuperación sin reanudar automatismos.
+- [x] Integración: runtime real con perfiles completos/parciales, compatibilidad, diferidos y protecciones; 2 pruebas del GitHubManager real verifican instalación y rollback con índice desactualizado.
+- [ ] Sandbox: pendiente fixture propia con hashes de configuración y archivos adicionales, manifiestos antes/después y restauración apagada. El build nuevo no está desplegado; la lectura del adapter del host no devolvió respuesta verificable y hay una ventana compartida en curso.
+- [ ] iPad: medición física pendiente. Incidencia móvil bajo supervisión; no efectuar operaciones directas sin petición explícita de Eme para esa operación. Este proyecto no ha escrito archivos del iPad.
+
+## Source checkpoint
+
+2026-10-01 18:32 Madrid, Codex: npm test aprueba263 pruebas, sin fallos ni skips; npm run build termina exit0. Código de archivo publicado en39344da. evidence/archive-validation.json identifica los archivos comprobados. Son pruebas de fuente con adapters de prueba; ninguna carpeta real ha sido archivada o restaurada. El Sandbox conserva el build inicial anterior y ENSO conserva los dos gestores. No declarar listo para uso exclusivo.

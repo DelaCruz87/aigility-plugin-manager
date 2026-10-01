@@ -61,8 +61,8 @@ Snapshot de campos tocados; operationPending antes de mutaciones; APIs verificad
 ### 5.1 Deployment
 Spec/contrato; módulos; unit/build; Sandbox real; migración ENSO backup/readback; restart; matriz física según acceso.
 
-### 5.2 Acceptance (10)
-- [x] AC-1 - npm test/build return 0; evidence/tests.txt/build.txt. Snapshot 2026-10-01 15:48 Madrid: 228 pruebas aprobadas y build exit0. Revalidar después de cambios posteriores.
+### 5.2 Acceptance (11)
+- [x] AC-1 - npm test/build return 0; evidence/tests.txt/build.txt. Snapshot 2026-10-01 18:32 Madrid: 263 pruebas aprobadas, sin skips, y build exit0; incluye archivo de descargados. Revalidar después de cambios posteriores. La compilación no acredita aceptación nativa.
 - [ ] AC-2 - Migración tags/templates/core/deferred/fixtures; tests y receipt.
 - [ ] AC-3 - UI/sidebar en Sandbox; evidence/sandbox.json y screenshot.
 - [ ] AC-4 - Full/core/protected/incompatible/fixture/undo; tests + Sandbox.
@@ -84,7 +84,7 @@ Spec/contrato; módulos; unit/build; Sandbox real; migración ENSO backup/readba
 Adapters falsos DOM-free; CLI con nombre de vault comprobado; screenshots; comparación before/after. No pruebas destructivas en ENSO.
 
 ### 5.5 Checkpoint
-2026-10-01 15:48 Madrid, Codex: módulos y comandos integrados implementados; 228 pruebas/build aprobados. Sandbox instalado/habilitado/cargado, migración7perfiles/42fixtures preservada. La aceptación nativa funcional todavía está en ejecución; no sustituir gestores ENSO hasta esa aceptación. Research de septiembre es histórico, no configuración actual.
+2026-10-01 18:32 Madrid, Codex: módulos, comandos y archivo de descargados implementados; 263 pruebas/build aprobados. El Sandbox conserva instalado/habilitado/cargado el build inicial, anterior a esta ampliación; migración7perfiles/42fixtures preservada. Aceptación nativa funcional y siguiente arranque pendientes. No sustituir gestores ENSO hasta esa aceptación. Research de septiembre es histórico, no configuración actual.
 
 ## 6. Delivery & Acceptance Runbook
 Verificar build marker y binding. Probar filtros/perfiles/core/deferred/recovery/debug/beta rollback. Matriz macbook, zenbook, iphone, ipad, s24, lenovo tab, boox tab mini c: distinguir pruebas físicas, emuladas y pendientes por acceso. Referencias de vault en documentos usan wikilinks sin alias; hidden/external files usan links navegables. No editar AGENTS/REMEMBER ni index.md.
@@ -93,9 +93,9 @@ Verificar build marker y binding. Probar filtros/perfiles/core/deferred/recovery
 
 2026-10-01, Codex. Ampliación solicitada directamente por Eme en chat: conservar plugins descargados y su configuración sin mantener todos sus manifests en el catálogo nativo.
 
-- [ ] FR-13 - Requirement.open - Archivar/restaurar carpetas community completas mediante vault.adapter.rename, con índice local, identidad comprobada y sin reinstalación. Sólo archivar plugins apagados en estado deseado, nativo, real y programado; conservar tags, grupos, versiones, fuentes y pins. Excluir core, gestor y protecciones.
-- [ ] FR-14 - Requirement.open - Opciones incluye Descargados, búsqueda y páginas de 50; distingue disponible en archivo de instalado en catálogo. Restaurar manualmente deja el plugin apagado; aplicar un perfil restaura sus miembros archivados compatibles dentro de la misma cola antes de activarlos.
-- [ ] FR-15 - Requirement.open - Comprobar Sync antes de mover: la exclusión del archivo oculto no impide que el borrado de la ubicación activa se propague. Con Installed community plugin list sincronizada, exigir su desactivación local para archivo por equipo. Estado de Sync desconocido requiere diagnóstico, nunca una garantía inventada.
+- [x] FR-13 - Requirement.implemented - Archivar/restaurar carpetas community completas mediante vault.adapter.rename, con índice local, identidad comprobada y sin reinstalación. Sólo archivar plugins apagados en estado deseado, nativo, real y programado; conservar tags, grupos, versiones, fuentes y pins. Excluir core, gestor y protecciones.
+- [x] FR-14 - Requirement.implemented - Opciones incluye Descargados, búsqueda y páginas de 50; distingue disponible en archivo de instalado en catálogo. Restaurar manualmente deja el plugin apagado; aplicar un perfil restaura sus miembros archivados compatibles dentro de la misma cola antes de activarlos.
+- [x] FR-15 - Requirement.implemented - Comprobar Sync antes de mover: la exclusión del archivo oculto no impide que el borrado de la ubicación activa se propague. Con Installed community plugin list sincronizada, exigir su desactivación local para archivo por equipo. Estado de Sync desconocido requiere diagnóstico, nunca una garantía inventada.
 - [ ] AC-11 - Archivar reduce manifests de carpetas directamente dentro de plugins; restaurar conserva exactamente main/manifest/styles/data y archivos adicionales. Pruebas de conflictos, operaciones interrumpidas, perfil, betas, Sync y catálogo sintético >=723; prueba nativa sólo con fixtures propios.
 
-Plan incremental: contrato y fuente del host; backend y UI por Ringer; integración con perfiles/betas; tests/build; prueba reversible en Sandbox con archivos propios; medir iPad cuando su acceso físico esté disponible. No archivar automáticamente el catálogo real durante el desarrollo.
+Contrato, fuente del host, backend/UI por Ringer, integración y tests/build completados en fuente. Pendientes prueba reversible en Sandbox con archivos propios y medición física iPad bajo las restricciones de DEVICE-VALIDATION.md. AC-11 permanece abierto hasta observar el traslado real y su restauración. No archivar automáticamente el catálogo real durante el desarrollo.
