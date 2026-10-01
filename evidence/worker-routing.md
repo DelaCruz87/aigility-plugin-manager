@@ -86,3 +86,9 @@ El primer backend compilable falló checks independientes de Sync, protección, 
 ## Requested archive path - 2026-10-01 19:06 Madrid
 
 Ringerarchive-path-v011 GLM5.3Flash PASS1/177.6s, ocho archivos exactamente scoped. Ruta _archive ymetadata0.1.1 comprobados por checker;263tests/build0. El warning de generate_session_title no impidió entrega. Ringeroutput4440tokens; modelUsageinput59244/output4889/cache354176/costUSD0.595533/costBasisunknown son métricas declaradas, no factura. Sin pruebas nativas ni operaciones Sync/iPad.
+
+## Deploy check review - 2026-10-01 20:00 Madrid
+
+Native-smokeLuna p84723 compilation6PASS pero revisión REJECTEDporAPIsinventadas/cleanupnocorrecto; dos artifactsuntrackedpropiosretirados,nunca--run. GLMFlashcommunity-preflight183s ybuild-check-guards240.5s timeoutsinentrega. Luna p2304nofilesalusarRinger scratchCWDrelativo;configlocalcorrige -C source. ÚltimoLuna p10587TIMEOUT90.6s peroentregóguardas;root13helperchecksaprueban despuésde corregirliteralCASstring/object.
+
+Como lane de revisión/checks, Codex reescribe artifactdeverificaciónmanager-only con finallyselectivo, fullprofilehashes ydeadline120/reserve35;9testspuros/jobwrapperPASS. Suitefull277PASS/sourcebundle191f8c...49337 sin cambiosproducto desde6fd3c7e. No workersnativos niArchiveroundtrip nativo. READYrevisado d91394e,pendienteSTARTsupervisor. Codexquota compartida96%weeklyexpues­ta;sin nuevasinferenciasCodexlargas. No importecredit/invoiceinferido.

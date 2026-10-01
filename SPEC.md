@@ -62,7 +62,7 @@ Snapshot de campos tocados; operationPending antes de mutaciones; APIs verificad
 Spec/contrato; módulos; unit/build; Sandbox real; migración ENSO backup/readback; restart; matriz física según acceso.
 
 ### 5.2 Acceptance (11)
-- [x] AC-1 - npm test/build return 0; evidence/tests.txt/build.txt. Snapshot 2026-10-01 18:32 Madrid: 263 pruebas aprobadas, sin skips, y build exit0; incluye archivo de descargados. Revalidar después de cambios posteriores. La compilación no acredita aceptación nativa.
+- [x] AC-1 - npm test/build return 0; evidence/tests.txt/build.txt. Snapshot 2026-10-01 20:00 Madrid: 277 pruebas aprobadas, sin skips; producto0.1.1/_archive mantiene build exit0. Incluye checks de despliegue y harness; no equivalen a ejecución nativa. Revalidar después de cambios posteriores. La compilación no acredita aceptación nativa.
 - [ ] AC-2 - Migración tags/templates/core/deferred/fixtures; tests y receipt.
 - [ ] AC-3 - UI/sidebar en Sandbox; evidence/sandbox.json y screenshot.
 - [ ] AC-4 - Full/core/protected/incompatible/fixture/undo; tests + Sandbox.

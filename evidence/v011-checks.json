@@ -1,0 +1,21 @@
+{
+  "sourceVersion": "0.1.1",
+  "archivePath": "<vault.configDir>/plugins/_archive",
+  "tests": {
+    "passed": 277,
+    "failed": 0,
+    "skipped": 0,
+    "command": "npm test"
+  },
+  "sourceProductUnchangedSince": "6fd3c7e",
+  "buildAlreadyPassed": true,
+  "nativeExecuted": false,
+  "managerOnlyNativeReady": "evidence/sandbox-build-ready.json",
+  "archiveNativePositivePending": "Sandbox Sync plugin installation remains enabled; do not bypass guard",
+  "compiledSha256": {
+    "main.js": "191f8c24329698fd99756e891383930f0dc11f6e6b47ea2a31b00e6a03e49337",
+    "manifest.json": "071dad04f950c83e28a4867b94be41eef0d32d26f74f917b277584ef616a2db1",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "notes": "New cases are deployment/source-harness checks, not physical acceptance."
+}
