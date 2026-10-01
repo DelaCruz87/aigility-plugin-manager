@@ -1,11 +1,9 @@
 {
-	"id": "better-plugins-manager",
-	"name": "Better Manager",
-	"version": "1.0.14",
-	"minAppVersion": "1.5.8",
-	"description": "Make plugin management more intuitive and efficient.",
-	"author": "zero",
-	"authorUrl": "https://github.com/eondrcode/",
-	"fundingUrl": "https://ifdian.net/a/eondr",
-	"isDesktopOnly": false
+  "id": "aigility-plugin-manager",
+  "name": "AIgility Plugin Manager",
+  "version": "0.1.0",
+  "minAppVersion": "1.13.7",
+  "description": "Integrated plugin manager for Obsidian.",
+  "author": "AIgility",
+  "isDesktopOnly": false
 }

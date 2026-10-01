@@ -1,36 +1,21 @@
 {
   "compilerOptions": {
-    "inlineSourceMap": true,
-    "inlineSources": true,
+    "target": "ES2022",
     "module": "Node16",
-    "target": "ES6",
-    "allowJs": true,
-    "noImplicitAny": true,
-    "moduleResolution": "node16",
-    "paths": {
-      "main": [
-        "./src/main"
-      ],
-      "src/*": [
-        "./src/*"
-      ]
-    },
-    "importHelpers": true,
+    "moduleResolution": "Node16",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
     "isolatedModules": true,
-	"strictNullChecks": true,
-    "lib": [
-      "DOM",
-      "ES5",
-      "ES6",
-      "ES7",
-      "ES2021"
-    ]
+    "esModuleInterop": true,
+    "paths": {
+      "aigility-types": ["./src/integrated/types.ts"]
+    },
+    "lib": ["DOM", "ES2022"]
   },
-  "include": [
-    "**/*.ts"
+  "files": [
+    "main.ts",
+    "src/integrated/types.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "参考/**"
-  ]
+  "exclude": ["node_modules"]
 }

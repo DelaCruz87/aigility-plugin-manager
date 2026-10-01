@@ -1,3 +1,4 @@
-import Manager from './src/main'
+import { Plugin } from 'obsidian';
 
-export default Manager
+/** Temporary foundation entry point. Integration is intentionally inactive. */
+export default class AIgilityPluginManager extends Plugin {}
