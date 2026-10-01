@@ -6,6 +6,7 @@ import {
     Setting,
     setIcon
 } from 'obsidian';
+import { renderArchiveSection } from './archive-ui';
 import type {
     Change,
     DeferredPolicy,
@@ -1061,7 +1062,7 @@ export class ManagerUI {
             return;
         }
 
-        const filtered = filterPlugins(allPlugins, this.filterCriteria);
+        const filtered = filterPlugins(allPlugins.filter((plugin) => plugin.installed && !plugin.archived), this.filterCriteria);
 
         // Summary count
         const countRow = document.createElement('div');
@@ -2004,6 +2005,7 @@ export class ManagerOptionsModal extends Modal {
             { id: 'fixtures', label: 'Fixtures y Protecciones' },
             { id: 'deferred', label: 'Carga Diferida' },
             { id: 'github', label: 'GitHub y Betas' },
+            ...(this.ui.runtime.list().some((item) => item.ref.kind === 'community' && item.installed) || this.ui.plugin.archive?.list().length ? [{ id: 'downloaded', label: 'Descargados' }] : []),
             { id: 'debug', label: 'Depuración' },
             { id: 'advanced', label: 'Avanzado y Recuperación' }
         ];
@@ -2044,6 +2046,9 @@ export class ManagerOptionsModal extends Modal {
                 break;
             case 'github':
                 this.renderGitHubSection(container);
+                break;
+            case 'downloaded':
+                renderArchiveSection(this.ui, container);
                 break;
             case 'debug':
                 this.renderDebugSection(container);

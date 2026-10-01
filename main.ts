@@ -6,6 +6,7 @@ import { ManagerUI, ProfileComparisonModal } from './src/integrated/ui';
 import { installStartupGuards } from './src/integrated/guards';
 import { migrateLegacy } from './src/integrated/migration';
 import { collectObserved } from './src/integrated/adapter';
+import { ArchiveManager } from './src/integrated/archive';
 import type { State } from './src/integrated/types';
 
 const LEGACY_BPM_ID = 'better-plugins-manager';
@@ -42,6 +43,7 @@ export default class AIgilityPluginManager extends Plugin {
     logger: Console = console;
     managerBuild = `aigility-plugin-manager/${this.manifest.version}`;
     runtime!: ManagerRuntime;
+    archive!: ArchiveManager;
     github!: GithubManager;
     debug!: DebugManager;
     managerUI!: ManagerUI;
@@ -94,6 +96,9 @@ export default class AIgilityPluginManager extends Plugin {
 
         attachRedactingSerialization(state);
         this.runtime = new ManagerRuntime(this.app, this, state);
+        this.archive = new ArchiveManager(this.runtime, this.app, this);
+        this.runtime.archive = this.archive;
+        await this.archive.initialize();
         this.github = new GithubManager(this.runtime, this.app, this);
         this.debug = new DebugManager(this.runtime, this.app, this);
         this.managerUI = new ManagerUI(this, this.runtime, this.github, this.debug);

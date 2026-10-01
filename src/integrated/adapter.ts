@@ -59,7 +59,7 @@ function hostApiVersion(): string | undefined {
     return typeof apiVersion === 'string' && apiVersion.length > 0 ? apiVersion : undefined;
 }
 
-function manifestCompatible(manifest: any, app: any): boolean {
+export function isManifestCompatible(manifest: any, app: any): boolean {
     if (manifest?.compatible === false || manifest?.metadata?.compatible === false) return false;
     if (manifest?.isDesktopOnly === true && isMobileHost()) return false;
     const minimum = typeof manifest?.minAppVersion === 'string' && manifest.minAppVersion ? manifest.minAppVersion : undefined;
@@ -141,7 +141,7 @@ export function collectObserved(app: any): ObservedPlugin[] {
             name: String(manifest?.name ?? manifest?.id ?? id),
             version: String(manifest?.version ?? ''),
             installed: true,
-            compatible: manifestCompatible(manifest, app),
+            compatible: isManifestCompatible(manifest, app),
             nativeAutostart: plugins?.enabledPlugins?.has?.(id) === true,
             loaded: instanceLoaded(communityInstance(plugins, id)),
         });
@@ -156,7 +156,7 @@ export function collectObserved(app: any): ObservedPlugin[] {
             name: String(instance?.name ?? manifest?.name ?? id),
             version: String(manifest?.version ?? ''),
             installed: true,
-            compatible: manifestCompatible(manifest, app),
+            compatible: isManifestCompatible(manifest, app),
             nativeAutostart: wrapper.enabled === true,
             loaded: instanceLoaded(instance),
         });

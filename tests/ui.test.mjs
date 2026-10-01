@@ -421,6 +421,9 @@ function mockSetIcon(el, name) {
 
 registerHooks({
     resolve(specifier, context, nextResolve) {
+        if (specifier === './archive-ui' && context.parentURL?.endsWith('/src/integrated/ui.ts')) {
+            return nextResolve('./archive-ui.ts', context);
+        }
         if (specifier === 'obsidian') {
             const obsidianStubCode = `
                 export class App {
@@ -1400,13 +1403,14 @@ describe('AIgility Plugin Manager - UI & Filter Test Suite', () => {
             optionsModal.onOpen();
 
             const navTabs = optionsModal.contentEl.querySelectorAll('.aigility-nav-tab');
-            assert.equal(navTabs.length, 6);
+            assert.equal(navTabs.length, 7);
 
             const expectedLabels = [
                 'Perfiles',
                 'Fixtures y Protecciones',
                 'Carga Diferida',
                 'GitHub y Betas',
+                'Descargados',
                 'Depuración',
                 'Avanzado y Recuperación'
             ];

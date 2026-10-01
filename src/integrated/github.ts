@@ -29,6 +29,7 @@ type GithubRuntime = {
   enqueue<T>(label: string, operation: (transaction?: GithubTransaction) => Promise<T>): Promise<T>;
   getMutationGeneration(ref: PluginRef): number;
   list?(): Array<{ ref: { kind: string; id: string }; installed?: boolean; compatible?: boolean; version?: string }>;
+  archive?: { has(id: string): boolean };
 };
 type GithubTransaction = {
   save(): Promise<void>;
@@ -363,12 +364,17 @@ export class GithubManager {
     return this.runtime.enqueue(`github-install:${repo}`, async (rawTransaction) => {
       const transaction = this.transaction(rawTransaction);
       const queuedPause = this.blocked(); if (queuedPause) throw new Error(queuedPause);
+      // The archive folder is authoritative even if the runtime archive index is stale.
+      const archiveRoot = `${this.app.vault.configDir}/plugins/.aigility-archive`;
+      const archivedPluginExists = async (id: string): Promise<boolean> => this.adapter.exists(`${archiveRoot}/${id}`);
       const sourceEntry = Object.entries(this.runtime.state.githubSources).find(([, source]) => {
         try { return parseRepository(source.repo) === repo; } catch { return false; }
       });
       const sourceKey = sourceEntry?.[0];
       const sourceBefore = sourceKey ? structuredClone(this.runtime.state.githubSources[sourceKey]) : undefined;
       const expectedId = sourceKey?.startsWith('community:') ? sourceKey.slice('community:'.length) : undefined;
+      if (expectedId && this.runtime.archive?.has(expectedId)) throw new Error(`Plugin ${expectedId} is archived; restore it before installing or updating it.`);
+      if (expectedId && await archivedPluginExists(expectedId)) throw new Error(`Plugin ${expectedId} is archived; restore it before installing or updating it.`);
       const preNetworkFiles = new Map<string, string | null>();
       const preNetworkGeneration = expectedId ? this.mutationGeneration(this.communityRef(expectedId)) : undefined;
       const preNetworkEnabled = expectedId ? this.isNativeAutostart(expectedId) : undefined;
@@ -390,6 +396,8 @@ export class GithubManager {
       if (normalizedTag(release.tag_name) !== normalizedTag(manifest.version)) throw new Error('Release tag and manifest version do not match');
       const recordKey = `community:${manifest.id}`;
       if (manifest.id === MANAGER_ID || this.runtime.state.protected.includes(recordKey)) throw new Error('Protected plugin cannot be replaced');
+      if (this.runtime.archive?.has(manifest.id)) throw new Error(`Plugin ${manifest.id} is archived; restore it before installing or updating it.`);
+      if (await archivedPluginExists(manifest.id)) throw new Error(`Plugin ${manifest.id} is archived; restore it before installing or updating it.`);
       const hostApiVersion = this.apiVersion();
       if (manifest.minAppVersion && compareVersions(hostApiVersion, manifest.minAppVersion) < 0) throw new Error(`Incompatible Obsidian version: requires ${manifest.minAppVersion}`);
       if ((manifest as JsonObject).isDesktopOnly === true && (this.app?.isMobile === true || Platform.isMobile || !Platform.isDesktopApp)) throw new Error('Plugin is desktop-only');
@@ -478,12 +486,15 @@ export class GithubManager {
 
   async rollback(id: string): Promise<void> {
     if (!validPluginId(id)) throw new TypeError('Invalid plugin id');
+    if (this.runtime.archive?.has(id)) throw new Error(`Plugin ${id} is archived; restore it before rollback.`);
     const paused = this.blocked(); if (paused) throw new Error(paused);
     const priorSource = this.runtime.state.githubSources[`community:${id}`];
     if (id === MANAGER_ID) throw new Error('The manager cannot roll back its own running files');
     await this.runtime.enqueue(`github-rollback:${id}`, async (rawTransaction) => {
       const transaction = this.transaction(rawTransaction);
       const queuedPause = this.blocked(); if (queuedPause) throw new Error(queuedPause);
+      const archivedPath = `${this.app.vault.configDir}/plugins/.aigility-archive/${id}`;
+      if (this.runtime.archive?.has(id) || await this.adapter.exists(archivedPath)) throw new Error(`Plugin ${id} is archived; restore it before rollback.`);
       const { manifest } = await this.readLatestBackup(id);
       const operationLabel = `github-rollback:${id}`;
       this.beginPending(operationLabel);

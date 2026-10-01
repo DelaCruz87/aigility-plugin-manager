@@ -1,5 +1,5 @@
 import { Platform } from 'obsidian';
-import { collectObserved, createHostAdapter } from './adapter';
+import { collectObserved, createHostAdapter, isManifestCompatible } from './adapter';
 import { DeferredScheduler } from './deferred';
 import { StateConflictError, RuntimeStore } from './store';
 import { key, parseKey } from './types';
@@ -67,6 +67,7 @@ function isObject(value: unknown): value is Record<string, any> {
 }
 
 export class ManagerRuntime {
+    archive?: { list(): Array<{ id: string; name: string; version: string; minAppVersion?: string; isDesktopOnly?: boolean }>; fingerprint(): string; restoreInTransaction(id: string): Promise<void> };
     state: State;
     local: LocalState;
     readonly localKey: string;
@@ -102,6 +103,16 @@ export class ManagerRuntime {
     list(): EffectivePlugin[] {
         const observed = this.host.observe();
         const byKey = new Map(observed.map((item) => [key(item.ref), item]));
+        for (const archived of this.archive?.list() ?? []) {
+            const ref: PluginRef = { kind: 'community', id: archived.id };
+            const archivedKey = key(ref);
+            if (byKey.has(archivedKey)) continue;
+            byKey.set(archivedKey, {
+                ref, name: archived.name, version: archived.version, installed: false,
+                compatible: isManifestCompatible(archived, this.app), nativeAutostart: false,
+                loaded: false, archived: true,
+            } as ObservedPlugin & { archived: boolean });
+        }
         for (const record of Object.values(this.state.records ?? {})) {
             const id = key(record.ref);
             if (!byKey.has(id)) {
@@ -113,6 +124,7 @@ export class ManagerRuntime {
                     compatible: record.metadata?.compatible !== false,
                     nativeAutostart: false,
                     loaded: false,
+                    archived: false,
                 });
             }
         }
@@ -131,6 +143,7 @@ export class ManagerRuntime {
             else if (isDebugging(this.state)) reason = 'debug-paused';
             return {
                 ...item,
+                archived: Boolean((item as ObservedPlugin & { archived?: boolean }).archived),
                 compatible,
                 desired: record?.desired ?? item.nativeAutostart,
                 tags: [...(record?.tags ?? [])],
@@ -210,7 +223,7 @@ export class ManagerRuntime {
             const changes: Change[] = [];
             for (const [rawKey, enabled] of declared) {
                 const ref = parseKey(rawKey)!;
-                const item = this.host.observe().find((candidate) => key(candidate.ref) === rawKey);
+                const item = this.list().find((candidate) => key(candidate.ref) === rawKey);
                 // Protection outranks every declared state, the manager included:
                 // its current actual state is what stands, so nothing is pushed to
                 // desired, native or loaded. The declaration stays in the profile.
@@ -221,7 +234,7 @@ export class ManagerRuntime {
                 // An absent member, or one the host cannot enable, is skipped
                 // visibly instead of aborting every other declared member: the
                 // actionable filter of the legacy applyPluginStateMap.
-                if (!item?.installed) {
+                if (!item?.installed && !item?.archived) {
                     this.log('warn', `Fixture member ${rawKey} is not installed and was skipped; its declared state is retained for review.`);
                     continue;
                 }
@@ -242,12 +255,24 @@ export class ManagerRuntime {
                 for (const change of changes) {
                     this.assertNoConcurrentPause();
                     const desiredBefore = this.state.records[key(change.ref)]?.desired ?? change.before;
-                    const policy = change.ref.kind === 'community'
-                        ? this.state.deferred.find((item) => item.id === change.ref.id && item.enabled)
-                        : undefined;
-                    if (policy) await this.host.excludeDeferred(change.ref, { unload: true });
-                    else if (this.host.isEnabled(change.ref) !== change.after) {
-                        await this.applyHostChange(change.ref, change.after);
+                    const observed = this.list().find((item) => key(item.ref) === key(change.ref));
+                    if (change.after && observed?.archived) {
+                        this.assertNoConcurrentPause();
+                        await this.archive!.restoreInTransaction(change.ref.id);
+                        this.assertNoConcurrentPause();
+                    }
+                    // Turning an archived member off records desired state only;
+                    // its archived files and deferred policy remain untouched.
+                    if (!change.after && observed?.archived) {
+                        // No host or deferred mutation is needed.
+                    } else {
+                        const policy = change.ref.kind === 'community'
+                            ? this.state.deferred.find((item) => item.id === change.ref.id && item.enabled)
+                            : undefined;
+                        if (policy) await this.host.excludeDeferred(change.ref, { unload: true });
+                        else if (this.host.isEnabled(change.ref) !== change.after) {
+                            await this.applyHostChange(change.ref, change.after);
+                        }
                     }
                     if (!change.after && change.ref.kind === 'community') this.scheduler.cancel(change.ref.id);
                     this.bumpGeneration(change.ref);
@@ -549,6 +574,7 @@ export class ManagerRuntime {
                 kind: item.ref.kind,
                 id: item.ref.id,
                 installed: item.installed,
+                archived: Boolean((item as ObservedPlugin & { archived?: boolean }).archived),
                 desired: item.desired,
                 nativeAutostart: item.nativeAutostart,
                 loaded: item.loaded,
@@ -619,6 +645,12 @@ export class ManagerRuntime {
             const applied: ProfileUndoEntry[] = [];
             for (const change of this.profileOrder(changes)) {
                 this.assertNoConcurrentPause();
+                const initial = this.list().find((item) => key(item.ref) === key(change.ref));
+                if (change.after && initial?.archived) {
+                    this.assertNoConcurrentPause();
+                    await this.archive!.restoreInTransaction(change.ref.id);
+                    this.assertNoConcurrentPause();
+                }
                 const current = this.host.isEnabled(change.ref);
                 const record = this.state.records[key(change.ref)];
                 const desiredBefore = record?.desired ?? current;
@@ -734,8 +766,8 @@ export class ManagerRuntime {
         if (!profile) throw new Error(`Device profile ${id} does not exist.`);
         const tags = new Set(profile.tagIds ?? []);
         const changes: Change[] = [];
-        for (const item of this.host.observe()) {
-            if (!item.installed) continue;
+        for (const item of this.list()) {
+            if (!item.installed && !item.archived) continue;
             const ref = item.ref;
             if (this.isProtected(ref)) continue;
             const compatible = this.isCompatible(ref, item);
@@ -752,7 +784,7 @@ export class ManagerRuntime {
     private profileFingerprint(id: string): string {
         const profile = this.state.deviceProfiles.find((candidate) => candidate.id === id);
         if (!profile) throw new Error(`Device profile ${id} does not exist.`);
-        return JSON.stringify({ profile, records: this.state.records, tags: this.state.tags, observed: this.host.observe().map((item) => ({ ref: item.ref, installed: item.installed, compatible: item.compatible, nativeAutostart: item.nativeAutostart, loaded: item.loaded, enabled: this.host.isEnabled(item.ref) })) });
+        return JSON.stringify({ profile, records: this.state.records, tags: this.state.tags, archive: this.archive?.fingerprint(), observed: this.list().map((item) => ({ ref: item.ref, installed: item.installed, archived: item.archived, compatible: item.compatible, nativeAutostart: item.nativeAutostart, loaded: item.loaded, enabled: this.host.isEnabled(item.ref) })) });
     }
 
     private profileOrder(changes: Change[]): Change[] {
@@ -764,6 +796,7 @@ export class ManagerRuntime {
     }
 
     private async applyHostChange(ref: PluginRef, enabled: boolean, explicit = false): Promise<void> {
+        if (enabled && ref.kind === 'community' && this.archive?.list().some((item) => item.id === ref.id)) throw new Error(`Archived plugin ${key(ref)} must be restored explicitly before manual activation.`);
         if (enabled && !this.isCompatible(ref)) throw new Error(`Incompatible plugin ${key(ref)} cannot be enabled.`);
         if (enabled && !explicit && this.isProtected(ref) && key(ref) !== MANAGER_PROTECTED_KEY) throw new Error(`Protected plugin ${key(ref)} cannot be changed by a profile.`);
         await this.host.setEnabled(ref, enabled);
@@ -803,7 +836,7 @@ export class ManagerRuntime {
     }
 
     private isCompatible(ref: PluginRef, observation?: ObservedPlugin): boolean {
-        const item = observation ?? this.host.observe().find((candidate) => key(candidate.ref) === key(ref));
+        const item = observation ?? this.list().find((candidate) => key(candidate.ref) === key(ref));
         return Boolean(item?.compatible && this.state.records[key(ref)]?.metadata?.compatible !== false);
     }
 

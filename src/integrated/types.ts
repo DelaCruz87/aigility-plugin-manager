@@ -94,9 +94,11 @@ export interface ObservedPlugin {
   compatible: boolean;
   nativeAutostart: boolean;
   loaded: boolean;
+  archived?: boolean;
 }
 
 export interface EffectivePlugin extends ObservedPlugin {
+  archived?: boolean;
   desired: boolean;
   tags: string[];
   group: string;
