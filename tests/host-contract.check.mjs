@@ -50,3 +50,15 @@ test('persisted native flag without actual load is a readback failure',async()=>
  const h=host();h.app.plugins.enablePluginAndSave=async id=>{h.app.plugins.enabledPlugins.add(id);return true;};
  await assert.rejects(h.adapter.setEnabled({kind:'community',id:'slow'},true),/readback|load/i);
 });
+test('a manual equal-value call during an awaited manager load retains its mutation signal',async()=>{
+ const h=host();let release;const gate=new Promise(resolve=>release=resolve);
+ h.app.plugins.enablePluginAndSave=async id=>{await gate;h.app.plugins.enabledPlugins.add(id);h.app.plugins.plugins[id]={_loaded:true};return true;};
+ h.app.plugins.disablePlugin=async id=>{delete h.app.plugins.plugins[id];};
+ const mutations=[];
+ const adapter=createHostAdapter(h.app,{app:h.app},()=>{},ref=>mutations.push(ref.id));
+ adapter.installMutationTracking();
+ const pending=adapter.setEnabled({kind:'community',id:'slow'},true);
+ await h.app.plugins.disablePlugin('slow');
+ assert.deepEqual(mutations,['slow'],'an awaited manager call must not suppress an unrelated manual request');
+ release();await pending;adapter.dispose();
+});
