@@ -1,0 +1,1909 @@
+{
+  "status": "passed",
+  "at": "2026-10-01T19:20:07.190Z",
+  "deadline": "2026-10-01T19:22:07.190Z",
+  "source": {
+    "main.js": "d3c7878c44a5e137d26726ca1cdeffe7c8ad92359a93d46f48fb8030d1cb448c",
+    "manifest.json": "0d271ec8231a4e08c5175d2de387e2c61d6d4974c3b71e2a41487e72ccf707ab",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "before": {
+    "main.js": "17475c03f3bd161cdd1ad0a267ea600b7b5462fd317244c26a9ad33bcda35ada",
+    "manifest.json": "db5c26082a1049472f3bb6681b50a2d222241537bec46a4a0c8d6845452d90aa",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "after": {
+    "main.js": "d3c7878c44a5e137d26726ca1cdeffe7c8ad92359a93d46f48fb8030d1cb448c",
+    "manifest.json": "0d271ec8231a4e08c5175d2de387e2c61d6d4974c3b71e2a41487e72ccf707ab",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "written": [
+    "main.js",
+    "manifest.json"
+  ],
+  "cleanup": {
+    "protectedHashBefore": "dc815d6850af9fe26f900c674cd5fb3d8ba95f14e24f3889ace593724e684594",
+    "protectedHashAfter": "dc815d6850af9fe26f900c674cd5fb3d8ba95f14e24f3889ace593724e684594",
+    "protectedHashExpected": "dc815d6850af9fe26f900c674cd5fb3d8ba95f14e24f3889ace593724e684594",
+    "preservedForeignAdditions": [],
+    "localFieldsRestored": [],
+    "localConflicts": [],
+    "localAfter": {
+      "deviceProfileId": null,
+      "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+      "appliedProfileId": null,
+      "operationPending": null
+    },
+    "completed": true
+  },
+  "hostBefore": {
+    "foreign": [
+      {
+        "id": "advanced-exclude",
+        "version": "4.1.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "agility-links",
+        "version": "0.1.3-dev.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-blocks",
+        "version": "0.1.0-dev.32",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-obs",
+        "version": "0.50.0-dev.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-tables",
+        "version": "0.1.0-dev.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-ui",
+        "version": "0.1.0-dev.6",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "annoteca",
+        "version": "1.19.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "better-plugins-manager",
+        "version": "1.0.14-enso.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "better-plugins-manager-companion",
+        "version": "0.5.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "callout-manager",
+        "version": "1.1.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "cmdr",
+        "version": "0.5.13",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "darlal-switcher-plus",
+        "version": "6.2.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "datacore",
+        "version": "0.1.29",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "dataview",
+        "version": "0.5.68",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "document-comments",
+        "version": "0.1.15",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "dragger",
+        "version": "2.0.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "editing-toolbar",
+        "version": "4.1.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enhanced-annotations",
+        "version": "0.1.9",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "enhanced-symbols-prettifier",
+        "version": "1.5.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enso-control-plane",
+        "version": "0.4.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "enso-filetree-lab",
+        "version": "0.3.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enso-secret-placeholders",
+        "version": "0.7.2-enso.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "excerpt-outline-mindmap-editor",
+        "version": "0.2.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "fenced-blocks",
+        "version": "0.2.3",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "fileclass",
+        "version": "0.2.15",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "folder-notes",
+        "version": "1.8.26",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "gridexplorer",
+        "version": "3.5.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "inline-comments",
+        "version": "0.2.3",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "insta-toc",
+        "version": "7.0.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "keyshots",
+        "version": "2.8.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "nodian",
+        "version": "1.4.14",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "note-toolbar",
+        "version": "1.35.11",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "notebook-navigator",
+        "version": "3.4.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-custom-frames",
+        "version": "2.6.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-excalidraw-plugin",
+        "version": "2.28.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-local-rest-api",
+        "version": "5.3.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-mindmap-nextgen",
+        "version": "1.16.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "obsidian-outliner",
+        "version": "4.10.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "obsidian-sort-and-permute-lines",
+        "version": "0.9.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-style-settings",
+        "version": "1.0.9",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-trash-explorer",
+        "version": "1.2.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "omnisearch",
+        "version": "1.31.0",
+        "native": false,
+        "loaded": true
+      },
+      {
+        "id": "ribbon-organizer",
+        "version": "0.19.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "side-comments-origin",
+        "version": "1.0.10",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "stratify-mindmap",
+        "version": "1.3.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "table-editor-obsidian",
+        "version": "0.23.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "tag-wrangler",
+        "version": "0.6.5",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "templater-obsidian",
+        "version": "2.25.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "voiceink-companion",
+        "version": "0.1.0",
+        "native": true,
+        "loaded": true
+      }
+    ],
+    "core": [
+      {
+        "id": "audio-recorder",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "backlink",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "bases",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "bookmarks",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "canvas",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "command-palette",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "daily-notes",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "editor-status",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "file-explorer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "file-recovery",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "footnotes",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "global-search",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "graph",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "note-composer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "outgoing-link",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "outline",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "page-preview",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "properties",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "publish",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "random-note",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "slash-command",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "slides",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "switcher",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "sync",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "tag-pane",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "templates",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "webviewer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "word-count",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "workspaces",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "zk-prefixer",
+        "enabled": false,
+        "loaded": false
+      }
+    ],
+    "local": {
+      "deviceProfileId": null,
+      "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+      "appliedProfileId": null,
+      "operationPending": null
+    },
+    "protected": [
+      "enso-sync-manager",
+      "note-toolbar",
+      "obsidian-git",
+      "tasknotes",
+      "aigility-plugin-manager",
+      "community:advanced-exclude",
+      "community:agility-links",
+      "community:aigility-blocks",
+      "community:aigility-obs",
+      "community:aigility-tables",
+      "community:aigility-ui",
+      "community:better-plugins-manager",
+      "community:better-plugins-manager-companion",
+      "community:callout-manager",
+      "community:cmdr",
+      "community:darlal-switcher-plus",
+      "community:datacore",
+      "community:dataview",
+      "community:document-comments",
+      "community:dragger",
+      "community:editing-toolbar",
+      "community:enhanced-symbols-prettifier",
+      "community:enso-control-plane",
+      "community:enso-filetree-lab",
+      "community:enso-secret-placeholders",
+      "community:excerpt-outline-mindmap-editor",
+      "community:fenced-blocks",
+      "community:fileclass",
+      "community:folder-notes",
+      "community:gridexplorer",
+      "community:insta-toc",
+      "community:keyshots",
+      "community:nodian",
+      "community:note-toolbar",
+      "community:notebook-navigator",
+      "community:obsidian-custom-frames",
+      "community:obsidian-excalidraw-plugin",
+      "community:obsidian-local-rest-api",
+      "community:obsidian-mindmap-nextgen",
+      "community:obsidian-outliner",
+      "community:obsidian-sort-and-permute-lines",
+      "community:obsidian-style-settings",
+      "community:obsidian-trash-explorer",
+      "community:omnisearch",
+      "community:plugin-drawers",
+      "community:ribbon-organizer",
+      "community:stratify-mindmap",
+      "community:table-editor-obsidian",
+      "community:tag-wrangler",
+      "community:templater-obsidian",
+      "core:audio-recorder",
+      "core:backlink",
+      "core:bases",
+      "core:bookmarks",
+      "core:canvas",
+      "core:command-palette",
+      "core:daily-notes",
+      "core:editor-status",
+      "core:file-explorer",
+      "core:file-recovery",
+      "core:footnotes",
+      "core:global-search",
+      "core:graph",
+      "core:note-composer",
+      "core:outgoing-link",
+      "core:outline",
+      "core:page-preview",
+      "core:properties",
+      "core:publish",
+      "core:random-note",
+      "core:slash-command",
+      "core:slides",
+      "core:switcher",
+      "core:sync",
+      "core:tag-pane",
+      "core:templates",
+      "core:webviewer",
+      "core:word-count",
+      "core:workspaces",
+      "core:zk-prefixer",
+      "community:aigility-plugin-manager"
+    ],
+    "profiles": 7,
+    "fixtures": 42,
+    "invalidRecords": 1,
+    "invalidMembers": 21,
+    "debug": false,
+    "settings": false,
+    "loaded": true,
+    "native": true,
+    "version": "0.1.0",
+    "build": "aigility-plugin-manager/0.1.0",
+    "archiveRoot": null,
+    "archiveReady": false,
+    "profileHash": "917838effdfd4f260116165700368889dea302d346f322cf8d3aecd7e13f45cf",
+    "fixtureHash": "9cb0f5a279943610912e1c0faaa6a57ad27f802f55901622f6471c9bd916d342",
+    "stateContentHash": "a26b098af759b075436501b3dee168bb868c1eba537bd17dd101baba168a8876"
+  },
+  "backup": "evidence/local-backups/sandbox-build-1790882407980",
+  "firstMutationAt": "2026-10-01T19:20:07.986Z",
+  "repair": {
+    "patchCount": 46,
+    "preimageHash": "19f80761dbbd1f78f6a6975d3f4b95367bdfd0f7640c1d04c8e7f3a53485f09b"
+  },
+  "temporaryProtections": {
+    "before": [
+      "enso-sync-manager",
+      "note-toolbar",
+      "obsidian-git",
+      "tasknotes",
+      "aigility-plugin-manager",
+      "community:advanced-exclude",
+      "community:agility-links",
+      "community:aigility-blocks",
+      "community:aigility-obs",
+      "community:aigility-tables",
+      "community:aigility-ui",
+      "community:better-plugins-manager",
+      "community:better-plugins-manager-companion",
+      "community:callout-manager",
+      "community:cmdr",
+      "community:darlal-switcher-plus",
+      "community:datacore",
+      "community:dataview",
+      "community:document-comments",
+      "community:dragger",
+      "community:editing-toolbar",
+      "community:enhanced-symbols-prettifier",
+      "community:enso-control-plane",
+      "community:enso-filetree-lab",
+      "community:enso-secret-placeholders",
+      "community:excerpt-outline-mindmap-editor",
+      "community:fenced-blocks",
+      "community:fileclass",
+      "community:folder-notes",
+      "community:gridexplorer",
+      "community:insta-toc",
+      "community:keyshots",
+      "community:nodian",
+      "community:note-toolbar",
+      "community:notebook-navigator",
+      "community:obsidian-custom-frames",
+      "community:obsidian-excalidraw-plugin",
+      "community:obsidian-local-rest-api",
+      "community:obsidian-mindmap-nextgen",
+      "community:obsidian-outliner",
+      "community:obsidian-sort-and-permute-lines",
+      "community:obsidian-style-settings",
+      "community:obsidian-trash-explorer",
+      "community:omnisearch",
+      "community:plugin-drawers",
+      "community:ribbon-organizer",
+      "community:stratify-mindmap",
+      "community:table-editor-obsidian",
+      "community:tag-wrangler",
+      "community:templater-obsidian",
+      "core:audio-recorder",
+      "core:backlink",
+      "core:bases",
+      "core:bookmarks",
+      "core:canvas",
+      "core:command-palette",
+      "core:daily-notes",
+      "core:editor-status",
+      "core:file-explorer",
+      "core:file-recovery",
+      "core:footnotes",
+      "core:global-search",
+      "core:graph",
+      "core:note-composer",
+      "core:outgoing-link",
+      "core:outline",
+      "core:page-preview",
+      "core:properties",
+      "core:publish",
+      "core:random-note",
+      "core:slash-command",
+      "core:slides",
+      "core:switcher",
+      "core:sync",
+      "core:tag-pane",
+      "core:templates",
+      "core:webviewer",
+      "core:word-count",
+      "core:workspaces",
+      "core:zk-prefixer",
+      "community:aigility-plugin-manager"
+    ],
+    "added": [
+      "community:annoteca",
+      "community:enhanced-annotations",
+      "community:inline-comments",
+      "community:side-comments-origin",
+      "community:voiceink-companion"
+    ],
+    "after": [
+      "enso-sync-manager",
+      "note-toolbar",
+      "obsidian-git",
+      "tasknotes",
+      "aigility-plugin-manager",
+      "community:advanced-exclude",
+      "community:agility-links",
+      "community:aigility-blocks",
+      "community:aigility-obs",
+      "community:aigility-tables",
+      "community:aigility-ui",
+      "community:better-plugins-manager",
+      "community:better-plugins-manager-companion",
+      "community:callout-manager",
+      "community:cmdr",
+      "community:darlal-switcher-plus",
+      "community:datacore",
+      "community:dataview",
+      "community:document-comments",
+      "community:dragger",
+      "community:editing-toolbar",
+      "community:enhanced-symbols-prettifier",
+      "community:enso-control-plane",
+      "community:enso-filetree-lab",
+      "community:enso-secret-placeholders",
+      "community:excerpt-outline-mindmap-editor",
+      "community:fenced-blocks",
+      "community:fileclass",
+      "community:folder-notes",
+      "community:gridexplorer",
+      "community:insta-toc",
+      "community:keyshots",
+      "community:nodian",
+      "community:note-toolbar",
+      "community:notebook-navigator",
+      "community:obsidian-custom-frames",
+      "community:obsidian-excalidraw-plugin",
+      "community:obsidian-local-rest-api",
+      "community:obsidian-mindmap-nextgen",
+      "community:obsidian-outliner",
+      "community:obsidian-sort-and-permute-lines",
+      "community:obsidian-style-settings",
+      "community:obsidian-trash-explorer",
+      "community:omnisearch",
+      "community:plugin-drawers",
+      "community:ribbon-organizer",
+      "community:stratify-mindmap",
+      "community:table-editor-obsidian",
+      "community:tag-wrangler",
+      "community:templater-obsidian",
+      "core:audio-recorder",
+      "core:backlink",
+      "core:bases",
+      "core:bookmarks",
+      "core:canvas",
+      "core:command-palette",
+      "core:daily-notes",
+      "core:editor-status",
+      "core:file-explorer",
+      "core:file-recovery",
+      "core:footnotes",
+      "core:global-search",
+      "core:graph",
+      "core:note-composer",
+      "core:outgoing-link",
+      "core:outline",
+      "core:page-preview",
+      "core:properties",
+      "core:publish",
+      "core:random-note",
+      "core:slash-command",
+      "core:slides",
+      "core:switcher",
+      "core:sync",
+      "core:tag-pane",
+      "core:templates",
+      "core:webviewer",
+      "core:word-count",
+      "core:workspaces",
+      "core:zk-prefixer",
+      "community:aigility-plugin-manager",
+      "community:annoteca",
+      "community:enhanced-annotations",
+      "community:inline-comments",
+      "community:side-comments-origin",
+      "community:voiceink-companion"
+    ],
+    "local": {
+      "deviceProfileId": null,
+      "recoveryReason": "aigility-manager-deploy:1790882407190",
+      "appliedProfileId": null,
+      "operationPending": null
+    }
+  },
+  "hostAfter": {
+    "foreign": [
+      {
+        "id": "advanced-exclude",
+        "version": "4.1.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "agility-links",
+        "version": "0.1.3-dev.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-blocks",
+        "version": "0.1.0-dev.32",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-obs",
+        "version": "0.50.0-dev.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-tables",
+        "version": "0.1.0-dev.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-ui",
+        "version": "0.1.0-dev.6",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "annoteca",
+        "version": "1.19.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "better-plugins-manager",
+        "version": "1.0.14-enso.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "better-plugins-manager-companion",
+        "version": "0.5.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "callout-manager",
+        "version": "1.1.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "cmdr",
+        "version": "0.5.13",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "darlal-switcher-plus",
+        "version": "6.2.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "datacore",
+        "version": "0.1.29",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "dataview",
+        "version": "0.5.68",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "document-comments",
+        "version": "0.1.15",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "dragger",
+        "version": "2.0.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "editing-toolbar",
+        "version": "4.1.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enhanced-annotations",
+        "version": "0.1.9",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "enhanced-symbols-prettifier",
+        "version": "1.5.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enso-control-plane",
+        "version": "0.4.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "enso-filetree-lab",
+        "version": "0.3.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enso-secret-placeholders",
+        "version": "0.7.2-enso.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "excerpt-outline-mindmap-editor",
+        "version": "0.2.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "fenced-blocks",
+        "version": "0.2.3",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "fileclass",
+        "version": "0.2.15",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "folder-notes",
+        "version": "1.8.26",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "gridexplorer",
+        "version": "3.5.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "inline-comments",
+        "version": "0.2.3",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "insta-toc",
+        "version": "7.0.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "keyshots",
+        "version": "2.8.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "nodian",
+        "version": "1.4.14",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "note-toolbar",
+        "version": "1.35.11",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "notebook-navigator",
+        "version": "3.4.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-custom-frames",
+        "version": "2.6.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-excalidraw-plugin",
+        "version": "2.28.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-local-rest-api",
+        "version": "5.3.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-mindmap-nextgen",
+        "version": "1.16.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "obsidian-outliner",
+        "version": "4.10.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "obsidian-sort-and-permute-lines",
+        "version": "0.9.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-style-settings",
+        "version": "1.0.9",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-trash-explorer",
+        "version": "1.2.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "omnisearch",
+        "version": "1.31.0",
+        "native": false,
+        "loaded": true
+      },
+      {
+        "id": "ribbon-organizer",
+        "version": "0.19.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "side-comments-origin",
+        "version": "1.0.10",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "stratify-mindmap",
+        "version": "1.3.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "table-editor-obsidian",
+        "version": "0.23.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "tag-wrangler",
+        "version": "0.6.5",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "templater-obsidian",
+        "version": "2.25.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "voiceink-companion",
+        "version": "0.1.0",
+        "native": true,
+        "loaded": true
+      }
+    ],
+    "core": [
+      {
+        "id": "audio-recorder",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "backlink",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "bases",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "bookmarks",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "canvas",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "command-palette",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "daily-notes",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "editor-status",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "file-explorer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "file-recovery",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "footnotes",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "global-search",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "graph",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "note-composer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "outgoing-link",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "outline",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "page-preview",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "properties",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "publish",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "random-note",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "slash-command",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "slides",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "switcher",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "sync",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "tag-pane",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "templates",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "webviewer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "word-count",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "workspaces",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "zk-prefixer",
+        "enabled": false,
+        "loaded": false
+      }
+    ],
+    "local": {
+      "deviceProfileId": null,
+      "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+      "appliedProfileId": null,
+      "operationPending": null
+    },
+    "protected": [
+      "enso-sync-manager",
+      "note-toolbar",
+      "obsidian-git",
+      "tasknotes",
+      "aigility-plugin-manager",
+      "community:advanced-exclude",
+      "community:agility-links",
+      "community:aigility-blocks",
+      "community:aigility-obs",
+      "community:aigility-tables",
+      "community:aigility-ui",
+      "community:better-plugins-manager",
+      "community:better-plugins-manager-companion",
+      "community:callout-manager",
+      "community:cmdr",
+      "community:darlal-switcher-plus",
+      "community:datacore",
+      "community:dataview",
+      "community:document-comments",
+      "community:dragger",
+      "community:editing-toolbar",
+      "community:enhanced-symbols-prettifier",
+      "community:enso-control-plane",
+      "community:enso-filetree-lab",
+      "community:enso-secret-placeholders",
+      "community:excerpt-outline-mindmap-editor",
+      "community:fenced-blocks",
+      "community:fileclass",
+      "community:folder-notes",
+      "community:gridexplorer",
+      "community:insta-toc",
+      "community:keyshots",
+      "community:nodian",
+      "community:note-toolbar",
+      "community:notebook-navigator",
+      "community:obsidian-custom-frames",
+      "community:obsidian-excalidraw-plugin",
+      "community:obsidian-local-rest-api",
+      "community:obsidian-mindmap-nextgen",
+      "community:obsidian-outliner",
+      "community:obsidian-sort-and-permute-lines",
+      "community:obsidian-style-settings",
+      "community:obsidian-trash-explorer",
+      "community:omnisearch",
+      "community:plugin-drawers",
+      "community:ribbon-organizer",
+      "community:stratify-mindmap",
+      "community:table-editor-obsidian",
+      "community:tag-wrangler",
+      "community:templater-obsidian",
+      "core:audio-recorder",
+      "core:backlink",
+      "core:bases",
+      "core:bookmarks",
+      "core:canvas",
+      "core:command-palette",
+      "core:daily-notes",
+      "core:editor-status",
+      "core:file-explorer",
+      "core:file-recovery",
+      "core:footnotes",
+      "core:global-search",
+      "core:graph",
+      "core:note-composer",
+      "core:outgoing-link",
+      "core:outline",
+      "core:page-preview",
+      "core:properties",
+      "core:publish",
+      "core:random-note",
+      "core:slash-command",
+      "core:slides",
+      "core:switcher",
+      "core:sync",
+      "core:tag-pane",
+      "core:templates",
+      "core:webviewer",
+      "core:word-count",
+      "core:workspaces",
+      "core:zk-prefixer",
+      "community:aigility-plugin-manager",
+      "community:annoteca",
+      "community:enhanced-annotations",
+      "community:inline-comments",
+      "community:side-comments-origin",
+      "community:voiceink-companion"
+    ],
+    "profiles": 7,
+    "fixtures": 42,
+    "invalidRecords": 0,
+    "invalidMembers": 0,
+    "debug": false,
+    "settings": false,
+    "loaded": true,
+    "native": true,
+    "version": "0.1.2",
+    "build": "aigility-plugin-manager/0.1.2",
+    "archiveRoot": ".obsidian/plugins/_archive",
+    "archiveReady": true,
+    "profileHash": "917838effdfd4f260116165700368889dea302d346f322cf8d3aecd7e13f45cf",
+    "fixtureHash": "b7a4cf24e62f517dcac663c01978223864509b5ad777f01bf23ebaeb2bd21200",
+    "stateContentHash": "1f49263f716958dd03ca80f8d8fa7d7c5dcd0a6fda51fcca069222b38eed04cf"
+  },
+  "operation": {
+    "id": "aigility-manager-deploy:1790882407190:3:forward-reload",
+    "startedAt": "2026-10-01T19:20:08.047Z",
+    "phase": "forward-reload",
+    "status": "complete",
+    "result": {
+      "loaded": true
+    }
+  },
+  "hostFinal": {
+    "foreign": [
+      {
+        "id": "advanced-exclude",
+        "version": "4.1.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "agility-links",
+        "version": "0.1.3-dev.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-blocks",
+        "version": "0.1.0-dev.32",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-obs",
+        "version": "0.50.0-dev.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-tables",
+        "version": "0.1.0-dev.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-ui",
+        "version": "0.1.0-dev.6",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "annoteca",
+        "version": "1.19.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "better-plugins-manager",
+        "version": "1.0.14-enso.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "better-plugins-manager-companion",
+        "version": "0.5.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "callout-manager",
+        "version": "1.1.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "cmdr",
+        "version": "0.5.13",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "darlal-switcher-plus",
+        "version": "6.2.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "datacore",
+        "version": "0.1.29",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "dataview",
+        "version": "0.5.68",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "document-comments",
+        "version": "0.1.15",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "dragger",
+        "version": "2.0.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "editing-toolbar",
+        "version": "4.1.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enhanced-annotations",
+        "version": "0.1.9",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "enhanced-symbols-prettifier",
+        "version": "1.5.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enso-control-plane",
+        "version": "0.4.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "enso-filetree-lab",
+        "version": "0.3.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enso-secret-placeholders",
+        "version": "0.7.2-enso.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "excerpt-outline-mindmap-editor",
+        "version": "0.2.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "fenced-blocks",
+        "version": "0.2.3",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "fileclass",
+        "version": "0.2.15",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "folder-notes",
+        "version": "1.8.26",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "gridexplorer",
+        "version": "3.5.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "inline-comments",
+        "version": "0.2.3",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "insta-toc",
+        "version": "7.0.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "keyshots",
+        "version": "2.8.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "nodian",
+        "version": "1.4.14",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "note-toolbar",
+        "version": "1.35.11",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "notebook-navigator",
+        "version": "3.4.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-custom-frames",
+        "version": "2.6.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-excalidraw-plugin",
+        "version": "2.28.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-local-rest-api",
+        "version": "5.3.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-mindmap-nextgen",
+        "version": "1.16.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "obsidian-outliner",
+        "version": "4.10.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "obsidian-sort-and-permute-lines",
+        "version": "0.9.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-style-settings",
+        "version": "1.0.9",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-trash-explorer",
+        "version": "1.2.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "omnisearch",
+        "version": "1.31.0",
+        "native": false,
+        "loaded": true
+      },
+      {
+        "id": "ribbon-organizer",
+        "version": "0.19.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "side-comments-origin",
+        "version": "1.0.10",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "stratify-mindmap",
+        "version": "1.3.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "table-editor-obsidian",
+        "version": "0.23.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "tag-wrangler",
+        "version": "0.6.5",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "templater-obsidian",
+        "version": "2.25.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "voiceink-companion",
+        "version": "0.1.0",
+        "native": true,
+        "loaded": true
+      }
+    ],
+    "core": [
+      {
+        "id": "audio-recorder",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "backlink",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "bases",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "bookmarks",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "canvas",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "command-palette",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "daily-notes",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "editor-status",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "file-explorer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "file-recovery",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "footnotes",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "global-search",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "graph",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "note-composer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "outgoing-link",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "outline",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "page-preview",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "properties",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "publish",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "random-note",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "slash-command",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "slides",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "switcher",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "sync",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "tag-pane",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "templates",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "webviewer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "word-count",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "workspaces",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "zk-prefixer",
+        "enabled": false,
+        "loaded": false
+      }
+    ],
+    "local": {
+      "deviceProfileId": null,
+      "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+      "appliedProfileId": null,
+      "operationPending": null
+    },
+    "protected": [
+      "enso-sync-manager",
+      "note-toolbar",
+      "obsidian-git",
+      "tasknotes",
+      "aigility-plugin-manager",
+      "community:advanced-exclude",
+      "community:agility-links",
+      "community:aigility-blocks",
+      "community:aigility-obs",
+      "community:aigility-tables",
+      "community:aigility-ui",
+      "community:better-plugins-manager",
+      "community:better-plugins-manager-companion",
+      "community:callout-manager",
+      "community:cmdr",
+      "community:darlal-switcher-plus",
+      "community:datacore",
+      "community:dataview",
+      "community:document-comments",
+      "community:dragger",
+      "community:editing-toolbar",
+      "community:enhanced-symbols-prettifier",
+      "community:enso-control-plane",
+      "community:enso-filetree-lab",
+      "community:enso-secret-placeholders",
+      "community:excerpt-outline-mindmap-editor",
+      "community:fenced-blocks",
+      "community:fileclass",
+      "community:folder-notes",
+      "community:gridexplorer",
+      "community:insta-toc",
+      "community:keyshots",
+      "community:nodian",
+      "community:note-toolbar",
+      "community:notebook-navigator",
+      "community:obsidian-custom-frames",
+      "community:obsidian-excalidraw-plugin",
+      "community:obsidian-local-rest-api",
+      "community:obsidian-mindmap-nextgen",
+      "community:obsidian-outliner",
+      "community:obsidian-sort-and-permute-lines",
+      "community:obsidian-style-settings",
+      "community:obsidian-trash-explorer",
+      "community:omnisearch",
+      "community:plugin-drawers",
+      "community:ribbon-organizer",
+      "community:stratify-mindmap",
+      "community:table-editor-obsidian",
+      "community:tag-wrangler",
+      "community:templater-obsidian",
+      "core:audio-recorder",
+      "core:backlink",
+      "core:bases",
+      "core:bookmarks",
+      "core:canvas",
+      "core:command-palette",
+      "core:daily-notes",
+      "core:editor-status",
+      "core:file-explorer",
+      "core:file-recovery",
+      "core:footnotes",
+      "core:global-search",
+      "core:graph",
+      "core:note-composer",
+      "core:outgoing-link",
+      "core:outline",
+      "core:page-preview",
+      "core:properties",
+      "core:publish",
+      "core:random-note",
+      "core:slash-command",
+      "core:slides",
+      "core:switcher",
+      "core:sync",
+      "core:tag-pane",
+      "core:templates",
+      "core:webviewer",
+      "core:word-count",
+      "core:workspaces",
+      "core:zk-prefixer",
+      "community:aigility-plugin-manager"
+    ],
+    "profiles": 7,
+    "fixtures": 42,
+    "invalidRecords": 0,
+    "invalidMembers": 0,
+    "debug": false,
+    "settings": false,
+    "loaded": true,
+    "native": true,
+    "version": "0.1.2",
+    "build": "aigility-plugin-manager/0.1.2",
+    "archiveRoot": ".obsidian/plugins/_archive",
+    "archiveReady": true,
+    "profileHash": "917838effdfd4f260116165700368889dea302d346f322cf8d3aecd7e13f45cf",
+    "fixtureHash": "b7a4cf24e62f517dcac663c01978223864509b5ad777f01bf23ebaeb2bd21200",
+    "stateContentHash": "1f49263f716958dd03ca80f8d8fa7d7c5dcd0a6fda51fcca069222b38eed04cf"
+  },
+  "reloadVerified": true,
+  "finishedAt": "2026-10-01T19:20:08.683Z"
+}

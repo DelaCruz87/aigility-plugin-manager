@@ -1,0 +1,19 @@
+{
+  "status": "local-candidate-only-not-exclusive",
+  "at": "2026-10-01T18:58:53.491545+00:00",
+  "version": "0.1.2",
+  "zip": "release/aigility-plugin-manager-0.1.2.zip",
+  "sha256": "0e44baa2f96d731cc238fdc1418a22321f3bdb4edb08d6ef0bbcd3d817d735c0",
+  "files": {
+    "main.js": "d3c7878c44a5e137d26726ca1cdeffe7c8ad92359a93d46f48fb8030d1cb448c",
+    "manifest.json": "0d271ec8231a4e08c5175d2de387e2c61d6d4974c3b71e2a41487e72ccf707ab",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "nativeDeployed": true,
+  "githubReleasePublished": false,
+  "tests": 287,
+  "sourceCommit": "b7f6472",
+  "target": "Mac Sandbox",
+  "nativeReceipt": "sandbox-build.json",
+  "exclusiveReady": false
+}

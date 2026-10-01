@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-01T19:21:28.361194+00:00",
+  "status": "verified-filesystem-after-native",
+  "manifestVersion": "0.1.2",
+  "dataSha256": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+  "allRecordsTyped": true,
+  "allFixtureMembersBoolean": true,
+  "records": 75,
+  "deviceProfiles": 7,
+  "fixtureProfiles": 42,
+  "nativeEvidence": "sandbox-build.json",
+  "archiveFolderExists": false,
+  "realArchiveMoves": 0,
+  "exclusiveReady": false
+}
