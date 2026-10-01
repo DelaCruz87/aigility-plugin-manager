@@ -1,0 +1,25 @@
+✔ ownership focal wrapper intent and actual original reference precede installation (10.50725ms)
+✔ ownership focal failing durable wrapper intent installs no wrapper and makes no native call (0.254542ms)
+✔ ownership focal inherited host method restores original absence of own descriptor (1.880333ms)
+✔ ownership focal later descriptor edit is preserved even when wrapper function reference matches (1.145125ms)
+✔ ownership focal actual serialized controller persists wrapper intent before installation and restores native descriptor (385.419709ms)
+✔ ownership focal actual receipt replacement during wrapper intent preserves foreign receipt and prevents activation (184.572125ms)
+✔ ownership focal actual serialized controller refuses replacement window before registering native job (44.278625ms)
+✔ ownership focal receipt updates only complete immutable envelope and exact expected bytes (57.7725ms)
+✔ ownership focal same-key receipt replacement is preserved byte for byte (12.600333ms)
+✔ ownership focal changed token lease deadline and target cannot overwrite receipt even with matching key (12.935209ms)
+✔ ownership focal summary publication requires explicit previous and new envelopes, never adopts current bytes (6.359ms)
+✔ ownership focal path replacement after descriptor pinning preserves new foreign file (1.855625ms)
+✔ ownership focal late replacement during pinned write does not overwrite foreign path (6.294833ms)
+✔ ownership focal native gate accepts only previously frozen window webContents and document references (0.277292ms)
+✔ ownership focal new window with reused IDs URLs is refused rather than adopted (0.123875ms)
+✔ ownership focal reloaded document with identical URL is refused (0.085625ms)
+✔ ownership focal changes in webContents ID URL document URL or baseline token are refused (0.18925ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 937.77925

@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "at": "2026-10-01T22:39:29.667Z",
+  "tests": [
+    "tests/profile-controller-v013.test.mjs",
+    "tests/profile-cases-v013.test.mjs",
+    "tests/profile-ownership-v013.test.mjs"
+  ],
+  "counts": {
+    "tests": 17,
+    "pass": 17,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "exitCode": 0,
+  "nativeExecuted": false,
+  "productSourceChanged": false,
+  "previous40Repeated": false
+}

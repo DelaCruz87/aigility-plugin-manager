@@ -5,7 +5,7 @@ const MANAGER = 'aigility-plugin-manager';
 const VAULT = 'Sandbox', BASE = '/Users/eme/Obsidian/Sandbox', APP_ID = 'd137282e82167d84';
 const clone = value => value === undefined ? undefined : structuredClone(value);
 
-export async function runOwnedProfileCases(app, globals, job, { deadline, now = Date.now, onStep = () => {}, beforeStep=()=>{}, manualFixtureProfileId=null }) {
+export async function runOwnedProfileCases(app, globals, job, { deadline, now = Date.now, onStep = () => {}, beforeStep=()=>{}, beforeHostWrapper=()=>{}, manualFixtureProfileId=null }) {
   const manager = app?.plugins?.plugins?.[MANAGER];
   const rt = manager?.runtime;
   const nativePlugins=app?.plugins;
@@ -22,7 +22,10 @@ export async function runOwnedProfileCases(app, globals, job, { deadline, now = 
   if(!Number.isFinite(deadline))throw Error('Finite deadline required');
   if(manualFixtureProfileId&&(manualFixtureProfileId!=='aigility-host-partial'||!rt.state.fixtureProfiles.some(p=>p.id===manualFixtureProfileId)))throw Error('Manual fixture profile is outside owned scope or missing');
   const originalHost = host.setEnabled;
+  const originalDescriptor=Object.getOwnPropertyDescriptor(host,'setEnabled');
+  const sameDescriptor=(a,b)=>a===undefined?b===undefined:b!==undefined&&['value','get','set','writable','enumerable','configurable'].every(k=>a[k]===b[k]);
   if (typeof originalHost !== 'function') throw Error('host setEnabled unavailable');
+  if(originalDescriptor&&(!originalDescriptor.configurable||originalDescriptor.get||originalDescriptor.set))throw Error('Host wrapper descriptor is not replaceable');
   let wrapperConflict = false;
   const ownWrapper = async function(ref, ...args) {
     identity();
@@ -31,7 +34,11 @@ export async function runOwnedProfileCases(app, globals, job, { deadline, now = 
     identity();
     return result;
   };
-  host.setEnabled = ownWrapper;
+  const ownedDescriptor={value:ownWrapper,configurable:true,enumerable:originalDescriptor?.enumerable??false,writable:true};
+  job.wrapperIntent={status:'planned',hadOwnDescriptor:originalDescriptor!==undefined,descriptor:originalDescriptor?{writable:originalDescriptor.writable,enumerable:originalDescriptor.enumerable,configurable:originalDescriptor.configurable}:null};
+  Object.defineProperty(job,'hostWrapperOwnership',{value:{host,originalHost,originalDescriptor,ownWrapper,ownedDescriptor},enumerable:false});
+  identity();await beforeHostWrapper(job.wrapperIntent);identity();
+  if(host.setEnabled!==originalHost||!sameDescriptor(Object.getOwnPropertyDescriptor(host,'setEnabled'),originalDescriptor))throw Error('Host wrapper preimage changed before installation');
   const record = async (name, original, args) => {
     identity();
     await beforeStep({name,args:clone(args)});identity();
@@ -86,15 +93,21 @@ export async function runOwnedProfileCases(app, globals, job, { deadline, now = 
   facade.list=()=>{identity();return rt.list.call(rt);};
   for (const name of ['state', 'local']) Object.defineProperty(facade, name, { enumerable: true, get: () => { identity(); return rt[name]; } });
   try {
+    identity();
+    if(host.setEnabled!==originalHost||!sameDescriptor(Object.getOwnPropertyDescriptor(host,'setEnabled'),originalDescriptor))throw Error('Host wrapper preimage changed before installation');
+    Object.defineProperty(host,'setEnabled',ownedDescriptor);job.wrapperIntent.status='installed';
     const cases = new Function('app', 'rt', 'globalThis', `return (${buildCasesBody({ deadline })});`)(app, facade, globals);
     return await cases();
   } finally {
     if(manualFixtureProfileId&&JSON.stringify(ownedMembers)!==JSON.stringify(originalMembers)){
       try{identity();await updateOwnedMembers(originalMembers);}catch(error){job.manualFixtureRestoreConflict=String(error);}
     }
-    if (host.setEnabled === ownWrapper) host.setEnabled = originalHost;
-    else wrapperConflict = true;
+    if (host.setEnabled === ownWrapper&&sameDescriptor(Object.getOwnPropertyDescriptor(host,'setEnabled'),ownedDescriptor)){
+      if(originalDescriptor)Object.defineProperty(host,'setEnabled',originalDescriptor);else delete host.setEnabled;
+      if(host.setEnabled!==originalHost)wrapperConflict=true;
+    }else wrapperConflict = true;
     job.wrapperConflict = wrapperConflict;
+    job.wrapperIntent.status=wrapperConflict?'conflict-preserved':'restored';
   }
 }
 
