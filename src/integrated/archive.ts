@@ -29,7 +29,7 @@ export class ArchiveManager {
   constructor(runtime: any, app: any, plugin: any) {
     this.runtime = runtime; this.app = app; this.plugin = plugin;
     this.adapter = app.vault.adapter;
-    this.root = `${app.vault.configDir}/plugins/.aigility-archive`;
+    this.root = `${app.vault.configDir}/plugins/_archive`;
     this.indexPath = `${this.root}/index.json`;
   }
 

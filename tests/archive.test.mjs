@@ -4,7 +4,7 @@ import { importModule } from '../test.config.mjs';
 const { ArchiveManager } = await importModule('src/integrated/archive.ts');
 const { ManagerRuntime } = await importModule('src/integrated/runtime.ts');
 const active = '.obsidian/plugins/example';
-const root = '.obsidian/plugins/.aigility-archive';
+const root = '.obsidian/plugins/_archive';
 const indexPath = root + '/index.json';
 const entry = { id: 'example', name: 'Example', version: '1.0.0', minAppVersion: '1.0.0', archivedAt: '2026-10-01T00:00:00Z' };
 function fixture(initialIndex) {

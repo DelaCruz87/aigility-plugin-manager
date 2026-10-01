@@ -365,7 +365,7 @@ export class GithubManager {
       const transaction = this.transaction(rawTransaction);
       const queuedPause = this.blocked(); if (queuedPause) throw new Error(queuedPause);
       // The archive folder is authoritative even if the runtime archive index is stale.
-      const archiveRoot = `${this.app.vault.configDir}/plugins/.aigility-archive`;
+      const archiveRoot = `${this.app.vault.configDir}/plugins/_archive`;
       const archivedPluginExists = async (id: string): Promise<boolean> => this.adapter.exists(`${archiveRoot}/${id}`);
       const sourceEntry = Object.entries(this.runtime.state.githubSources).find(([, source]) => {
         try { return parseRepository(source.repo) === repo; } catch { return false; }
@@ -493,7 +493,7 @@ export class GithubManager {
     await this.runtime.enqueue(`github-rollback:${id}`, async (rawTransaction) => {
       const transaction = this.transaction(rawTransaction);
       const queuedPause = this.blocked(); if (queuedPause) throw new Error(queuedPause);
-      const archivedPath = `${this.app.vault.configDir}/plugins/.aigility-archive/${id}`;
+      const archivedPath = `${this.app.vault.configDir}/plugins/_archive/${id}`;
       if (this.runtime.archive?.has(id) || await this.adapter.exists(archivedPath)) throw new Error(`Plugin ${id} is archived; restore it before rollback.`);
       const { manifest } = await this.readLatestBackup(id);
       const operationLabel = `github-rollback:${id}`;

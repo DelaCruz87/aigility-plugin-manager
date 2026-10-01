@@ -39,7 +39,7 @@ function harness() {
 test('install rejects a disk-archived plugin with a stale false cache before downloading main.js', async () => {
   const { GithubManager } = await importModule('src/integrated/github.ts');
   const h = harness();
-  h.dirs.add('.obsidian/plugins/.aigility-archive/calendar');
+  h.dirs.add('.obsidian/plugins/_archive/calendar');
   let mainAssetRequested = false;
   h.plugin.githubRequest = async ({ url }) => {
     if (url.includes('/releases/tags/')) return { status: 200, json: { tag_name: 'v2.0.0', assets: [
@@ -62,7 +62,7 @@ test('rollback rechecks the archive folder after entering the runtime queue befo
   let queued = false;
   h.runtime.enqueue = (_label, action) => {
     queued = true;
-    h.dirs.add('.obsidian/plugins/.aigility-archive/calendar');
+    h.dirs.add('.obsidian/plugins/_archive/calendar');
     const run = Promise.resolve().then(() => action({ save: async () => {}, setEnabled: async () => {}, refresh: async () => {}, writeEffectiveState: async () => {} }));
     return run;
   };
