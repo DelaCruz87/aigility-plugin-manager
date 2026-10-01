@@ -2,6 +2,14 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { importModule, typecheck } from '../test.config.mjs';
 
+test('Obsidian stub exports the host version and platform flags used by modules', async () => {
+  const { apiVersion, Platform } = await importModule('tests/obsidian-stub.mjs');
+  assert.equal(apiVersion, '1.14.3');
+  assert.equal(Platform.isDesktopApp, true);
+  assert.equal(Platform.isDesktop, true);
+  assert.equal(Platform.isMobile, false);
+});
+
 test('plugin references round-trip through canonical record keys', async () => {
   const { key, parseKey } = await importModule('src/integrated/types.ts');
   for (const ref of [

@@ -28,9 +28,12 @@ export class Setting {}
 export class Notice {}
 
 export const Platform = {
+  isDesktopApp: true,
   isDesktop: true,
   isMobile: false,
 };
+
+export const apiVersion = '1.14.3';
 
 let requestUrlHandler;
 

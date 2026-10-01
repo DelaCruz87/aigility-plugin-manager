@@ -3,7 +3,7 @@ import { promisify } from 'node:util';
 import { execFile as execFileCallback } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 
 const execFile = promisify(execFileCallback);
@@ -30,7 +30,14 @@ export async function bundleModule(entryPoint) {
 
 export async function importModule(entryPoint) {
   const bundled = await bundleModule(entryPoint);
-  return import(`data:text/javascript;base64,${Buffer.from(bundled).toString('base64')}`);
+  const tempRoot = await mkdtemp(path.join(projectRoot, 'tests', '.bundle-import-'));
+  const bundlePath = path.join(tempRoot, 'bundle.mjs');
+  try {
+    await writeFile(bundlePath, bundled, 'utf8');
+    return await import(pathToFileURL(bundlePath).href);
+  } finally {
+    await rm(tempRoot, { recursive: true, force: true });
+  }
 }
 
 export async function typecheck(source, { fileName = 'contract-fixture.ts' } = {}) {
