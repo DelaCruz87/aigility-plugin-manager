@@ -259,6 +259,51 @@ test('fixture changes only declared members', async () => {
   assert.equal(state.records['community:b'].desired, false);
 });
 
+test('fixture skips protected, absent and incompatible members visibly while the ordinary member still applies', async () => {
+  const community = communityHost('beta', true);
+  addCommunity(community, 'bad', { enabled: true, compatible: false });
+  const state = makeState({
+    records: {
+      'community:beta': { ref: { kind: 'community', id: 'beta' }, name: 'beta', version: '1', tags: [], group: '', desired: true, metadata: {} },
+      'community:bad': { ref: { kind: 'community', id: 'bad' }, name: 'bad', version: '1', tags: [], group: '', desired: false, metadata: { compatible: false } },
+      'core:search': { ref: { kind: 'core', id: 'search' }, name: 'search', version: '', tags: [], group: '', desired: true, metadata: {} },
+    },
+    protected: ['core:search', 'community:keeper'],
+    fixtureProfiles: [{
+      id: 'partial',
+      name: 'Partial',
+      members: { 'core:search': false, 'community:keeper': true, 'community:ghost': true, 'community:bad': true, 'community:beta': false },
+    }],
+  });
+  const harness = makeHarness({ state, community: community.api, core: { search: true } });
+  await harness.runtime.applyFixture('partial');
+  assert.equal(harness.wrapperMap.get('search').enabled, true, 'a protected core member is never disabled');
+  assert.equal(state.records['core:search'].desired, true, 'and its desired state is left alone');
+  assert.equal(community.enabledIds.has('bad'), true, 'an incompatible member is skipped, not unloaded');
+  assert.equal(community.enabledIds.has('beta'), false, 'the ordinary declared member still applies');
+  assert.equal(state.records['community:beta'].desired, false);
+  const warnings = harness.plugin.logs.filter(([level]) => level === 'warn').map(([, message]) => message).join('\n');
+  for (const rawKey of ['core:search', 'community:keeper', 'community:ghost', 'community:bad']) {
+    assert.ok(warnings.includes(rawKey), `the skipped ref ${rawKey} must be visible in the log`);
+  }
+  assert.ok(
+    state.fixtureProfiles[0].members['core:search'] === false,
+    'the skipped declaration is retained verbatim in the profile',
+  );
+});
+
+test('an invalid fixture key rejects before any declared member is touched', async () => {
+  const community = communityHost('beta', true);
+  const state = makeState({
+    records: { 'community:beta': { ref: { kind: 'community', id: 'beta' }, name: 'beta', version: '1', tags: [], group: '', desired: true, metadata: {} } },
+    fixtureProfiles: [{ id: 'broken', name: 'Broken', members: { 'community:beta': false, 'nonsense': false } }],
+  });
+  const harness = makeHarness({ state, community: community.api });
+  await assert.rejects(harness.runtime.applyFixture('broken'), /invalid plugin key/);
+  assert.equal(community.enabledIds.has('beta'), true, 'the valid member declared before the invalid one stays untouched');
+  assert.equal(state.records['community:beta'].desired, true);
+});
+
 test('fixture undo leaves a manually reasserted state untouched by its mutation generation', async () => {
   const community = communityHost('a');
   const state = makeState({

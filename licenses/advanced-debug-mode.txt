@@ -1,0 +1,78 @@
+Advanced Debug Mode upstream attribution
+========================================
+
+Project: mnaoumov/obsidian-advanced-debug-mode
+Release: 1.11.1
+Source: https://github.com/mnaoumov/obsidian-advanced-debug-mode/tree/1.11.1
+Resolved tag commit: 8f8a33fca879e8219ade270aa0ebf232b91fab65
+Vendored integration: callback, event-listener removal, Promise, and Desktop async-hook stack tracing only
+Upstream license: MIT
+Copyright (C) 2025-2026 by Michael Naumov
+Installed release manifest: /Users/eme/Obsidian/ENSO/.obsidian/plugins/advanced-debug-mode/manifest.json
+Installed release main.js SHA-256: 7b26d2d513f6fbd1cc5963052983ef923aa4bf6dd19109653c21371686ccfd18
+
+The MIT license applies to Advanced Debug Mode and is reproduced below.
+
+MIT License
+
+Copyright (C) 2025-2026 by Michael Naumov
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Third-party source bundled by the upstream release and vendored for the
+integrated mobile console:
+
+Project: eruda, https://github.com/liriliri/eruda
+Version: 3.4.3 (same version included by upstream Advanced Debug Mode 1.11.1)
+Source package: https://registry.npmjs.org/eruda/-/eruda-3.4.3.tgz
+Vendored file: src/integrated/advanced/eruda-3.4.3.js
+SHA-256: 332f95b14b1dc53cdbe6042e0ea95ac6025ac691c285d51b647c64360fe939e2
+Upstream package license: MIT
+
+Abort-controller lifecycle reference used for the shared cancellation integration:
+
+Project: mnaoumov/obsidian-dev-utils
+Tested source release: 107.3.1
+Source files: src/abort-controller.ts and src/obsidian-dev-utils-state.ts
+Public source: https://github.com/mnaoumov/obsidian-dev-utils/tree/107.3.1/src
+Resolved tag commit: 75a346bfd8096ecd00736d98c30a68d7f6353f3e
+Upstream package license: MIT
+Adapted surface: app-wide `__obsidianDevUtils.sharedAbortController` ValueWrapper lifecycle and ResettableAbortController abort/reset behavior. No upstream package code is vendored.
+
+MIT License
+
+Copyright (c) 2016-present liriliri
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

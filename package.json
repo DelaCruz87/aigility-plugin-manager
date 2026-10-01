@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "tsc --noEmit --skipLibCheck -p tsconfig.json && node esbuild.config.mjs production",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --test tests/*.test.mjs tests/*check.mjs",
     "test:foundation": "node --test tests/foundation.test.mjs"
   },
   "keywords": [

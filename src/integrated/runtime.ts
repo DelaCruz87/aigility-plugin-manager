@@ -188,18 +188,37 @@ export class ManagerRuntime {
         return this.enqueue(`apply-fixture:${id}`, async () => {
             const fixture = this.state.fixtureProfiles.find((candidate) => candidate.id === id);
             if (!fixture) throw new Error(`Fixture profile ${id} does not exist.`);
+            const declared = Object.entries(fixture.members ?? {});
+            // A malformed key is a malformed definition, so it is rejected in a
+            // pre-pass: nothing observable has been touched at that point.
+            for (const [rawKey] of declared) {
+                if (!parseKey(rawKey)) throw new Error(`Fixture ${id} contains invalid plugin key ${rawKey}.`);
+            }
             const changes: Change[] = [];
-            for (const [rawKey, enabled] of Object.entries(fixture.members ?? {})) {
-                const ref = parseKey(rawKey);
-                if (!ref) throw new Error(`Fixture ${id} contains invalid plugin key ${rawKey}.`);
+            for (const [rawKey, enabled] of declared) {
+                const ref = parseKey(rawKey)!;
                 const item = this.host.observe().find((candidate) => key(candidate.ref) === rawKey);
-                if (!item?.installed) throw new Error(`Fixture member ${rawKey} is not installed.`);
-                if (enabled && (!this.isCompatible(ref) || this.isProtected(ref) && rawKey !== MANAGER_PROTECTED_KEY)) {
-                    throw new Error(`Fixture member ${rawKey} is protected or incompatible and cannot be enabled.`);
+                // Protection outranks every declared state, the manager included:
+                // its current actual state is what stands, so nothing is pushed to
+                // desired, native or loaded. The declaration stays in the profile.
+                if (this.isProtected(ref)) {
+                    this.log('warn', `Fixture member ${rawKey} is protected and was skipped; its declared state is retained for review.`);
+                    continue;
+                }
+                // An absent member, or one the host cannot enable, is skipped
+                // visibly instead of aborting every other declared member: the
+                // actionable filter of the legacy applyPluginStateMap.
+                if (!item?.installed) {
+                    this.log('warn', `Fixture member ${rawKey} is not installed and was skipped; its declared state is retained for review.`);
+                    continue;
+                }
+                if (enabled && !this.isCompatible(ref, item)) {
+                    this.log('warn', `Fixture member ${rawKey} is incompatible and was skipped; its declared state is retained for review.`);
+                    continue;
                 }
                 const before = this.host.isEnabled(ref);
                 const desiredBefore = this.state.records[rawKey]?.desired;
-                if ((before !== enabled || desiredBefore !== enabled) && !(this.isProtected(ref) && rawKey !== MANAGER_PROTECTED_KEY)) {
+                if (before !== enabled || desiredBefore !== enabled) {
                     changes.push({ ref, before, after: enabled, reason: `fixture:${id}` });
                 }
             }
