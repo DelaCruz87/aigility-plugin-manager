@@ -347,6 +347,11 @@ export class ManagerUI {
     private wrappedCommunityDisplay: ((...args: any[]) => any) | null = null;
     private originalSettingOpen: ((...args: any[]) => any) | null = null;
     private wrappedSettingOpen: ((...args: any[]) => any) | null = null;
+    private originalCommunityRenderTab: ((...args: any[]) => any) | null = null;
+    private wrappedCommunityRenderTab: ((...args: any[]) => any) | null = null;
+    private originalCommunityUpdate: ((...args: any[]) => any) | null = null;
+    private wrappedCommunityUpdate: ((...args: any[]) => any) | null = null;
+    private isRefreshingCommunityRender: boolean = false;
     private communityTab: any = null;
     private installedContainerEl: HTMLElement | null = null;
     private installedDiagnosticEl: HTMLElement | null = null;
@@ -446,6 +451,28 @@ export class ManagerUI {
             this.originalCommunityDisplay = null;
             this.wrappedCommunityDisplay = null;
 
+            // Restore native renderer hooks, but only the ones we still own
+            // (a later third-party replacement must survive unload)
+            if (
+                this.communityTab &&
+                this.originalCommunityRenderTab &&
+                this.communityTab.renderTab === this.wrappedCommunityRenderTab
+            ) {
+                this.communityTab.renderTab = this.originalCommunityRenderTab;
+            }
+            this.originalCommunityRenderTab = null;
+            this.wrappedCommunityRenderTab = null;
+
+            if (
+                this.communityTab &&
+                this.originalCommunityUpdate &&
+                this.communityTab.update === this.wrappedCommunityUpdate
+            ) {
+                this.communityTab.update = this.originalCommunityUpdate;
+            }
+            this.originalCommunityUpdate = null;
+            this.wrappedCommunityUpdate = null;
+
             // Restore hidden native elements in community tab
             this.restoreHiddenNativeElements();
 
@@ -484,7 +511,7 @@ export class ManagerUI {
         if (!tab) return;
 
         this.communityTab = tab;
-        if (!this.originalCommunityDisplay && typeof tab.display === 'function') {
+        if (typeof tab.renderTab !== 'function' && !this.originalCommunityDisplay && typeof tab.display === 'function') {
             const originalDisplay = tab.display;
             this.originalCommunityDisplay = originalDisplay;
             this.wrappedCommunityDisplay = (...args: any[]) => {
@@ -498,6 +525,69 @@ export class ManagerUI {
             };
             tab.display = this.wrappedCommunityDisplay;
         }
+
+        // Native host (>= 1.14.x) renders via renderTab/update instead of
+        // display, so those paths must be hooked too or native tab changes
+        // bypass the integrated list.
+        this.wrapCommunityRenderHooks(tab);
+    }
+
+    /**
+     * Wraps the native renderTab/update renderer methods (if present) so the
+     * integrated list is refreshed after the native renderer completes.
+     * The legacy display fallback above stays authoritative when renderTab
+     * is absent (older hosts).
+     */
+    private wrapCommunityRenderHooks(tab: any): void {
+        if (!tab || typeof tab.renderTab !== 'function') return;
+
+        if (!this.originalCommunityRenderTab) {
+            const originalRenderTab = tab.renderTab;
+            this.originalCommunityRenderTab = originalRenderTab;
+            this.wrappedCommunityRenderTab = (...args: any[]) => {
+                const isOuterRender = !this.isRefreshingCommunityRender;
+                if (isOuterRender) this.isRefreshingCommunityRender = true;
+                try {
+                    const result = originalRenderTab.apply(tab, args);
+                    if (isOuterRender && this.isInstalled) {
+                        this.refreshCommunityInstalledArea(tab);
+                    }
+                    return result;
+                } finally {
+                    if (isOuterRender) this.isRefreshingCommunityRender = false;
+                }
+            };
+            tab.renderTab = this.wrappedCommunityRenderTab;
+        }
+
+        if (!this.originalCommunityUpdate && typeof tab.update === 'function') {
+            const originalUpdate = tab.update;
+            this.originalCommunityUpdate = originalUpdate;
+            this.wrappedCommunityUpdate = (...args: any[]) => {
+                const isOuterRender = !this.isRefreshingCommunityRender;
+                if (isOuterRender) this.isRefreshingCommunityRender = true;
+                try {
+                    const result = originalUpdate.apply(tab, args);
+                    if (isOuterRender && this.isInstalled) {
+                        this.refreshCommunityInstalledArea(tab);
+                    }
+                    return result;
+                } finally {
+                    if (isOuterRender) this.isRefreshingCommunityRender = false;
+                }
+            };
+            tab.update = this.wrappedCommunityUpdate;
+        }
+    }
+
+    /**
+     * Re-applies native hidden styles and mounts exactly one manager list
+     * after a native renderer pass.
+     */
+    private refreshCommunityInstalledArea(tab: any): void {
+        this.restoreHiddenNativeElements();
+        this.removeInstalledContainer();
+        this.patchCommunityInstalledArea(tab.containerEl, tab);
     }
 
     /**

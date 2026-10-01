@@ -1153,6 +1153,56 @@ describe('AIgility Plugin Manager - UI & Filter Test Suite', () => {
             assert.ok(installedContainer.querySelector('.aigility-manager-root') !== null);
         });
 
+        test('native renderTab and update render the integrated list without calling legacy display', () => {
+            let nativeCalls=0,updateCalls=0;
+            communityTab.settingItems=[{}];
+            communityTab.display=()=>{throw new Error('Native renderer must not call legacy display');};
+            communityTab.renderTab=function(){nativeCalls++;};
+            communityTab.update=function(){updateCalls++;this.renderedItems[0].groupEl.style.display='grid';};
+            ui.install();communityTab.renderTab();
+            assert.equal(nativeCalls,1);
+            assert.equal(communityTab.renderedItems[0].groupEl.style.display,'none');
+            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,1);
+            communityTab.update();assert.equal(updateCalls,1);
+            assert.equal(communityTab.renderedItems[0].groupEl.style.display,'none');
+            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,1);
+        });
+
+        test('nested native render preserves this and return, mounts once, and leaves display untouched', () => {
+            let mounts=0;
+            const patch=ui.patchCommunityInstalledArea.bind(ui);
+            ui.patchCommunityInstalledArea=(...args)=>{mounts++;return patch(...args);};
+            const display=communityTab.display;
+            communityTab.update=function(){assert.equal(this,communityTab);return 17;};
+            communityTab.renderTab=function(){assert.equal(this,communityTab);return this.update()+1;};
+            ui.install();assert.equal(communityTab.display,display);
+            assert.equal(communityTab.renderTab(),18);assert.equal(mounts,1);
+            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,1);
+        });
+
+        test('throwing native render preserves exception and allows a later successful render', () => {
+            let fail=true;
+            communityTab.renderTab=function(){if(fail)throw new Error('native failure');return 'ok';};
+            ui.install();assert.throws(()=>communityTab.renderTab(),/native failure/);
+            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,0);
+            fail=false;assert.equal(communityTab.renderTab(),'ok');
+            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,1);
+        });
+
+        test('native renderer method identities are restored only while the manager owns them', () => {
+            const render=function(){},update=function(){};
+            communityTab.renderTab=render;communityTab.update=update;
+            ui.install();assert.notEqual(communityTab.renderTab,render);assert.notEqual(communityTab.update,update);
+            ui.dispose();assert.equal(communityTab.renderTab,render);assert.equal(communityTab.update,update);
+            assert.equal(communityTab.renderedItems[0].groupEl.style.display,'grid');
+        });
+
+        test('native update wrapper preserves a foreign later replacement on unload', () => {
+            communityTab.renderTab=function(){};communityTab.update=function(){};
+            ui.install();const foreign=function(){};communityTab.update=foreign;
+            ui.dispose();assert.equal(communityTab.update,foreign);
+        });
+
         test('unknown native renderedItems shape keeps the native list and reports visibly', () => {
             communityTab.renderedItems = [{
                 type: 'section',
