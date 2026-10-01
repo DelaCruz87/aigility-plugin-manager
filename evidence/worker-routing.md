@@ -38,3 +38,18 @@ Ringer reported197229tokens, equal to total uncached input plus output across th
 - Foundation3tests exit0 and build exit0.
 - Host adapter initial reviewer gate4failed/4: true global restricted state, nonpersistent deferred loading, core Workspaces API and actual-load readback. These findings must be corrected before deploy.
 - No production managers replaced at this snapshot.
+
+## Free Route Review - 2026-10-01 13:27 Madrid
+
+Coordinador de modelos confirmó acceso a OpenCode Space Bunny gratuito mediante una extracción sintética. El proyecto usó una configuración local con wrapper Seatbelt y flags actuales, sin fallback API facturable. Los eventos OpenCode cost suman 0; no se infiere saldo ni disponibilidad futura.
+
+| Unit | Requested model | Check | Duration | Review |
+| --- | --- | --- | ---: | --- |
+| adapter-free | opencode/space-bunny-free | PASS attempt1 | 479.1s | 23 owned +4 independent tests; revisión añadió caso manual concurrente y falló4/5 |
+| adapter-concurrency | opencode/space-bunny-free | PASS attempt1 | 371s | 24 owned +5 independent tests aprobados; supresión limitada a invocación sincrónica |
+
+Los contadores agregados por step_finish del primer run: input51173, output18349, reasoning25845, cache.read2842426, total2937793; segundo run: input29658, output17200, reasoning0, cache.read1141888, total1188746. Son campos del engine, no cuota restante. No se equiparan automáticamente a los tokens agregados de Ringer ni a contadores Codex. El primer run Ringer publicó83651 tokens.
+
+Z.ai devolvió primary5h usedPercent0 después del reset13:10:47Madrid; UI-controls volvió a glm-5.3-flash con max_parallel1. Antigravity sigue sin recuperación confirmada. Runtime/Advanced/debug/harness usan workers Luna6 ya autorizados. No se reinician los runs originales sólo porque notes.md quedó fuera del scratch: pruebas20/14 pasaron, aunque el deliverable gate marcó FAIL. Integration4tests iniciales pasaron pero su typecheck falló en módulos en curso; no acredita build integrado ni despliegue.
+
+Los checks independientes integrados ahora prueban ManagerRuntime y DebugManager reales juntos. La pausa de automatización no puede impedir las mutaciones de una sesión de diagnóstico explícita. Estas dos pruebas siguen pendientes de reparación del contrato entre módulos.
