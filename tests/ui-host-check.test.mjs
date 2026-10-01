@@ -191,3 +191,32 @@ test('a pending predecessor receipt survives without dispatch or overwrite',asyn
 test('exclusive fsynced receipt creation never truncates an existing lease',async()=>{const dir=await mkdtemp(path.join(tmpdir(),'aigility-ui-receipt-')),file=path.join(dir,'own.receipt.json');try{await persistNewReceipt(file,{key:'own',status:'dispatch-prepared'});await assert.rejects(()=>persistNewReceipt(file,{key:'other'}),{code:'EEXIST'});assert.equal(JSON.parse(await readFile(file,'utf8')).key,'own');}finally{await rm(dir,{recursive:true,force:true});}});
 test('primary document gate rejects the auxiliary Settings context and a different window',()=>{const main={},aux={},app={workspace:{containerEl:{ownerDocument:main}}};primaryDocumentGate(app,main,7,7);assert.throws(()=>primaryDocumentGate(app,aux,8,7),/Auxiliary/);assert.throws(()=>primaryDocumentGate(app,main,8,7),/window identity/);});
 test('real ownership gate after capture refuses replacement doc and foreign tab before filter cleanup',async()=>{const doc={},modal={},settings={doc,modalEl:modal,lastTabId:'community-plugins'},owned={doc,modal,tab:'community-plugins'};let cleaned=0;layoutOwnershipGate(settings,owned);await Promise.resolve();settings.doc={};assert.throws(()=>{layoutOwnershipGate(settings,owned);cleaned++;},/ownership changed/);settings.doc=doc;settings.lastTabId='appearance';assert.throws(()=>{layoutOwnershipGate(settings,owned);cleaned++;},/ownership changed/);assert.equal(cleaned,0);});
+
+import {settingsOwnershipPlan,restoreOwnedSettings} from '../checks/sandbox-ui-v013.check.mjs';
+import {createRequire} from 'node:module';
+const testRequire=createRequire(import.meta.url);
+test('borrowed Settings scope requires exact approved prior tab and never owns closure',()=>{assert.throws(()=>settingsOwnershipPlan(true,'voiceink-companion',null),/outside approved/);assert.throws(()=>settingsOwnershipPlan(true,'appearance','voiceink-companion'),/outside approved/);assert.deepEqual(settingsOwnershipPlan(true,'voiceink-companion','voiceink-companion'),{open:false,close:false,restoreTab:'voiceink-companion'});assert.deepEqual(settingsOwnershipPlan(false,'appearance',null),{open:true,close:true,restoreTab:'appearance'});});
+test('real borrowed Settings restoration renders original tab without closing the preexisting modal',async()=>{const doc={},modal={isConnected:true},calls=[],settings={doc,modalEl:modal,lastTabId:'community-plugins',openTabById(id){calls.push(id);this.lastTabId=id;},close(){throw Error('Must not close borrowed Settings');}};await restoreOwnedSettings(settings,{doc,modal,tab:'community-plugins'},{close:false,restoreTab:'voiceink-companion'},()=>{},()=>{throw Error('Must not await borrowed closure');});assert.deepEqual(calls,['voiceink-companion']);assert.equal(modal.isConnected,true);assert.equal(settings.lastTabId,'voiceink-companion');});
+test('borrowed cleanup preserves a later manual tab instead of rendering or closing over it',async()=>{const doc={},modal={isConnected:true};let actions=0;const settings={doc,modalEl:modal,lastTabId:'appearance',openTabById(){actions++;},close(){actions++;}};await assert.rejects(()=>restoreOwnedSettings(settings,{doc,modal,tab:'community-plugins'},{close:false,restoreTab:'voiceink-companion'},()=>{},()=>{}),/CAS mismatch/);assert.equal(actions,0);assert.equal(settings.lastTabId,'appearance');});
+test('the actual serialized host abort with preexisting unapproved Settings performs zero UI cleanup actions',async()=>{
+ const doc={querySelector:()=>null};let uiActions=0;
+ const plugin={_loaded:true,manifest:{version:'0.1.3',dir:'.obsidian/plugins/aigility-plugin-manager'},runtime:{local:{recoveryReason:'pause'}},
+  managerUI:{filterCriteria:{search:''},sidebarFilterCriteria:{search:''},applySidebarFilter(){uiActions++;},refreshList(){uiActions++;}}};
+ const app={appId:'d137282e82167d84',
+  vault:{getName:()=> 'Sandbox',adapter:{getBasePath:()=> '/Users/eme/Obsidian/Sandbox',read:async()=> '{}'}},
+  plugins:{plugins:{'aigility-plugin-manager':plugin},manifests:{},enabledPlugins:new Set(['aigility-plugin-manager'])},
+  internalPlugins:{plugins:{}},workspace:{containerEl:{ownerDocument:doc},activeLeaf:{id:'prior'},iterateAllLeaves(){}},
+  setting:{doc,modalEl:{isConnected:true},lastTabId:'voiceink-companion',open(){uiActions++;},close(){uiActions++;},openTabById(){uiActions++;}}};
+ const window={id:1,isFocused:()=>false};
+ const req=name=>name==='@electron/remote'?{getCurrentWindow:()=>window,BrowserWindow:{getAllWindows:()=>[window]}}:name==='child_process'?{execFileSync:()=> 'com.apple.loginwindow'}:testRequire(name);
+ const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
+ const fn=new AsyncFunction('app','globalThis','document','require','let value;'+uiBody('preflight-only',Date.now()+1000,Date.now()+2000,'a.png','b.png')+'return value;');
+ const result=await fn(app,{},doc,req);
+ assert.equal(result.status,'failed');assert.match(result.error,/Preexisting Settings/);assert.equal(uiActions,0);
+ assert.equal(app.setting.modalEl.isConnected,true);assert.equal(app.setting.lastTabId,'voiceink-companion');
+ assert.deepEqual(result.cleanupNotRequired,['filters','settings']);assert.equal(result.restoration.filters,true);assert.equal(result.restoration.settings,true);
+});
+
+import {selectSettingsWindow} from '../checks/sandbox-ui-v013.check.mjs';
+test('Settings window selection binds primary-document modal to the exact primary window',()=>{const doc={},main={id:1},aux={id:8,getTitle:()=> 'Settings - Sandbox - Obsidian'};assert.equal(selectSettingsWindow(doc,doc,main,[aux],1),main);assert.throws(()=>selectSettingsWindow(doc,doc,main,[aux],8),/replaced/);});
+test('detached Settings document refuses missing, ambiguous or replaced exact-title windows',()=>{const primary={},settings={},main={id:1},aux={id:8,getTitle:()=> 'Settings - Sandbox - Obsidian'};assert.equal(selectSettingsWindow(settings,primary,main,[aux],8),aux);assert.throws(()=>selectSettingsWindow(settings,primary,main,[],null),/missing/);assert.throws(()=>selectSettingsWindow(settings,primary,main,[aux,{...aux,id:9}],null),/ambiguous/);assert.throws(()=>selectSettingsWindow(settings,primary,main,[aux],9),/replaced/);});

@@ -51,6 +51,27 @@ export function casSettingsDecision(beforeTab,ownedTab,currentTab,ownedDoc,curre
  return {ok:true,conflict:false,shouldRestoreTab:true,shouldClose:true,restoreTab:beforeTab};
 }
 
+export function settingsOwnershipPlan(connected,tab,approvedPreexistingTab){
+ if(connected){if(!approvedPreexistingTab||tab!==approvedPreexistingTab)throw Error('Preexisting Settings tab is outside approved scope');return {open:false,close:false,restoreTab:tab};}
+ return {open:true,close:true,restoreTab:tab};
+}
+export function selectSettingsWindow(settingsDoc,primaryDoc,mainWindow,windows,expectedId){
+ const matches=settingsDoc===primaryDoc?[mainWindow]:windows.filter(w=>w.getTitle()==='Settings - Sandbox - Obsidian');
+ if(matches.length!==1)throw Error('Settings window missing or ambiguous');
+ if(expectedId!==null&&expectedId!==undefined&&matches[0].id!==expectedId)throw Error('Settings window replaced');
+ return matches[0];
+}
+export async function restoreOwnedSettings(settings,owned,plan,gate,waitForClose){
+ gate();const cas=casSettingsDecision(plan.restoreTab,owned.tab,settings.lastTabId,owned.doc,settings.doc,owned.modal,settings.modalEl);
+ if(!cas.ok)throw Error(cas.reason);
+ if(plan.close){
+  settings.lastTabId=plan.restoreTab;gate();settings.close();await waitForClose(()=>!owned.modal.isConnected);gate();
+ }else{
+  gate();settings.openTabById(plan.restoreTab);gate();layoutOwnershipGate(settings,{doc:owned.doc,modal:owned.modal,tab:plan.restoreTab});
+  if(!owned.modal.isConnected)throw Error('Preexisting Settings unexpectedly closed');
+ }
+}
+
 export async function dispatchOnce(persist,dispatch,metadata){
  if(metadata.key&&globalThis[metadata.key])throw Error('Global key already registered before dispatch');
  await persist({status:'dispatch-prepared',...metadata});
@@ -93,7 +114,7 @@ export function focusDecision(before,post,current){
  return {ok:true,conflict:false,restore:JSON.stringify(before)!==JSON.stringify(current)};
 }
 
-export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,deadline,cleanupDeadline){
+export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,deadline,cleanupDeadline,approvedPreexistingTab){
  const primaryWindowId=require('@electron/remote').getCurrentWindow().id;primaryDocumentGate(app,document,primaryWindowId,primaryWindowId);
  const job=registerUIJob(globalThis,key);Object.defineProperty(job,'pluginRef',{value:app.plugins.plugins['aigility-plugin-manager'],enumerable:false});
  const checkIdentity=()=>{primaryDocumentGate(app,document,require('@electron/remote').getCurrentWindow().id,primaryWindowId);validateUIIdentity(app,globalThis,key,job);};
@@ -141,11 +162,12 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  const cores=()=>Object.entries(app.internalPlugins.plugins).map(([id,w])=>({id,enabled:w.enabled,loaded:w.instance?._loaded===true})).sort((a,b)=>a.id.localeCompare(b.id));
  const prior={filter:structuredClone(ui.filterCriteria),sidebar:structuredClone(ui.sidebarFilterCriteria),tab:settings.lastTabId,leaf:app.workspace.activeLeaf,leaves:[],foreign:foreign(),core:cores(),local:JSON.stringify(P.runtime.local)};
  app.workspace.iterateAllLeaves(l=>prior.leaves.push(l.id));
+ prior.settingsConnected=settings.modalEl?.isConnected===true;
  const dataPath=P.manifest.dir+'/data.json';
  prior.dataHash=digest(await adapter.read(dataPath));gate();
 
  let ownedFilter=structuredClone(prior.filter),ownedSidebar=structuredClone(prior.sidebar),ownModal=null,sd=null;
- let ownedSettingsTab=null,pinnedSettingsDoc=null,pinnedSettingsModalEl=null,pinnedSettingsWinId=null;
+ let ownedSettingsTab=null,pinnedSettingsDoc=null,pinnedSettingsModalEl=null,pinnedSettingsWinId=null,uiStarted=false,settingsPlan=null;
 
  const wait=async(predicate,label)=>{
   for(let i=0;i<80;i++){
@@ -165,7 +187,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
 
  const mainWin=require('@electron/remote').getCurrentWindow();
  const pinnedMainWinId=mainWin.id;
- const settingsWindow=()=>{const wins=require('@electron/remote').BrowserWindow.getAllWindows().filter(w=>w.getTitle()==='Settings - Sandbox - Obsidian');if(wins.length!==1)throw Error('Settings window missing or ambiguous');if(pinnedSettingsWinId!==null&&wins[0].id!==pinnedSettingsWinId)throw Error('Settings window replaced');return wins[0];};
+ const settingsWindow=()=>selectSettingsWindow(settings.doc,document,mainWin,require('@electron/remote').BrowserWindow.getAllWindows(),pinnedSettingsWinId);
  const rememberOwnFocus=()=>{const current={electron:getElectronFocus(),os:getOSFrontmost()};if(current.electron!==null&&![initialElectronFocus,pinnedMainWinId,pinnedSettingsWinId].includes(current.electron))throw Error('Manual Electron focus changed; preserved');if(current.os!==initialOSBundle&&current.os!=='md.obsidian')throw Error('Manual OS focus changed; preserved');ownFocus=current;job.focusPost={...current};};
  const assertDocument=()=>{if(pinnedSettingsDoc)layoutOwnershipGate(settings,{doc:pinnedSettingsDoc,modal:pinnedSettingsModalEl,tab:ownedSettingsTab});if(pinnedSettingsWinId!==null)settingsWindow();};
 
@@ -180,7 +202,9 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
    assertDocument();targetWin=settingsWindow();
   }
   check('Native capture window exists',!!targetWin);
-  const modal=doc.querySelector('.aigility-options-modal')?.closest('.modal');
+  const optionsModal=doc.querySelector('.aigility-options-modal')?.closest('.modal');
+  const settingsModal=doc===pinnedSettingsDoc&&settings.modalEl===pinnedSettingsModalEl&&settings.lastTabId===ownedSettingsTab&&settings.modalEl?.querySelector('.aigility-manager-root')?settings.modalEl:null;
+  const modal=optionsModal??settingsModal;
   const rect=modal?.getBoundingClientRect();
   if(doc===document&&(!rect||rect.width<=0||rect.height<=0))throw Error('Own manager modal crop unavailable; refuse whole mainwindow capture');
   const clip=rect?{x:Math.max(0,Math.floor(rect.x)),y:Math.max(0,Math.floor(rect.y)),width:Math.ceil(rect.width),height:Math.ceil(rect.height)}:undefined;
@@ -192,10 +216,10 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  try{
   gate();check('Correct Sandbox identity',app.vault.getName()==='Sandbox'&&adapter.getBasePath()==='/Users/eme/Obsidian/Sandbox'&&app.appId==='d137282e82167d84');
   check('Native loaded0.1.3',P._loaded&&P.manifest.version==='0.1.3');
-  check('Settings initially closed',!settings.modalEl?.isConnected);
+  settingsPlan=settingsOwnershipPlan(prior.settingsConnected,prior.tab,approvedPreexistingTab);check('Settings ownership preflight',true,{preexisting:prior.settingsConnected,priorTab:prior.tab,openedByUs:settingsPlan.open});
   check('No previous manager modal',!q('.aigility-options-modal'));
   check('Recovery remains paused',!!P.runtime.local.recoveryReason&&!P.runtime.local.deviceProfileId&&!P.runtime.local.operationPending&&!P.runtime.state.debug?.active);
-  gate();settings.open();ownedSettingsTab=settings.lastTabId;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsDoc=settings.doc;await wait(()=>settings.doc?.querySelector('.vertical-tab-content'),'Settings document');
+  gate();uiStarted=true;if(settingsPlan.open)settings.open();ownedSettingsTab=settings.lastTabId;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsDoc=settings.doc;await wait(()=>settings.doc?.querySelector('.vertical-tab-content'),'Settings document');
   sd=settings.doc;pinnedSettingsWinId=settingsWindow().id;rememberOwnFocus();pinnedSettingsDoc=settings.doc;pinnedSettingsModalEl=settings.modalEl;
   gate();settings.openTabById('community-plugins');ownedSettingsTab='community-plugins';await wait(()=>sd.querySelector('.aigility-manager-root'),'integrated Community list');
   ownedSettingsTab='community-plugins';
@@ -261,6 +285,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
   });
 
   await restore('filters',()=>{
+   if(!uiStarted){job.cleanupNotRequired??=[];job.cleanupNotRequired.push('filters');return;}
    assertDocument();
    const f=matchingRestore(prior.filter,ownedFilter,ui.filterCriteria);
    const s=matchingRestore(prior.sidebar,ownedSidebar,ui.sidebarFilterCriteria);
@@ -269,18 +294,10 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
   });
 
   await restore('settings',async()=>{
+   if(!uiStarted){job.cleanupNotRequired??=[];job.cleanupNotRequired.push('settings');return;}
    if(!focusDecision(job.focusBefore,ownFocus,{electron:getElectronFocus(),os:getOSFrontmost()}).ok)throw Error('Manual focus changed; preserve Settings');
-   const cas=casSettingsDecision(prior.tab,ownedSettingsTab,settings.lastTabId,pinnedSettingsDoc,settings.doc,pinnedSettingsModalEl,settings.modalEl);
-   if(!cas.ok){
-    throw Error(cas.reason);
-   }
-   if(cas.shouldRestoreTab&&settings.lastTabId==='community-plugins'){
-    settings.lastTabId=prior.tab;
-   }
-   if(cas.shouldClose&&settings.modalEl?.isConnected){
-    settings.close();
-    await waitClosedLocal(()=>!pinnedSettingsModalEl.isConnected,cleanupDeadline);cleanupGate();rememberOwnFocus();
-   }
+   await restoreOwnedSettings(settings,{tab:ownedSettingsTab,doc:pinnedSettingsDoc,modal:pinnedSettingsModalEl},settingsPlan,cleanupGate,predicate=>waitClosedLocal(predicate,cleanupDeadline));
+   ownedSettingsTab=settingsPlan.restoreTab;rememberOwnFocus();job.settingsAfter={connected:settings.modalEl?.isConnected===true,tab:settings.lastTabId,preexisting:prior.settingsConnected};
   });
 
   await restore('focus',()=>{
@@ -305,12 +322,12 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  }catch(error){job.status='failed';job.error=String(error);job.phase='preflight-failed';job.finishedAt=new Date().toISOString();return job;}
 }
 
-export function uiBody(key,deadline,cleanupDeadline,communityImage,downloadImage){
- return `const primaryDocumentGate=${primaryDocumentGate.toString()};const layoutOwnershipGate=${layoutOwnershipGate.toString()};const registerUIJob=${registerUIJob.toString()};const validateUIIdentity=${validateUIIdentity.toString()};const focusDecision=${focusDecision.toString()};const uiGate=${uiGate.toString()};
+export function uiBody(key,deadline,cleanupDeadline,communityImage,downloadImage,approvedPreexistingTab){
+ return `const selectSettingsWindow=${selectSettingsWindow.toString()};const settingsOwnershipPlan=${settingsOwnershipPlan.toString()};const restoreOwnedSettings=${restoreOwnedSettings.toString()};const primaryDocumentGate=${primaryDocumentGate.toString()};const layoutOwnershipGate=${layoutOwnershipGate.toString()};const registerUIJob=${registerUIJob.toString()};const validateUIIdentity=${validateUIIdentity.toString()};const focusDecision=${focusDecision.toString()};const uiGate=${uiGate.toString()};
 const matchingRestore=${matchingRestore.toString()};
 const waitClosed=${waitClosed.toString()};
 const casSettingsDecision=${casSettingsDecision.toString()};
-value=await (${nativeUI.toString()})(app,globalThis,${J(communityImage)},${J(downloadImage)},${J(key)},${deadline},${cleanupDeadline});`;
+value=await (${nativeUI.toString()})(app,globalThis,${J(communityImage)},${J(downloadImage)},${J(key)},${deadline},${cleanupDeadline},${J(approvedPreexistingTab??null)});`;
 }
 
 export async function run(){
@@ -323,6 +340,7 @@ export async function run(){
 
  const ready=JSON.parse(await readFile(path.join(ROOT,'evidence/sandbox-ui-v013-ready.json'),'utf8'));
  assert.equal(ready.status,'ready-offline-ui-v013');
+ const approvedPreexistingTab=process.env.AIGILITY_UI_PREEXISTING_TAB??null;assert.equal(approvedPreexistingTab,ready.preexistingSettingsTab??null,'Approved preexisting Settings scope differs from READY');
  assert.equal(hash(await readFile(fileURLToPath(import.meta.url))),ready.checkSha256);
  for(const file of ['main.js','manifest.json','styles.css']){
   assert.equal(hash(await readFile(path.join(VAULT_PATH,'.obsidian/plugins',MANAGER_ID,file))),ready.files[file]);
@@ -367,7 +385,7 @@ export async function run(){
    async()=>{
     const pending=await host("value=Object.keys(globalThis).filter(k=>k.startsWith('aigility-manager-ui:')&&globalThis[k]?.status==='pending');");const sameKey=await host(`value=Object.hasOwn(globalThis,${J(key)});`);assert.equal(sameKey,false,'Same UI token already exists, never dispatch again');
     assert.deepEqual(pending,[]);
-    return await host(uiBody(key,actionDeadline,deadline,path.join(images,'community.png'),path.join(images,'downloaded.png')),{mutation:true});
+    return await host(uiBody(key,actionDeadline,deadline,path.join(images,'community.png'),path.join(images,'downloaded.png'),approvedPreexistingTab),{mutation:true});
    },
    metadata
   );
