@@ -1,0 +1,2281 @@
+{
+  "key": "aigility-manager-profile:PM-SANDBOX-PROFILES-FINAL013-R2-20261001-2336",
+  "leaseId": "PM-SANDBOX-PROFILES-FINAL013-R2-20261001-2336",
+  "ackUTC": "2026-10-01T23:35:57.656066Z",
+  "startBy": 1790897877656,
+  "deadline": 1790897937656,
+  "actionDeadline": 1790897877656,
+  "nativeToken": "07a0330a6bf1c047ca7dc8dc3e1e22f5",
+  "nativeIdentity": {
+    "windowId": 1,
+    "webContentsId": 1,
+    "webContentsURL": "app://obsidian.md/index.html",
+    "documentURL": "app://obsidian.md/index.html",
+    "baselineKey": "aigility-manager-profile-baseline:PM-SANDBOX-PROFILES-FINAL013-R2-20261001-2336",
+    "baselineToken": "b98c92f9c22c4b3f8a9d3378ebe34ff8"
+  },
+  "status": "failed",
+  "phase": "settled",
+  "cleanup": {
+    "pending": false
+  },
+  "totalMs": 180000,
+  "cleanupMs": 60000,
+  "id": "aigility-manager-profile:PM-SANDBOX-PROFILES-FINAL013-R2-20261001-2336",
+  "startedAt": "2026-10-01T23:36:31.157Z",
+  "restoration": {
+    "local-before-cleanup": true,
+    "fixtures-off": true,
+    "state": true,
+    "protections": true,
+    "local": true,
+    "files": false,
+    "readback": true
+  },
+  "journal": [
+    {
+      "phase": "create-directory",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a",
+      "status": "settled"
+    },
+    {
+      "phase": "write-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/manifest.json",
+      "hash": "c16db02b37420238bb0e7a6c58c0e7f09a85365e577e2c4a12ca017aaf04dce5",
+      "status": "settled"
+    },
+    {
+      "phase": "write-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/main.js",
+      "hash": "e480c552a9e5d45ae8d754d699eb88e2f25b8abf3c6c8ae7462371f4c52a8a87",
+      "status": "settled"
+    },
+    {
+      "phase": "write-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/data.json",
+      "hash": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "status": "settled"
+    },
+    {
+      "phase": "write-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/custom.txt",
+      "hash": "7d61fdb5e22a82c29ffb792083d36faa6b80bd8981705853a19811370ff68ecc",
+      "status": "settled"
+    },
+    {
+      "phase": "create-directory",
+      "path": ".obsidian/plugins/aigility-manager-fixture-b",
+      "status": "settled"
+    },
+    {
+      "phase": "write-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-b/manifest.json",
+      "hash": "33f578838a67976123b4c36ff830b1ddef78bfa7b115573dc0acbad9b22d796b",
+      "status": "settled"
+    },
+    {
+      "phase": "write-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-b/main.js",
+      "hash": "e480c552a9e5d45ae8d754d699eb88e2f25b8abf3c6c8ae7462371f4c52a8a87",
+      "status": "settled"
+    },
+    {
+      "phase": "write-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-b/data.json",
+      "hash": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "status": "settled"
+    },
+    {
+      "phase": "write-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-b/custom.txt",
+      "hash": "7d61fdb5e22a82c29ffb792083d36faa6b80bd8981705853a19811370ff68ecc",
+      "status": "settled"
+    },
+    {
+      "phase": "remove-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/manifest.json",
+      "status": "planned"
+    },
+    {
+      "phase": "remove-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/manifest.json",
+      "status": "settled"
+    },
+    {
+      "phase": "remove-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/main.js",
+      "status": "planned"
+    },
+    {
+      "phase": "remove-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/main.js",
+      "status": "settled"
+    },
+    {
+      "phase": "remove-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/data.json",
+      "status": "planned"
+    },
+    {
+      "phase": "remove-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/data.json",
+      "status": "settled"
+    },
+    {
+      "phase": "remove-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/custom.txt",
+      "status": "planned"
+    },
+    {
+      "phase": "remove-fixture-file",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a/custom.txt",
+      "status": "settled"
+    },
+    {
+      "phase": "remove-empty-fixture-directory",
+      "path": ".obsidian/plugins/aigility-manager-fixture-a",
+      "status": "planned"
+    }
+  ],
+  "postimages": [
+    {
+      "name": "setEnabled-via-owned-fixture",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": true
+        },
+        "native": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": true
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": true
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [],
+              "group": "",
+              "desired": true,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-b": true
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [],
+          "undo": {
+            "kind": "profile",
+            "entries": [
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-b"
+                },
+                "before": false,
+                "after": true,
+                "reason": "fixture:aigility-host-partial",
+                "expectedPostimage": true,
+                "desiredBefore": false,
+                "generation": 1
+              }
+            ],
+            "createdAt": "2026-10-01T23:36:31.454Z",
+            "fixtureId": "aigility-host-partial"
+          }
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged."
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 0,
+          "aigility-manager-fixture-b": 1
+        }
+      }
+    },
+    {
+      "name": "previewProfile",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": true
+        },
+        "native": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": true
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": true
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [],
+              "group": "",
+              "desired": true,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-b": true
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [],
+          "undo": {
+            "kind": "profile",
+            "entries": [
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-b"
+                },
+                "before": false,
+                "after": true,
+                "reason": "fixture:aigility-host-partial",
+                "expectedPostimage": true,
+                "desiredBefore": false,
+                "generation": 1
+              }
+            ],
+            "createdAt": "2026-10-01T23:36:31.454Z",
+            "fixtureId": "aigility-host-partial"
+          }
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged."
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 0,
+          "aigility-manager-fixture-b": 1
+        }
+      }
+    },
+    {
+      "name": "applyProfile",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": true,
+          "aigility-manager-fixture-b": false
+        },
+        "native": {
+          "aigility-manager-fixture-a": true,
+          "aigility-manager-fixture-b": false
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": true,
+          "aigility-manager-fixture-b": false
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": true,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-b": true
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.493Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 1
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": true,
+                  "after": false,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": false,
+                  "desiredBefore": true,
+                  "generation": 2
+                }
+              ]
+            }
+          ],
+          "undo": {
+            "kind": "profile",
+            "entries": [
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-a"
+                },
+                "before": false,
+                "after": true,
+                "reason": "profile:aigility-host-test",
+                "expectedPostimage": true,
+                "desiredBefore": false,
+                "generation": 1
+              },
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-b"
+                },
+                "before": true,
+                "after": false,
+                "reason": "profile:aigility-host-test",
+                "expectedPostimage": false,
+                "desiredBefore": true,
+                "generation": 2
+              }
+            ],
+            "createdAt": "2026-10-01T23:36:31.493Z"
+          }
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+          "appliedProfileId": "aigility-host-test"
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 1,
+          "aigility-manager-fixture-b": 2
+        }
+      }
+    },
+    {
+      "name": "undoProfile",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": true
+        },
+        "native": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": true
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": true
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [],
+              "group": "",
+              "desired": true,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-b": true
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.493Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 1
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": true,
+                  "after": false,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": false,
+                  "desiredBefore": true,
+                  "generation": 2
+                }
+              ]
+            }
+          ]
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+          "appliedProfileId": "aigility-host-test"
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 2,
+          "aigility-manager-fixture-b": 3
+        }
+      }
+    },
+    {
+      "name": "setEnabled-via-owned-fixture",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "native": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-b": false
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.493Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 1
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": true,
+                  "after": false,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": false,
+                  "desiredBefore": true,
+                  "generation": 2
+                }
+              ]
+            }
+          ],
+          "undo": {
+            "kind": "profile",
+            "entries": [
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-b"
+                },
+                "before": true,
+                "after": false,
+                "reason": "fixture:aigility-host-partial",
+                "expectedPostimage": false,
+                "desiredBefore": true,
+                "generation": 4
+              }
+            ],
+            "createdAt": "2026-10-01T23:36:31.547Z",
+            "fixtureId": "aigility-host-partial"
+          }
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+          "appliedProfileId": "aigility-host-test"
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 2,
+          "aigility-manager-fixture-b": 4
+        }
+      }
+    },
+    {
+      "name": "setTags",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "native": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-b": false
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.493Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 1
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": true,
+                  "after": false,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": false,
+                  "desiredBefore": true,
+                  "generation": 2
+                }
+              ]
+            }
+          ],
+          "undo": {
+            "kind": "profile",
+            "entries": [
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-b"
+                },
+                "before": true,
+                "after": false,
+                "reason": "fixture:aigility-host-partial",
+                "expectedPostimage": false,
+                "desiredBefore": true,
+                "generation": 4
+              }
+            ],
+            "createdAt": "2026-10-01T23:36:31.547Z",
+            "fixtureId": "aigility-host-partial"
+          }
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+          "appliedProfileId": "aigility-host-test"
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 2,
+          "aigility-manager-fixture-b": 5
+        }
+      }
+    },
+    {
+      "name": "previewProfile",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "native": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-b": false
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.493Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 1
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": true,
+                  "after": false,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": false,
+                  "desiredBefore": true,
+                  "generation": 2
+                }
+              ]
+            }
+          ],
+          "undo": {
+            "kind": "profile",
+            "entries": [
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-b"
+                },
+                "before": true,
+                "after": false,
+                "reason": "fixture:aigility-host-partial",
+                "expectedPostimage": false,
+                "desiredBefore": true,
+                "generation": 4
+              }
+            ],
+            "createdAt": "2026-10-01T23:36:31.547Z",
+            "fixtureId": "aigility-host-partial"
+          }
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+          "appliedProfileId": "aigility-host-test"
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 2,
+          "aigility-manager-fixture-b": 5
+        }
+      }
+    },
+    {
+      "name": "applyProfile",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": true,
+          "aigility-manager-fixture-b": true
+        },
+        "native": {
+          "aigility-manager-fixture-a": true,
+          "aigility-manager-fixture-b": true
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": true,
+          "aigility-manager-fixture-b": true
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": true,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": true,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-b": false
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.493Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 1
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": true,
+                  "after": false,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": false,
+                  "desiredBefore": true,
+                  "generation": 2
+                }
+              ]
+            },
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.649Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 3
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 6
+                }
+              ]
+            }
+          ],
+          "undo": {
+            "kind": "profile",
+            "entries": [
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-a"
+                },
+                "before": false,
+                "after": true,
+                "reason": "profile:aigility-host-test",
+                "expectedPostimage": true,
+                "desiredBefore": false,
+                "generation": 3
+              },
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-b"
+                },
+                "before": false,
+                "after": true,
+                "reason": "profile:aigility-host-test",
+                "expectedPostimage": true,
+                "desiredBefore": false,
+                "generation": 6
+              }
+            ],
+            "createdAt": "2026-10-01T23:36:31.649Z"
+          }
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+          "appliedProfileId": "aigility-host-test"
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 3,
+          "aigility-manager-fixture-b": 6
+        }
+      }
+    },
+    {
+      "name": "undoProfile",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "native": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-b": false
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.493Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 1
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": true,
+                  "after": false,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": false,
+                  "desiredBefore": true,
+                  "generation": 2
+                }
+              ]
+            },
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.649Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 3
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 6
+                }
+              ]
+            }
+          ]
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+          "appliedProfileId": "aigility-host-test"
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 4,
+          "aigility-manager-fixture-b": 7
+        }
+      }
+    },
+    {
+      "name": "applyFixture",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": true,
+          "aigility-manager-fixture-b": false
+        },
+        "native": {
+          "aigility-manager-fixture-a": true,
+          "aigility-manager-fixture-b": false
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": true,
+          "aigility-manager-fixture-b": false
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": true,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-a": true
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.493Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 1
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": true,
+                  "after": false,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": false,
+                  "desiredBefore": true,
+                  "generation": 2
+                }
+              ]
+            },
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.649Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 3
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 6
+                }
+              ]
+            }
+          ],
+          "undo": {
+            "kind": "profile",
+            "entries": [
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-a"
+                },
+                "before": false,
+                "after": true,
+                "reason": "fixture:aigility-host-partial",
+                "expectedPostimage": true,
+                "desiredBefore": false,
+                "generation": 5
+              }
+            ],
+            "createdAt": "2026-10-01T23:36:31.709Z",
+            "fixtureId": "aigility-host-partial"
+          }
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+          "appliedProfileId": "aigility-host-test"
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 5,
+          "aigility-manager-fixture-b": 7
+        }
+      }
+    },
+    {
+      "name": "setEnabled-via-owned-fixture",
+      "settled": true,
+      "postimage": {
+        "desired": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "native": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "loaded": {
+          "aigility-manager-fixture-a": false,
+          "aigility-manager-fixture-b": false
+        },
+        "projection": {
+          "records": {
+            "community:aigility-manager-fixture-a": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-a"
+              },
+              "name": "aigility-manager-fixture-a",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            },
+            "community:aigility-manager-fixture-b": {
+              "ref": {
+                "kind": "community",
+                "id": "aigility-manager-fixture-b"
+              },
+              "name": "aigility-manager-fixture-b",
+              "version": "1.0.0",
+              "tags": [
+                "aigility-test-tag"
+              ],
+              "group": "",
+              "desired": false,
+              "metadata": {}
+            }
+          },
+          "tags": [
+            {
+              "id": "aigility-test-tag",
+              "name": "AIgility acceptance tag"
+            }
+          ],
+          "deviceProfiles": [
+            {
+              "id": "aigility-host-test",
+              "name": "AIgility acceptance profile",
+              "tagIds": [
+                "aigility-test-tag"
+              ],
+              "applyAtStart": false
+            }
+          ],
+          "fixtureProfiles": [
+            {
+              "id": "aigility-host-partial",
+              "name": "AIgility acceptance partial",
+              "members": {
+                "community:aigility-manager-fixture-a": false
+              }
+            }
+          ],
+          "deferred": [],
+          "profileBackups": [
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.493Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 1
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": true,
+                  "after": false,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": false,
+                  "desiredBefore": true,
+                  "generation": 2
+                }
+              ]
+            },
+            {
+              "profileId": "aigility-host-test",
+              "createdAt": "2026-10-01T23:36:31.649Z",
+              "entries": [
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-a"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 3
+                },
+                {
+                  "ref": {
+                    "kind": "community",
+                    "id": "aigility-manager-fixture-b"
+                  },
+                  "before": false,
+                  "after": true,
+                  "reason": "profile:aigility-host-test",
+                  "expectedPostimage": true,
+                  "desiredBefore": false,
+                  "generation": 6
+                }
+              ]
+            }
+          ],
+          "undo": {
+            "kind": "profile",
+            "entries": [
+              {
+                "ref": {
+                  "kind": "community",
+                  "id": "aigility-manager-fixture-a"
+                },
+                "before": true,
+                "after": false,
+                "reason": "fixture:aigility-host-partial",
+                "expectedPostimage": false,
+                "desiredBefore": true,
+                "generation": 6
+              }
+            ],
+            "createdAt": "2026-10-01T23:36:31.739Z",
+            "fixtureId": "aigility-host-partial"
+          }
+        },
+        "local": {
+          "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+          "appliedProfileId": "aigility-host-test"
+        },
+        "generations": {
+          "aigility-manager-fixture-a": 6,
+          "aigility-manager-fixture-b": 7
+        }
+      }
+    }
+  ],
+  "primaryWindowId": 1,
+  "baseline": {
+    "projection": {
+      "records": {},
+      "tags": [],
+      "deviceProfiles": [],
+      "fixtureProfiles": [],
+      "deferred": [],
+      "profileBackups": []
+    },
+    "stateHash": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+    "local": {
+      "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+      "operationPending": null,
+      "deviceProfileId": null,
+      "appliedProfileId": null
+    },
+    "foreign": [
+      {
+        "id": "advanced-exclude",
+        "version": "4.1.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "agility-links",
+        "version": "0.1.3-dev.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-blocks",
+        "version": "0.1.0-dev.32",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-obs",
+        "version": "0.50.0-dev.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-plugin-manager",
+        "version": "0.1.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-tables",
+        "version": "0.1.0-dev.5",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "aigility-ui",
+        "version": "0.1.0-dev.14",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "annoteca",
+        "version": "1.19.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "better-plugins-manager",
+        "version": "1.0.14-enso.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "better-plugins-manager-companion",
+        "version": "0.5.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "callout-manager",
+        "version": "1.1.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "cmdr",
+        "version": "0.5.13",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "darlal-switcher-plus",
+        "version": "6.2.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "datacore",
+        "version": "0.1.29",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "dataview",
+        "version": "0.5.68",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "document-comments",
+        "version": "0.1.15",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "dragger",
+        "version": "2.0.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "editing-toolbar",
+        "version": "4.1.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enhanced-annotations",
+        "version": "0.1.9",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "enhanced-symbols-prettifier",
+        "version": "1.5.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enso-control-plane",
+        "version": "0.4.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "enso-filetree-lab",
+        "version": "0.3.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "enso-secret-placeholders",
+        "version": "0.7.2-enso.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "excerpt-outline-mindmap-editor",
+        "version": "0.2.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "fenced-blocks",
+        "version": "0.2.3",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "fileclass",
+        "version": "0.2.15",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "folder-notes",
+        "version": "1.8.26",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "gridexplorer",
+        "version": "3.5.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "inline-comments",
+        "version": "0.2.3",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "insta-toc",
+        "version": "7.0.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "keyshots",
+        "version": "2.8.2",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "nodian",
+        "version": "1.4.14",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "note-toolbar",
+        "version": "1.35.11",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "notebook-navigator",
+        "version": "3.4.3",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-custom-frames",
+        "version": "2.6.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-excalidraw-plugin",
+        "version": "2.28.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-local-rest-api",
+        "version": "5.3.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-mindmap-nextgen",
+        "version": "1.16.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "obsidian-outliner",
+        "version": "4.10.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "obsidian-sort-and-permute-lines",
+        "version": "0.9.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-style-settings",
+        "version": "1.0.9",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "obsidian-trash-explorer",
+        "version": "1.2.4",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "omnisearch",
+        "version": "1.31.0",
+        "native": false,
+        "loaded": true
+      },
+      {
+        "id": "ribbon-organizer",
+        "version": "0.19.0",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "side-comments-origin",
+        "version": "1.0.10",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "stratify-mindmap",
+        "version": "1.3.0",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "table-editor-obsidian",
+        "version": "0.23.2",
+        "native": false,
+        "loaded": false
+      },
+      {
+        "id": "tag-wrangler",
+        "version": "0.6.5",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "templater-obsidian",
+        "version": "2.25.1",
+        "native": true,
+        "loaded": true
+      },
+      {
+        "id": "voiceink-companion",
+        "version": "0.1.0",
+        "native": true,
+        "loaded": true
+      }
+    ],
+    "core": [
+      {
+        "id": "audio-recorder",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "backlink",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "bases",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "bookmarks",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "canvas",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "command-palette",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "daily-notes",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "editor-status",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "file-explorer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "file-recovery",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "footnotes",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "global-search",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "graph",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "note-composer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "outgoing-link",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "outline",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "page-preview",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "properties",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "publish",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "random-note",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "slash-command",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "slides",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "switcher",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "sync",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "tag-pane",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "templates",
+        "enabled": false,
+        "loaded": false
+      },
+      {
+        "id": "webviewer",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "word-count",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "workspaces",
+        "enabled": true,
+        "loaded": false
+      },
+      {
+        "id": "zk-prefixer",
+        "enabled": false,
+        "loaded": false
+      }
+    ],
+    "leaves": [
+      "dbca6a72ac668347",
+      "4996da6c8b07ea31",
+      "b8b69192275e3228"
+    ]
+  },
+  "protections": {
+    "before": [
+      "enso-sync-manager",
+      "note-toolbar",
+      "obsidian-git",
+      "tasknotes",
+      "aigility-plugin-manager",
+      "community:advanced-exclude",
+      "community:agility-links",
+      "community:aigility-blocks",
+      "community:aigility-obs",
+      "community:aigility-tables",
+      "community:aigility-ui",
+      "community:better-plugins-manager",
+      "community:better-plugins-manager-companion",
+      "community:callout-manager",
+      "community:cmdr",
+      "community:darlal-switcher-plus",
+      "community:datacore",
+      "community:dataview",
+      "community:document-comments",
+      "community:dragger",
+      "community:editing-toolbar",
+      "community:enhanced-symbols-prettifier",
+      "community:enso-control-plane",
+      "community:enso-filetree-lab",
+      "community:enso-secret-placeholders",
+      "community:excerpt-outline-mindmap-editor",
+      "community:fenced-blocks",
+      "community:fileclass",
+      "community:folder-notes",
+      "community:gridexplorer",
+      "community:insta-toc",
+      "community:keyshots",
+      "community:nodian",
+      "community:note-toolbar",
+      "community:notebook-navigator",
+      "community:obsidian-custom-frames",
+      "community:obsidian-excalidraw-plugin",
+      "community:obsidian-local-rest-api",
+      "community:obsidian-mindmap-nextgen",
+      "community:obsidian-outliner",
+      "community:obsidian-sort-and-permute-lines",
+      "community:obsidian-style-settings",
+      "community:obsidian-trash-explorer",
+      "community:omnisearch",
+      "community:plugin-drawers",
+      "community:ribbon-organizer",
+      "community:stratify-mindmap",
+      "community:table-editor-obsidian",
+      "community:tag-wrangler",
+      "community:templater-obsidian",
+      "core:audio-recorder",
+      "core:backlink",
+      "core:bases",
+      "core:bookmarks",
+      "core:canvas",
+      "core:command-palette",
+      "core:daily-notes",
+      "core:editor-status",
+      "core:file-explorer",
+      "core:file-recovery",
+      "core:footnotes",
+      "core:global-search",
+      "core:graph",
+      "core:note-composer",
+      "core:outgoing-link",
+      "core:outline",
+      "core:page-preview",
+      "core:properties",
+      "core:publish",
+      "core:random-note",
+      "core:slash-command",
+      "core:slides",
+      "core:switcher",
+      "core:sync",
+      "core:tag-pane",
+      "core:templates",
+      "core:webviewer",
+      "core:word-count",
+      "core:workspaces",
+      "core:zk-prefixer",
+      "community:aigility-plugin-manager"
+    ],
+    "added": [
+      "community:annoteca",
+      "community:enhanced-annotations",
+      "community:inline-comments",
+      "community:side-comments-origin",
+      "community:voiceink-companion"
+    ]
+  },
+  "metadataIntent": {
+    "ids": [
+      "aigility-manager-fixture-a",
+      "aigility-manager-fixture-b"
+    ],
+    "tag": "aigility-test-tag",
+    "profile": "aigility-host-test",
+    "partial": "aigility-host-partial"
+  },
+  "wrapperIntent": {
+    "status": "restored",
+    "hadOwnDescriptor": true,
+    "descriptor": {
+      "writable": true,
+      "enumerable": true,
+      "configurable": true
+    }
+  },
+  "casePending": null,
+  "manualFixturePost": {
+    "id": "aigility-host-partial",
+    "members": {
+      "community:aigility-manager-fixture-a": true
+    }
+  },
+  "manualTogglesViaFixture": 3,
+  "wrapperConflict": false,
+  "result": {
+    "cases": [
+      "enable B before preview",
+      "profile preview",
+      "profile apply",
+      "profile undo",
+      "disable B",
+      "edit B tags",
+      "preview both fixtures",
+      "apply both fixtures",
+      "fixture undo",
+      "apply partial fixture",
+      "final disable A"
+    ],
+    "counterDeltas": {
+      "a": 3,
+      "b": 3
+    }
+  },
+  "cleanupPhase": "readback",
+  "cleanupErrors": [
+    {
+      "label": "files",
+      "error": "SystemError [ERR_FS_EISDIR]: Path is a directory: rm returned EISDIR (is a directory) /Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-manager-fixture-a"
+    }
+  ],
+  "finishedAt": "2026-10-01T23:36:31.952Z",
+  "pollErrors": []
+}
