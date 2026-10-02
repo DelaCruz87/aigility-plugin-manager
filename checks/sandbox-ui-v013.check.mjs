@@ -62,11 +62,16 @@ export function settingsBaselineGate(settings,baseline){
 export function effectiveSettingsGate(settings,registered){
  if(settings.modalEl?.isConnected===true&&(!settings.activeTab||settings.activeTab.id!==settings.lastTabId||!registered.includes(settings.activeTab)))throw Error('Preexisting Settings effective active tab is absent, stale or unregistered');
 }
-export function selectSettingsWindow(settingsDoc,primaryDoc,mainWindow,windows,expectedId){
- const matches=settingsDoc===primaryDoc?[mainWindow]:windows.filter(w=>w.getTitle()==='Settings - Sandbox - Obsidian');
+export function selectSettingsWindow(settingsDoc,primaryDoc,mainWindow,windows,expectedId,expectedWindow=null,expectedWebContents=null){
+ // Obsidian 1.14.3 app.js initializes each Window.electronWindow through that
+ // window's own remote.getCurrentWindow(); titles are localized and mutable.
+ const bound=settingsDoc?.defaultView?.electronWindow;
+ if(settingsDoc!==primaryDoc&&(!bound||settingsDoc?.defaultView?.document!==settingsDoc))throw Error('Settings document has no native window binding');
+ const matches=settingsDoc===primaryDoc?[mainWindow]:windows.filter(w=>w.id===bound.id&&w.webContents===bound.webContents);
  if(matches.length!==1)throw Error('Settings window missing or ambiguous');
- if(expectedId!==null&&expectedId!==undefined&&matches[0].id!==expectedId)throw Error('Settings window replaced');
- return matches[0];
+ const selected=matches[0];
+ if((expectedId!==null&&expectedId!==undefined&&selected.id!==expectedId)||(expectedWindow&&selected!==expectedWindow)||(expectedWebContents&&selected.webContents!==expectedWebContents))throw Error('Settings window replaced');
+ return selected;
 }
 export async function restoreOwnedSettings(settings,owned,plan,gate,waitForClose){
  gate();const cas=casSettingsDecision(plan.restoreTab,owned.tab,settings.lastTabId,owned.doc,settings.doc,owned.modal,settings.modalEl);
@@ -177,7 +182,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
  prior.dataHash=digest(await adapter.read(dataPath));gate();
 
  let ownedFilter=structuredClone(prior.filter),ownedSidebar=structuredClone(prior.sidebar),ownModal=null,sd=null;
- let ownedSettingsTab=null,pinnedSettingsDoc=null,pinnedSettingsModalEl=null,pinnedSettingsWinId=null,pinnedSettingsActiveTab=null,uiStarted=false,settingsPlan=null;
+ let ownedSettingsTab=null,pinnedSettingsDoc=null,pinnedSettingsModalEl=null,pinnedSettingsWinId=null,pinnedSettingsWinRef=null,pinnedSettingsWebContentsRef=null,pinnedSettingsActiveTab=null,uiStarted=false,settingsPlan=null;
 
  const wait=async(predicate,label)=>{
   for(let i=0;i<80;i++){
@@ -197,7 +202,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
 
  const mainWin=require('@electron/remote').getCurrentWindow();
  const pinnedMainWinId=mainWin.id;
- const settingsWindow=()=>selectSettingsWindow(settings.doc,document,mainWin,require('@electron/remote').BrowserWindow.getAllWindows(),pinnedSettingsWinId);
+ const settingsWindow=()=>{if(settings.win?.document!==settings.doc||settings.modalEl?.ownerDocument!==settings.doc)throw Error('Settings owner document changed');const bound=settings.doc?.defaultView?.electronWindow;if(settings.doc!==document&&(!bound||bound.id!==6||bound.webContents.id!==6||bound.isDestroyed()||bound.webContents.getURL()!=='about:blank'))throw Error('Settings lease window identity changed');return selectSettingsWindow(settings.doc,document,mainWin,require('@electron/remote').BrowserWindow.getAllWindows(),pinnedSettingsWinId,pinnedSettingsWinRef,pinnedSettingsWebContentsRef);};
  const rememberOwnFocus=()=>{const current={electron:getElectronFocus(),os:getOSFrontmost()};if(current.electron!==null&&![initialElectronFocus,pinnedMainWinId,pinnedSettingsWinId].includes(current.electron))throw Error('Manual Electron focus changed; preserved');if(current.os!==initialOSBundle&&current.os!=='md.obsidian')throw Error('Manual OS focus changed; preserved');ownFocus=current;job.focusPost={...current};};
  const assertDocument=()=>{if(pinnedSettingsDoc)layoutOwnershipGate(settings,{doc:pinnedSettingsDoc,modal:pinnedSettingsModalEl,tab:ownedSettingsTab,activeTab:pinnedSettingsActiveTab});if(pinnedSettingsWinId!==null)settingsWindow();};
 
@@ -232,7 +237,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
   check('No previous manager modal',!q('.aigility-options-modal'));
   check('Recovery remains paused',!!P.runtime.local.recoveryReason&&!P.runtime.local.deviceProfileId&&!P.runtime.local.operationPending&&!P.runtime.state.debug?.active);
   gate();settingsBaselineGate(settings,{doc:prior.settingsDoc,modal:prior.settingsModal,tab:prior.tab,connected:prior.settingsConnected,activeTab:prior.settingsActiveTab});uiStarted=true;if(settingsPlan.open)settings.open();ownedSettingsTab=settings.lastTabId;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsDoc=settings.doc;pinnedSettingsActiveTab=settings.activeTab;await wait(()=>settings.doc?.querySelector('.vertical-tab-content'),'Settings document');
-  sd=settings.doc;pinnedSettingsWinId=settingsWindow().id;rememberOwnFocus();pinnedSettingsDoc=settings.doc;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsActiveTab=settings.activeTab;
+  sd=settings.doc;pinnedSettingsWinRef=settingsWindow();pinnedSettingsWinId=pinnedSettingsWinRef.id;pinnedSettingsWebContentsRef=pinnedSettingsWinRef.webContents;rememberOwnFocus();pinnedSettingsDoc=settings.doc;pinnedSettingsModalEl=settings.modalEl;pinnedSettingsActiveTab=settings.activeTab;
   gate();settings.openTabById('community-plugins');ownedSettingsTab='community-plugins';pinnedSettingsActiveTab=settings.activeTab;await wait(()=>sd.querySelector('.aigility-manager-root'),'integrated Community list');
   ownedSettingsTab='community-plugins';
   check('One integrated list',sd.querySelectorAll('.aigility-manager-installed-container').length===1);

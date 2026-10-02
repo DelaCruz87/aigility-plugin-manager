@@ -1,0 +1,87 @@
+{
+  "id": "aigility-manager-ui:PM-SANDBOX-ESSENTIAL-UI013-FINAL-R1-20261002-0018",
+  "status": "failed",
+  "phase": "cleanup",
+  "startedAt": "2026-10-02T00:20:20.149Z",
+  "checks": [
+    {
+      "label": "Correct Sandbox identity",
+      "pass": true
+    },
+    {
+      "label": "Native loaded0.1.3",
+      "pass": true
+    },
+    {
+      "label": "Settings ownership preflight",
+      "pass": true,
+      "data": {
+        "preexisting": true,
+        "priorTab": "aigility-ui",
+        "openedByUs": false
+      }
+    },
+    {
+      "label": "No previous manager modal",
+      "pass": true
+    },
+    {
+      "label": "Recovery remains paused",
+      "pass": true
+    },
+    {
+      "label": "Foreign plugins unchanged",
+      "pass": true
+    },
+    {
+      "label": "Manager data unchanged",
+      "pass": true
+    },
+    {
+      "label": "Local recovery/profile unchanged",
+      "pass": true
+    },
+    {
+      "label": "Workspace and leaf unchanged",
+      "pass": true
+    }
+  ],
+  "restoration": {
+    "ownModal": true,
+    "filters": true,
+    "settings": true,
+    "focus": true,
+    "foreign": true,
+    "data": true,
+    "local": true,
+    "workspace": true
+  },
+  "focusBefore": {
+    "electron": null,
+    "os": "com.apple.loginwindow"
+  },
+  "error": "Error: Settings window missing or ambiguous",
+  "focusPost": {
+    "electron": null,
+    "os": "com.apple.loginwindow"
+  },
+  "settingsAfter": {
+    "connected": true,
+    "tab": "aigility-ui",
+    "preexisting": true
+  },
+  "focusAfter": {
+    "electron": null,
+    "os": "com.apple.loginwindow"
+  },
+  "finishedAt": "2026-10-02T00:20:20.528Z",
+  "key": "aigility-manager-ui:PM-SANDBOX-ESSENTIAL-UI013-FINAL-R1-20261002-0018",
+  "leaseId": "PM-SANDBOX-ESSENTIAL-UI013-FINAL-R1-20261002-0018",
+  "ackUTC": "2026-10-02T00:20:19.246Z",
+  "deadlines": {
+    "totalMs": 120000,
+    "cleanupMs": 35000,
+    "deadline": 1790900539246,
+    "actionDeadline": 1790900504246
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-02T00:26:30.753Z",
+  "status": "PASS",
+  "checks": 4,
+  "checkSha": "cc5ae0c37dee87f8340ecc7f80b306e4d3d5d3fc3261ea69ce793b144d4f6e99",
+  "native": false,
+  "sourceProof": "Obsidian1.14.3 app.js initializes each Window.electronWindow=window.electron.remote.getCurrentWindow()",
+  "inventoryProof": "Supervisor actual Settings6/webContents6 about:blank title Settings - Sandbox - Obsidian 1.14.3",
+  "scope": "Versioned title handled by document/native binding; later remote-window replacement and document mismatch refused; primary branch unchanged; nativeUI serialized function compiles. Product unchanged; prior91/37/299 not rerun."
+}
