@@ -1,0 +1,95 @@
+{
+  "id": "aigility-manager-ui:PM-SANDBOX-ESSENTIAL-UI013-FINAL-R3-ROOT-20261002-0035",
+  "status": "failed",
+  "phase": "cleanup",
+  "startedAt": "2026-10-02T00:35:09.454Z",
+  "checks": [
+    {
+      "label": "Correct Sandbox identity",
+      "pass": true
+    },
+    {
+      "label": "Native loaded0.1.3",
+      "pass": true
+    },
+    {
+      "label": "Settings ownership preflight",
+      "pass": true,
+      "data": {
+        "preexisting": true,
+        "priorTab": "aigility-ui",
+        "openedByUs": false
+      }
+    },
+    {
+      "label": "No previous manager modal",
+      "pass": true
+    },
+    {
+      "label": "Recovery remains paused",
+      "pass": true
+    },
+    {
+      "label": "One integrated list",
+      "pass": true
+    },
+    {
+      "label": "Sidebar options is visible",
+      "pass": false
+    },
+    {
+      "label": "Foreign plugins unchanged",
+      "pass": true
+    },
+    {
+      "label": "Manager data unchanged",
+      "pass": true
+    },
+    {
+      "label": "Local recovery/profile unchanged",
+      "pass": true
+    },
+    {
+      "label": "Workspace and leaf unchanged",
+      "pass": true
+    }
+  ],
+  "restoration": {
+    "ownModal": true,
+    "filters": true,
+    "settings": true,
+    "focus": true,
+    "foreign": true,
+    "data": true,
+    "local": true,
+    "workspace": true
+  },
+  "focusBefore": {
+    "electron": null,
+    "os": "com.apple.loginwindow"
+  },
+  "focusPost": {
+    "electron": null,
+    "os": "com.apple.loginwindow"
+  },
+  "error": "Error: Sidebar options is visible",
+  "settingsAfter": {
+    "connected": true,
+    "tab": "aigility-ui",
+    "preexisting": true
+  },
+  "focusAfter": {
+    "electron": null,
+    "os": "com.apple.loginwindow"
+  },
+  "finishedAt": "2026-10-02T00:35:09.964Z",
+  "key": "aigility-manager-ui:PM-SANDBOX-ESSENTIAL-UI013-FINAL-R3-ROOT-20261002-0035",
+  "leaseId": "PM-SANDBOX-ESSENTIAL-UI013-FINAL-R3-ROOT-20261002-0035",
+  "ackUTC": "2026-10-02T00:35:09.136703+00:00",
+  "deadlines": {
+    "totalMs": 120000,
+    "cleanupMs": 35000,
+    "deadline": 1790901429136,
+    "actionDeadline": 1790901394136
+  }
+}

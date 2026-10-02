@@ -241,7 +241,12 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
   gate();settings.openTabById('community-plugins');ownedSettingsTab='community-plugins';pinnedSettingsActiveTab=settings.activeTab;await wait(()=>sd.querySelector('.aigility-manager-root'),'integrated Community list');
   ownedSettingsTab='community-plugins';
   check('One integrated list',sd.querySelectorAll('.aigility-manager-installed-container').length===1);
-  check('Sidebar options is visible',visible(sd.querySelector('.aigility-options-btn')));
+  const sidebarNode=sd.querySelector('.aigility-options-btn');
+  const primitiveNode=n=>{if(!n)return null;if(n.nodeType!==1)return {kind:typeof n};const r=n.getBoundingClientRect(),c=n.ownerDocument.defaultView.getComputedStyle(n);return {tag:n.tagName,classes:n.className,connected:n.isConnected,settingsDocument:n.ownerDocument===sd,ownerDocumentURL:n.ownerDocument.documentURI,rootContains:sd.contains(n),display:c.display,visibility:c.visibility,height:r.height,width:r.width};};
+  const parentChain=[];for(let n=sidebarNode,i=0;n&&i<8;n=n.parentElement,i++)parentChain.push(primitiveNode(n));
+  job.sidebarEvidence={node:primitiveNode(sidebarNode),parentChain,controls:primitiveNode(ui.sidebarControlsEl),fields:Object.fromEntries(['communityPluginTabContainer','tabHeadersEl','navEl','containerEl','modalEl'].map(k=>[k,primitiveNode(settings[k])])),headerGroups:[...sd.querySelectorAll('.vertical-tab-header-group')].map(primitiveNode)};
+  if(!visible(sidebarNode)){rememberOwnFocus();assertDocument();job.phase='capture-sidebar-failure';job.communityCapture=await capture(sd,settingsImage);gate();}
+  check('Sidebar options is visible',visible(sidebarNode));
   check('Persistent recovery banner',visible(sd.querySelector('.aigility-recovery-banner')));
   const installed=P.runtime.list().filter(p=>p.installed&&!p.archived);
   setFilter('.aigility-kind-select','all');setFilter('.aigility-tag-select','all');setFilter('.aigility-group-select','all');setFilter('.aigility-search-input','','input');

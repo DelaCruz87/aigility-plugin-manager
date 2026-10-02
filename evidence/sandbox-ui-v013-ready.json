@@ -1,11 +1,11 @@
 {
   "status": "ready-offline-ui-v013",
-  "at": "2026-10-02T00:32:09.670Z",
+  "at": "2026-10-02T00:40:25.880Z",
   "vault": "Sandbox",
   "basePath": "/Users/eme/Obsidian/Sandbox",
   "appId": "d137282e82167d84",
   "version": "0.1.3",
-  "checkSha256": "3ba48ab64369046b0dddb451fd26f8f5a0821c03dc00596aceae720ea714c3b2",
+  "checkSha256": "df27a04f8b918270bc544655a514d9233e8167c0811757c17ffdcde074d8c2ad",
   "files": {
     "main.js": "bb45ba99633a121255a3a25a46619e2b0119bedcc97c5f0ca068280e11ae4b2a",
     "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
@@ -24,12 +24,13 @@
   "workerAdjudication": "acceptance-worker-v013.json preserves2AGYFAIL checkerpath/partialtimeout vsparentacceptance; same2exactroles mappedSQLiteIDLE/notFullyIdle0+backendshutdown settleswriter, not success",
   "receiptPath": "evidence/native-ui-v013/<leaseId>.receipt.json; compatibility summary evidence/sandbox-ui-v013.json only after settled result",
   "preexistingSettingsTab": "snapshot-current",
-  "previousAttempt": "R2 p59035 settledFAILED9PRE/RESTORE/0functional/0captures,8restored. Root pureREAD00:30:26.590 confirms nativeIDs6/6 but crossrealmremoteWindow and webContents wrapper references differ; no UI/config mutations.",
-  "previousCheckSha256": "cc5ae0c37dee87f8340ecc7f80b306e4d3d5d3fc3261ea69ce793b144d4f6e99",
+  "previousAttempt": "ROOTR3 actualFAILED Sidebar options visible; integratedCommunitylist1PASS; no captures; all8restored. Capturing exactly one actual failing frame and primitive sidebar state before same assertion in next approved lease; no product change.",
+  "previousCheckSha256": "3ba48ab64369046b0dddb451fd26f8f5a0821c03dc00596aceae720ea714c3b2",
   "nativeSettingsIdentity": {
     "windowId": 6,
     "webContentsId": 6,
     "url": "about:blank",
     "relation": "settings.win.document===settings.doc===modal.ownerDocument; doc.defaultView.electronWindow nativeIDs6/6 uniquely match current inventory IDs6/6; returned SAME-REALM inventorywindow+webContents references pinned and compared after awaits, never compared across realms."
-  }
+  },
+  "failureDiagnostic": "Only if sidebar visibility assertion would fail: capture own SettingsCommunity crop and primitive node/parentCSS/knownsettingcontainers/controlreference/headergroups; preserve FAILED and same cleanup. No new runtime calls/sourceproduct/features/framework/model/tests/build."
 }
