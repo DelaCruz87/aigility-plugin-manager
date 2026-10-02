@@ -1,0 +1,36 @@
+{
+  "status": "ready-offline-manager-sidebar-hotfix",
+  "at": "2026-10-02T01:12:04.929512+00:00",
+  "transport": "Tasks release-simple-deploy.py private adapter, no foreign edits",
+  "helper": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/checks/sandbox-sidebar-hotfix-v013.py",
+  "helperSha": "90e7d15e8ac182867278db2cbfce2d29c2e761e341be0be0ce10419037a9418c",
+  "inputSha": "e702c56284378255197f244d0d147d65249c080688d53395c6bd554954fa37a2",
+  "lease": {
+    "totalMs": 120000,
+    "actionMs": 90000,
+    "cleanupMs": 30000,
+    "absoluteACK": true
+  },
+  "files": {
+    "previous": {
+      "main.js": "bb45ba99633a121255a3a25a46619e2b0119bedcc97c5f0ca068280e11ae4b2a",
+      "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+      "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+    },
+    "next": {
+      "main.js": "bce4c84930af05a5d1b3e33abf97b60612f5415a82fe729aaa18b0fadb8dc2a9",
+      "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+      "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+    }
+  },
+  "command": "python3 checks/sandbox-sidebar-hotfix-v013.py . begin Sandbox ACK_UTC START_BY_UTC LEASE_ID",
+  "poll": "python3 checks/sandbox-sidebar-hotfix-v013.py . poll Sandbox",
+  "close": "python3 checks/sandbox-sidebar-hotfix-v013.py . close Sandbox",
+  "control": "evidence/manager-sidebar-hotfix-Sandbox-control.json wx+fsync before first CLI",
+  "job": "window.__managerSidebarHotfix Map; random token in control; register before first await; exact map+token+old/absent/returned instance and runtime",
+  "scope": "ONLY manager main.js oldbb45->bce4; skip identical manifest/styles. Backup+fsync files and ancestors; source/destination SHA checked before temp+atomic rename. One nonpersistent disable/loadManifest/enable observed through original loader exactly once. Durable loader-intent before wrapper, exact descriptor/absence restore. No automated rollback; settled error preserved for supervisor recovery. Poll SAME token only. Own temp close under cleanup budget.",
+  "baseline": "Sandbox primary1/appId d137282e82167d84/directorydevino; Settings6/6/aboutblank exact doc/modal/effective tab/ref/connected stable, own manager/Community Settings inactive. Seven config hashes (community/core/manager/BPM/Companion/workspace/workspaces), full runtime State+local,42fixture+7device counts/content preserved, all foreign/core native+loaded unchanged, workspace leaf/view/editor hashes+active leaf/focusreadback. No protections/state writes by executor. State/local compare canonical full serialized structures with every field and array preserved; seven disk config hashes remain exact. Settings.doc exists and matcheswin.document in prioractualUIR4/ROOTpure30 proof.",
+  "never": "No profileapply/core/foreigntoggle/globalreload/source/Gitduringlease/OS gestures/unlock/Sync/archive/ENSO/iPad/models",
+  "verification": "Python compiles, nonempty emitted begin/poll/close JS compile; reused Tasks isolated emitted-expression check restricted to3casesPASS: success exact returned ownloader+canonical state reorder, expiredACK zero writes, foreign instance postenable preserved+observer restored. No native contact/model/product rebuild/29991suite repeat.",
+  "focalCheckSha": "72da8dbca45fc6ef1299d45db97706c36b54723a30f787ee94ae3c77f4897775"
+}

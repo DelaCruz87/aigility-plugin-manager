@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-10-02T01:13:29.901799+00:00",
+  "action": "poll",
+  "value": {
+    "backup": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/release-backups/manager-sidebar-hotfix-0f00b55609eb425ca43d9b0f3aa3f1d5/before/",
+    "closed": false,
+    "copied": [
+      "main.js"
+    ],
+    "drifts": [],
+    "durableBackup": true,
+    "error": null,
+    "expires": 1790903724184,
+    "phase": "verified",
+    "result": {
+      "activeLeaf": "dbca6a72ac668347",
+      "build": "0.1.3",
+      "configHashes": {
+        "community-plugins.json": "0635b28cc030a2a27e2243f0fd3042add5a22f518b09537d4522b581e05a815e",
+        "core-plugins.json": "6a6a04f733e0bf3882e30683923857db99fa9f913335c0e9f9c52c31dd14802f",
+        "plugins/aigility-plugin-manager/data.json": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+        "plugins/better-plugins-manager-companion/data.json": "1813575bf90d4b9fe78ca9e2bf5039aebe7cec957945029635371e6046306e44",
+        "plugins/better-plugins-manager/data.json": "a264beacbadefd3a7aeb2fbbda33e0ab19a24b8589ca3e72918379bab8a4be75",
+        "workspace.json": "1cdddcd1ecbaa3c433091cc528cd75aced861e5917efbee31ef78f18ee522e14",
+        "workspaces.json": "342751ae2558a75bad16823142821633d20cb64b60f459c15ea104d0fa8f9c23"
+      },
+      "configUnchanged": true,
+      "enabledUnchanged": true,
+      "fixtures": 42,
+      "foreground": null,
+      "foreignAndCoreUnchanged": true,
+      "installed": {
+        "main.js": "bce4c84930af05a5d1b3e33abf97b60612f5415a82fe729aaa18b0fadb8dc2a9",
+        "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+        "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+      },
+      "leavesAndSourceUnchanged": true,
+      "localUnchanged": true,
+      "profiles": 7,
+      "settingsUiBefore": {
+        "open": true,
+        "ownerIsMainDocument": false,
+        "tabId": "aigility-ui",
+        "tabPluginId": "aigility-ui"
+      },
+      "settingsUiUnchanged": true,
+      "settingsUnchanged": true,
+      "wholeRuntimeStateUnchanged": true
+    },
+    "rollbackError": null,
+    "rollbackRestored": [],
+    "rollbackStatus": null,
+    "settingsUiBefore": {
+      "open": true,
+      "ownerIsMainDocument": false,
+      "tabId": "aigility-ui",
+      "tabPluginId": "aigility-ui"
+    },
+    "skipped": [
+      "manifest.json",
+      "styles.css"
+    ],
+    "status": "settled",
+    "token": "manager-sidebar-hotfix-0f00b55609eb425ca43d9b0f3aa3f1d5",
+    "windowId": 1
+  }
+}

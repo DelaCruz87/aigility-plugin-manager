@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-10-02T01:13:38.709852+00:00",
+  "action": "close",
+  "value": {
+    "activeLeaf": "dbca6a72ac668347",
+    "closed": true,
+    "foreground": null,
+    "foregroundBefore": null,
+    "phase": "verified",
+    "previousLeaf": "dbca6a72ac668347",
+    "rollbackStatus": null
+  }
+}

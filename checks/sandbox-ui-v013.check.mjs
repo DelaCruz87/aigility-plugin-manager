@@ -297,7 +297,7 @@ export async function nativeUI(app,globalThis,settingsImage,downloadImage,key,de
     const currentOpt=q('.aigility-options-modal');
     if(currentOpt&&currentOpt.closest('.modal-container')===ownModal){
      if(ownModal.isConnected){
-      const close=ownModal.querySelector('.modal-close-button');
+      const close=ownModal.querySelector('.modal-close-button')??ownModal.querySelector('.modal-header-button svg.lucide-x')?.closest('.modal-header-button');
       if(!close)throw Error('Own modal close button not found');
       close.click();
       await waitClosed(()=>!ownModal.isConnected,cleanupDeadline);cleanupGate();rememberOwnFocus();

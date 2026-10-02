@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-02",
+  "previous": {
+    "main.js": "bb45ba99633a121255a3a25a46619e2b0119bedcc97c5f0ca068280e11ae4b2a",
+    "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "vaultIdentity": {
+    "dev": 16777234,
+    "ino": 237131121
+  },
+  "sourceHelper": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Tasks (Obsidian)/aigility-obs/orchestration/release-simple-deploy.py",
+  "sourceHelperSha": "5838a57ae5273380d231a984345bc95b6f00cc0cc0bb16bcbae781b1e3e0b608",
+  "next": {
+    "main.js": "bce4c84930af05a5d1b3e33abf97b60612f5415a82fe729aaa18b0fadb8dc2a9",
+    "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  }
+}

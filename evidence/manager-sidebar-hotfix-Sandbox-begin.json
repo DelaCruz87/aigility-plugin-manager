@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-10-02T01:13:24.380934+00:00",
+  "action": "begin",
+  "value": {
+    "expires": 1790903724184,
+    "phase": "disabling",
+    "status": "running",
+    "token": "manager-sidebar-hotfix-0f00b55609eb425ca43d9b0f3aa3f1d5",
+    "windowId": 1
+  }
+}

@@ -1,13 +1,13 @@
 {
-  "status": "ready-offline-ui-v013",
-  "at": "2026-10-02T00:40:25.880Z",
+  "status": "sandbox-functional-ui-accepted-with-supplemental-closure",
+  "at": "2026-10-02T01:19:46.981667+00:00",
   "vault": "Sandbox",
   "basePath": "/Users/eme/Obsidian/Sandbox",
   "appId": "d137282e82167d84",
   "version": "0.1.3",
-  "checkSha256": "df27a04f8b918270bc544655a514d9233e8167c0811757c17ffdcde074d8c2ad",
+  "checkSha256": "ae7c07b0e90f2009368d3cc53a1d239f1eb70f11fef5a694da89cd6eb290906f",
   "files": {
-    "main.js": "bb45ba99633a121255a3a25a46619e2b0119bedcc97c5f0ca068280e11ae4b2a",
+    "main.js": "bce4c84930af05a5d1b3e33abf97b60612f5415a82fe729aaa18b0fadb8dc2a9",
     "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
     "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
   },
@@ -18,19 +18,20 @@
   "never": "No toggles/profileApply/resume/updates/archive moves/fixtures/Sync/ENSO/iPad/Git/source during lease",
   "restoration": "Abort before UI ownership performs zero UI cleanup actions. Borrowed Settings restored to original tab with native rendering only if same doc/modal/tab postimage, left connected. Settings opened by this test alone may close, awaiting disconnection. Exact primary or unique detached window; own Settings/Options modal crops. Preserve manual changes to filters/focus/docs/tabs. Prior effective tab object must remain registered and exact same activeTab object must be restored; preserve replacement by refusing render.",
   "capture": "Native Electron capturePage only, exactuniqueSettings+mainID; requiredownmodalcropformain, physicaldesktop notobservedbyprocedure",
-  "tests": "Historical37/4focal retained by oldSHA, not rerun. One actual crossrealm fault fixture PASS on currentSHA. Product299/build0 unchanged.",
+  "tests": "Existing UI checker df27 retained without edits or suite repeat. New product sidebar regression failed before fix; four focused lifecycle tests PASS after fix and required build PASS. ROOT hotfix native deployed bce4 at01:13:38.709852Z.",
   "phaseGuarantee": "Exclusive per-lease receipt created with wx; fsync file and parent directory BEFORE first CLI. Preserve/refuse pending predecessor receipts. Never replace host token; same-manager-instance and primary workspace document/window gates. Read-only polling of same job after unknown result. Final status only after cleanup.",
   "leaseInputs": "Mandatory AIGILITY_UI_LEASE_ID, AIGILITY_UI_ACK_UTC, AIGILITY_UI_START_BY epochmilliseconds; total120seconds beginsatACK includingpreflight; actiondeadlineACK+85seconds Explicit AIGILITY_UI_PREEXISTING_TAB=snapshot-current matching READY; dynamically observed prior tab must be registered and all initial identity fields must remain unchanged.",
   "workerAdjudication": "acceptance-worker-v013.json preserves2AGYFAIL checkerpath/partialtimeout vsparentacceptance; same2exactroles mappedSQLiteIDLE/notFullyIdle0+backendshutdown settleswriter, not success",
   "receiptPath": "evidence/native-ui-v013/<leaseId>.receipt.json; compatibility summary evidence/sandbox-ui-v013.json only after settled result",
   "preexistingSettingsTab": "snapshot-current",
-  "previousAttempt": "ROOTR3 actualFAILED Sidebar options visible; integratedCommunitylist1PASS; no captures; all8restored. Capturing exactly one actual failing frame and primitive sidebar state before same assertion in next approved lease; no product change.",
-  "previousCheckSha256": "3ba48ab64369046b0dddb451fd26f8f5a0821c03dc00596aceae720ea714c3b2",
+  "previousAttempt": "ROOT R4 actual FAILED Sidebar options visible; integrated Community list1PASS and all8restore true. Its PNG is a cached Appearance14 frame, not Community visual proof. Minimal one-line sidebar remount fix41f2840 now installed and loaded by ROOT hotfix with unchanged complete State/local/config7/foreign/core/workspace/Settings.",
+  "previousCheckSha256": "df27a04f8b918270bc544655a514d9233e8167c0811757c17ffdcde074d8c2ad",
   "nativeSettingsIdentity": {
     "windowId": 6,
     "webContentsId": 6,
     "url": "about:blank",
     "relation": "settings.win.document===settings.doc===modal.ownerDocument; doc.defaultView.electronWindow nativeIDs6/6 uniquely match current inventory IDs6/6; returned SAME-REALM inventorywindow+webContents references pinned and compared after awaits, never compared across realms."
   },
-  "failureDiagnostic": "Only if sidebar visibility assertion would fail: capture own SettingsCommunity crop and primitive node/parentCSS/knownsettingcontainers/controlreference/headergroups; preserve FAILED and same cleanup. No new runtime calls/sourceproduct/features/framework/model/tests/build."
+  "failureDiagnostic": "Only if sidebar visibility assertion would fail: capture own SettingsCommunity crop and primitive node/parentCSS/knownsettingcontainers/controlreference/headergroups; preserve FAILED and same cleanup. No new runtime calls/sourceproduct/features/framework/model/tests/build.",
+  "verification": "ROOT R5 original FAILED only ownModal cleanup old selector, all47checks PASS and other8restore true. Supplemental own-only native header X close before original deadline verified disconnected/config7/settings/leaf/focus unchanged. Original failure retained. Future checker only close selector fallback corrected; one emitted selector focal PASS. vm.SourceTextModule unavailable in this Node runtime, node --check exit0 used for syntax. No native retry or product change."
 }
