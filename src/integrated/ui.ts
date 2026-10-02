@@ -588,6 +588,7 @@ export class ManagerUI {
         this.restoreHiddenNativeElements();
         this.removeInstalledContainer();
         this.patchCommunityInstalledArea(tab.containerEl, tab);
+        this.patchSidebar((this.plugin.app as any).setting);
     }
 
     /**

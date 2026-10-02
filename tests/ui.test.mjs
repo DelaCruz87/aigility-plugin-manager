@@ -1168,6 +1168,25 @@ describe('AIgility Plugin Manager - UI & Filter Test Suite', () => {
             assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,1);
         });
 
+        test('native sidebar controls remount after Obsidian clears the live header', () => {
+            const header = mockApp.setting.communityPluginTabContainer;
+            const before = JSON.stringify(mockRuntime.state);
+            communityTab.renderTab = function () {
+                for (const child of [...header.children]) header.removeChild(child);
+                return 23;
+            };
+            ui.install();
+            const oldControls = header.querySelector('.aigility-sidebar-header-controls');
+            assert.ok(oldControls);
+            assert.equal(communityTab.renderTab(), 23);
+            assert.equal(oldControls.parentElement, null);
+            assert.equal(header.querySelectorAll('.aigility-sidebar-header-controls').length, 1);
+            assert.ok(header.querySelector('.aigility-options-btn'));
+            communityTab.renderTab();
+            assert.equal(header.querySelectorAll('.aigility-sidebar-header-controls').length, 1);
+            assert.equal(JSON.stringify(mockRuntime.state), before);
+        });
+
         test('nested native render preserves this and return, mounts once, and leaves display untouched', () => {
             let mounts=0;
             const patch=ui.patchCommunityInstalledArea.bind(ui);
