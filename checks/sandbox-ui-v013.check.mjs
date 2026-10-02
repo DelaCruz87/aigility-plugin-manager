@@ -67,7 +67,7 @@ export function selectSettingsWindow(settingsDoc,primaryDoc,mainWindow,windows,e
  // window's own remote.getCurrentWindow(); titles are localized and mutable.
  const bound=settingsDoc?.defaultView?.electronWindow;
  if(settingsDoc!==primaryDoc&&(!bound||settingsDoc?.defaultView?.document!==settingsDoc))throw Error('Settings document has no native window binding');
- const matches=settingsDoc===primaryDoc?[mainWindow]:windows.filter(w=>w.id===bound.id&&w.webContents===bound.webContents);
+ const matches=settingsDoc===primaryDoc?[mainWindow]:windows.filter(w=>w.id===bound.id&&w.webContents.id===bound.webContents.id);
  if(matches.length!==1)throw Error('Settings window missing or ambiguous');
  const selected=matches[0];
  if((expectedId!==null&&expectedId!==undefined&&selected.id!==expectedId)||(expectedWindow&&selected!==expectedWindow)||(expectedWebContents&&selected.webContents!==expectedWebContents))throw Error('Settings window replaced');

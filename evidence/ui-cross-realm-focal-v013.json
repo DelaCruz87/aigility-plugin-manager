@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-02T00:32:09.670Z",
+  "status": "PASS",
+  "checks": 1,
+  "native": false,
+  "checkSha": "3ba48ab64369046b0dddb451fd26f8f5a0821c03dc00596aceae720ea714c3b2",
+  "scope": "Actual cross-realm proxy fixture: equal native window/webContents IDs with different JS wrappers accepted; selected same-realm exact window/webContents references retained by existing guards. No other checks or product build repeated.",
+  "actualProof": "/tmp/pm-popup-proxy-pure-read-20261002-0030.json",
+  "actualObservedAt": "2026-10-02T00:30:26.590Z",
+  "actualProofOwner": "Supervisor"
+}
