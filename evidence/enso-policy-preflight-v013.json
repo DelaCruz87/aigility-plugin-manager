@@ -1,0 +1,212 @@
+{
+  "at": "2026-10-02T00:08:21.114Z",
+  "sourceOnly": true,
+  "nativeObservation": false,
+  "notice": "Projection with empty observed host is only for policy/protection/profile inventory, never a native baseline or actual desired/loaded proof.",
+  "sourceSha": "6297a281106f901b21ab0f935eeceeeab7daf2c60e559a5cc65670ed942c9715",
+  "runtimeSha": "5a523d2c1100a3ecc1a0aa93591e2030941f734a63cff9475328a75f4d019a7a",
+  "sources": {
+    "bpm": {
+      "path": "/Users/eme/Obsidian/ENSO/.obsidian/plugins/better-plugins-manager/data.json",
+      "sha": "ae32b1c151111d03e79141e63b4cd6a138e651b296b071cbc6e9bbae054bdee5"
+    },
+    "companion": {
+      "path": "/Users/eme/Obsidian/ENSO/.obsidian/plugins/better-plugins-manager-companion/data.json",
+      "sha": "323c48e2f4dc1ea80b7b6ccad18d383d71c2ead1a81655b45c761d20dda1bdf0"
+    },
+    "community": {
+      "path": "/Users/eme/Obsidian/ENSO/.obsidian/community-plugins.json",
+      "sha": "685a02897e2f59dad1f81065723830b8ab6e03874e27c607525c1f8c85f71ecd"
+    },
+    "core": {
+      "path": "/Users/eme/Obsidian/ENSO/.obsidian/core-plugins.json",
+      "sha": "4267834cb533629d343ac7a447e1ec7b9fa4e678e08f24499886f72930bf39bf"
+    }
+  },
+  "protected": [
+    "enso-sync-manager",
+    "note-toolbar",
+    "obsidian-git",
+    "tasknotes",
+    "aigility-plugin-manager"
+  ],
+  "deferred": [
+    {
+      "id": "folder-links",
+      "delayMs": 5000,
+      "enabled": false,
+      "parked": true,
+      "nativePersisted": false,
+      "protected": false,
+      "expectedNativeExclusion": false,
+      "actualLoaded": "requires fresh native READ"
+    },
+    {
+      "id": "backlink-cache",
+      "delayMs": 20000,
+      "enabled": false,
+      "parked": true,
+      "nativePersisted": false,
+      "protected": false,
+      "expectedNativeExclusion": false,
+      "actualLoaded": "requires fresh native READ"
+    },
+    {
+      "id": "omnisearch",
+      "delayMs": 30000,
+      "enabled": true,
+      "parked": false,
+      "nativePersisted": false,
+      "protected": false,
+      "expectedNativeExclusion": true,
+      "actualLoaded": "requires fresh native READ"
+    },
+    {
+      "id": "block-reference-enhancer",
+      "delayMs": 30000,
+      "enabled": false,
+      "parked": true,
+      "nativePersisted": false,
+      "protected": false,
+      "expectedNativeExclusion": false,
+      "actualLoaded": "requires fresh native READ"
+    },
+    {
+      "id": "vscode-editor",
+      "delayMs": 30000,
+      "enabled": false,
+      "parked": true,
+      "nativePersisted": false,
+      "protected": false,
+      "expectedNativeExclusion": false,
+      "actualLoaded": "requires fresh native READ"
+    }
+  ],
+  "deviceTemplates": [
+    {
+      "id": "macbook",
+      "applyAtStart": true,
+      "workspace": "d"
+    },
+    {
+      "id": "zenbook",
+      "applyAtStart": true,
+      "workspace": "d"
+    },
+    {
+      "id": "iphone",
+      "applyAtStart": true,
+      "workspace": "m"
+    },
+    {
+      "id": "ipad",
+      "applyAtStart": true,
+      "workspace": "t"
+    },
+    {
+      "id": "s24",
+      "applyAtStart": true,
+      "workspace": "m"
+    },
+    {
+      "id": "lenovo tab",
+      "applyAtStart": true,
+      "workspace": "t"
+    },
+    {
+      "id": "boox tab mini c",
+      "applyAtStart": true,
+      "workspace": "t"
+    }
+  ],
+  "fixtureProfiles": {
+    "count": 42,
+    "ids": [
+      "tbl-sheets",
+      "tbl-master",
+      "tbl-rich",
+      "tbl-html",
+      "tbl-all",
+      "tbl-none",
+      "cvs-board",
+      "cvs-solo",
+      "cvs-advanced",
+      "cvs-ink",
+      "cvs-excalidraw",
+      "cvs-all",
+      "cvs-none",
+      "lab-base",
+      "lab-pencil",
+      "lab-canvas",
+      "lab-spatial",
+      "lab-tasks",
+      "lab-agents-llm",
+      "lab-agent-consoles",
+      "lab-apis-mcp",
+      "lab-knowledge-automation",
+      "lab-off",
+      "lab-work-systems",
+      "lab-aigility-app",
+      "lab-documents",
+      "tsk-inline",
+      "tsk-tasknotes",
+      "tsk-operon",
+      "tsk-gtd",
+      "tsk-boards",
+      "tsk-bases",
+      "tsk-life",
+      "tsk-capture",
+      "blq-callouts-manager",
+      "blq-callouts-studio",
+      "blq-callouts-panel",
+      "blq-estilo-settings",
+      "blq-estilo-manager",
+      "blq-editores-ninguno",
+      "blq-comentarios-ninguno",
+      "blq-apagar"
+    ],
+    "contentSha": "541426dd1bbfe22a0072f85305c1929456d04d720968c431d6c2b3f0beb5c180"
+  },
+  "legacyTemplates": {
+    "desktop": {
+      "members": 739,
+      "on": 30,
+      "contentSha": "3a0b1ff2615abbc499d4f9f757de9d8cb2f474e25875d82b87009c819d03d372",
+      "omnisearch": false
+    },
+    "tablet": {
+      "members": 689,
+      "on": 25,
+      "contentSha": "40ce0a8492b70332b5f6e3b65f8f26a62b87070156ec8b8a1149ead61a9ac738",
+      "omnisearch": false
+    },
+    "mobile": {
+      "members": 461,
+      "on": 38,
+      "contentSha": "d551e952b8c996f392ab3a61701851774af7e0e3f57ae46d18f899261ef25c1f",
+      "omnisearch": true
+    }
+  },
+  "profileBackups": {
+    "preserved": 1,
+    "originalKeys": [
+      "desktop",
+      "mobile",
+      "tablet"
+    ],
+    "contentSha": "2760636c73fc408acbaec2ab80c28b00e2a4197fc4f08d74c68458ab0179a279"
+  },
+  "workspaceIds": {
+    "desktop": "d",
+    "tablet": "t",
+    "mobile": "m"
+  },
+  "expectedLoadedChangeIds": [
+    "omnisearch"
+  ],
+  "retireOnly": [
+    "better-plugins-manager",
+    "better-plugins-manager-companion"
+  ],
+  "advancedDebug": "preserve"
+}
