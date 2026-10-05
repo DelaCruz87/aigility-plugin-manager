@@ -2,6 +2,12 @@
 
 AIgility Plugin Manager es un plugin beta de Obsidian que reúne plugins community, core, perfiles de dispositivo, arranque diferido, recuperación, gestión de versiones y debugging reversible. El estado duradero del gestor se guarda en [data.json](file:///Users/eme/Obsidian/ENSO/.obsidian/plugins/aigility-plugin-manager/data.json); el estado operativo y los backups de migración permanecen en la configuración local del vault.
 
+## Desktop delivery checkpoint
+
+Snapshot verificado el 2026-10-05 a las 15:43 UTC por Codex. La versión 0.1.3 está instalada, habilitada y cargada en ENSO con los mismos tres artefactos aceptados en Sandbox. Better Plugins Manager y Companion quedaron desactivados, sin instancias cargadas y fuera del arranque nativo; sus directorios y datos originales permanecen conservados. La migración preservó siete perfiles de dispositivo, 42 fixtures y los backups fuente. Omnisearch sigue cargado, con estado deseado activo y arranque nativo desactivado.
+
+El cierre final aprobó 28 comprobaciones y una lectura independiente del host y de los archivos confirmó que el último guardado cambió únicamente los dos campos `desired` de los gestores retirados. La automatización permanece pausada por carga tardía, sin perfil de dispositivo vinculado ni Resume ejecutado. El siguiente arranque y la validación física móvil quedan fuera de este cierre. La captura nueva de Sandbox falló con `UnknownVizError`; los resultados funcionales anteriores sobre los mismos bytes se conservan como evidencia histórica, sin declarar aceptación visual nueva. El recibo completo está en [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/delivery-stage-v013]].
+
 ## Features
 
 - Gestiona plugins community y core instalados desde la pestaña de ajustes de AIgility Plugin Manager, con búsqueda, tags, grupos y un catálogo compacto.

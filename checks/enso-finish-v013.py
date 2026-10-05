@@ -37,8 +37,7 @@ if action=='begin':
     statePath=root/'.obsidian/plugins/aigility-plugin-manager/data.json'
     request['stateSha']=digest(statePath.read_bytes())
     request['migratedAt']=json.loads(statePath.read_text())['migration']['migratedAt']
-    request['previousToken']='MANAGER-ENSO-MIGRATION-20261005-R1'
-    request['previousFinishToken']='MANAGER-ENSO-FINISH-20261005-R1'
+    request['previousRetireToken']='MANAGER-ENSO-RETIRE-20261005-R2'
     durable(control,{'status':'dispatch-prepared','pending':True,'request':request})
     inner='(()=>{'+source+';return finishDelivery('+json.dumps(request)+');})()'
 elif action=='poll':
