@@ -36,6 +36,16 @@ Build y tests con exit code 0; importación sin pérdida; UI real; 723+ plugins 
 ### 2.2 Flows
 Load tardío no aplica perfiles. Los siete perfiles tienen applyAtStart true y requieren binding local explícito. Templates Desktop a macbook/zenbook, Mobile a iphone/s24, Tablet a ipad/lenovo tab/boox tab mini c. Omnisearch deferred activo se incluye en templates compatibles. Core inicial deriva estado vivo por ausencia en snapshots. Editar tags no aplica en caliente. Debugging nunca reescribe config de terceros.
 
+### 2.3 Recovery fixes (3)
+
+Observaciones reproducidas el 2026-10-05 por Codex sobre 0.1.3; estos casos amplían FR-6/FR-7, sin cambiar preferencias de dispositivo.
+
+- [ ] FIX-14 - Fix.open - Una operación aceptada en la cola antes de dispose ejecuta su callback y escribe State después del unload. La cola comprueba disposed sólo al aceptar, no al ejecutar. Debe rechazar el callback pendiente antes de cualquier efecto. Evidencia: tests/recovery-lifecycle.test.mjs, caso unload; evidence/recovery-lifecycle-before.txt.
+- [ ] FIX-15 - Fix.open - Resume elimina recoveryReason/operationPending en memoria antes de persistir; si localStorage falla, la recuperación deja de estar activa en memoria. El reconocimiento debe conservar ambos estados anteriores cuando falla la persistencia, incluida la lista de operaciones abandonadas. Evidencia: tests/recovery-lifecycle.test.mjs, caso local persistence; evidence/recovery-lifecycle-before.txt.
+- [ ] FIX-16 - Fix.open - Pause durante el await de refresh dentro de resume queda borrado por ese resume. Debe detectarse la generación nueva de pausa y rechazar la reanudación conservando el motivo nuevo. Evidencia: tests/recovery-lifecycle.test.mjs, caso pause during refresh; evidence/recovery-lifecycle-before.txt.
+
+La asociación de ENSO permanece sin modificar. Companion legado seleccionaba desktop por plataforma, sin binding físico por appId; macbook/zenbook comparten su origen. La comparación de configuración observada detecta VoiceInk Companion activo fuera del membership macbook. El preview debe preservar su activación recientemente autorizada y separar la vinculación local de las transiciones de plugins. Aplicar ese preview requiere autorización posterior; esta iteración no deduce preferencias nuevas.
+
 ## 3. Architecture & Data Model
 
 ### 3.1 Stack
