@@ -1,0 +1,41 @@
+{
+  "token": "MANAGER014-SANDBOX-20261005-R1",
+  "at": "2026-10-05T17:28:07.911Z",
+  "status": "passed",
+  "checks": {
+    "settled": true,
+    "actualInstance": true,
+    "loadedNative": true,
+    "version": true,
+    "artifacts": true,
+    "stateExact": true,
+    "localExact": true,
+    "enabledExact": true,
+    "fixedConfig": true,
+    "workspaceProjection": true,
+    "settingsClosed": true,
+    "nativeReceiptFsynced": true
+  },
+  "version": "0.1.4",
+  "window": 9,
+  "wc": 9,
+  "appId": "d137282e82167d84",
+  "artifacts": {
+    "main.js": "8eb589aad0a6bb6a93a1a2faccfbbc3e8070dda855c9856ffcb63e6856239752",
+    "manifest.json": "df8e023530cbb03431c4bab343b24bb3aae0b601b518e634c2c07d6b1e7c7a91",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "stateSha": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+  "profiles": 7,
+  "fixtures": 42,
+  "local": {
+    "recoveryReason": "Deferred policy for protected plugin community:omnisearch conflicts with its protection: native autostart and loaded state were left unchanged.",
+    "operationPending": null,
+    "deviceProfileId": null,
+    "appliedProfileId": null
+  },
+  "activeLeaf": "b5fe7b5b3c79ef4b",
+  "settingsLastTab": "",
+  "focusedWindow": null,
+  "mutationCalls": 0
+}

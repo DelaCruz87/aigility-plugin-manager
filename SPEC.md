@@ -156,6 +156,8 @@ Controller de perfiles y runner180/120/60 publicados en f80cdac:40checks offline
 - [x] Siete regresiones antes/después, 61 pruebas focales y build del candidato final.
 - [x] Dos revisiones de source independientes, con límites de I/O ya enviado explícitos.
 - [x] Adaptador de entrega endurecido y cinco pruebas offline de su código emitido; evidencia recovery-delivery-v014-faults-final.txt. El primer intento de fixture incompleto se conserva como error en recovery-delivery-v014-faults.txt.
-- [ ] Deploy y readback actuales Sandbox: espera START del supervisor tras liberar la operación compartida.
+- [x] Deploy y readback actuales Sandbox: MANAGER014-SANDBOX-20261005-R1, ACK17:26:51.524Z, native17:26:51.966Z con 24 PASS, readback17:28:07.911Z con 12 PASS. Source/State/local/foreign/core/Settings/leaves/foco preservados; lease RELEASE. Sigue pausado, sin binding ni apply.
 - [ ] Flujos lifecycle con fixture propio y captura Community/Options/Downloaded/error: adaptaciones en preparación, sin llamadas nativas.
 - [ ] Deploy aceptado y readback ENSO: necesita aceptación Sandbox; no incluye binding, Apply at start ni Resume por inferencia.
+
+2026-10-05T17:28:07.911Z, Codex: candidato 0.1.4 instalado/native/loaded en Sandbox9/9 tras una única recarga propia. State SHA31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4, siete perfiles y 42 fixtures exactos. No hubo Resume ni Apply at start. El inventario previo observó ENSO10 con renderer crashed; ese evento no se atribuye al Manager y la recuperación está a cargo del supervisor. Las comprobaciones lifecycle/UI propuestas no se han ejecutado en host.

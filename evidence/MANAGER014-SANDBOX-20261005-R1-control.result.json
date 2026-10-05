@@ -1,0 +1,125 @@
+{
+  "token": "MANAGER014-SANDBOX-20261005-R1",
+  "status": "passed",
+  "pending": false,
+  "startedAt": "2026-10-05T17:26:51.585Z",
+  "completedAt": "2026-10-05T17:26:51.966Z",
+  "checks": [
+    {
+      "name": "fresh file preimage /Users/eme/Obsidian/Sandbox/.obsidian/community-plugins.json",
+      "pass": true
+    },
+    {
+      "name": "fresh file preimage /Users/eme/Obsidian/Sandbox/.obsidian/core-plugins.json",
+      "pass": true
+    },
+    {
+      "name": "fresh file preimage /Users/eme/Obsidian/Sandbox/.obsidian/plugins/better-plugins-manager/data.json",
+      "pass": true
+    },
+    {
+      "name": "fresh file preimage /Users/eme/Obsidian/Sandbox/.obsidian/plugins/better-plugins-manager-companion/data.json",
+      "pass": true
+    },
+    {
+      "name": "fresh file preimage /Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/main.js",
+      "pass": true
+    },
+    {
+      "name": "fresh file preimage /Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/manifest.json",
+      "pass": true
+    },
+    {
+      "name": "fresh file preimage /Users/eme/Obsidian/Sandbox/.obsidian/plugins/aigility-plugin-manager/styles.css",
+      "pass": true
+    },
+    {
+      "name": "State request CAS",
+      "pass": true
+    },
+    {
+      "name": "State matches disk",
+      "pass": true
+    },
+    {
+      "name": "foreign deferred already off or protected",
+      "pass": true
+    },
+    {
+      "name": "old Manager unloaded only",
+      "pass": true
+    },
+    {
+      "name": "source frozen main.js",
+      "pass": true
+    },
+    {
+      "name": "owned artifact CAS main.js",
+      "pass": true
+    },
+    {
+      "name": "installed new bytes main.js",
+      "pass": true
+    },
+    {
+      "name": "source frozen manifest.json",
+      "pass": true
+    },
+    {
+      "name": "owned artifact CAS manifest.json",
+      "pass": true
+    },
+    {
+      "name": "installed new bytes manifest.json",
+      "pass": true
+    },
+    {
+      "name": "source frozen styles.css",
+      "pass": true
+    },
+    {
+      "name": "owned artifact CAS styles.css",
+      "pass": true
+    },
+    {
+      "name": "installed new bytes styles.css",
+      "pass": true
+    },
+    {
+      "name": "new actual Manager loaded",
+      "pass": true
+    },
+    {
+      "name": "complete State preserved",
+      "pass": true
+    },
+    {
+      "name": "local binding and recovery preserved",
+      "pass": true
+    },
+    {
+      "name": "seven profiles and42 fixtures",
+      "pass": true
+    }
+  ],
+  "error": null,
+  "result": {
+    "version": "0.1.4",
+    "loaded": true,
+    "native": true,
+    "dataSha": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+    "artifacts": {
+      "main.js": "8eb589aad0a6bb6a93a1a2faccfbbc3e8070dda855c9856ffcb63e6856239752",
+      "manifest.json": "df8e023530cbb03431c4bab343b24bb3aae0b601b518e634c2c07d6b1e7c7a91",
+      "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+    },
+    "profiles": 7,
+    "fixtures": 42,
+    "backup": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/release-backups/MANAGER014-SANDBOX-20261005-R1",
+    "foreignAndCorePreserved": true,
+    "settingsLeavesFocusPreserved": true,
+    "automationPaused": true,
+    "boundProfileId": null,
+    "appliedProfileId": null
+  }
+}
