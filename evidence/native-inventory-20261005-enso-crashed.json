@@ -1,0 +1,39 @@
+{
+  "observedAt": "2026-10-05T17:21:44.755471+00:00",
+  "author": "Codex",
+  "method": "guarded Sandbox9 synchronous BrowserWindow.getAllWindows, webContents.isCrashed",
+  "nativeMutationCalls": 0,
+  "windows": [
+    {
+      "window": 10,
+      "webContents": 10,
+      "title": "Recent files - ENSO - Obsidian 1.14.4",
+      "url": "app://obsidian.md/index.html",
+      "crashed": true
+    },
+    {
+      "window": 9,
+      "webContents": 9,
+      "title": "fixture_document_comments - Sandbox - Obsidian 1.14.4",
+      "url": "app://obsidian.md/index.html",
+      "crashed": false
+    },
+    {
+      "window": 11,
+      "webContents": 11,
+      "title": "AIgility Tables dev4 Gesture QA - Sandbox - Obsidian 1.14.4",
+      "url": "about:blank",
+      "crashed": false
+    },
+    {
+      "window": 6,
+      "webContents": 6,
+      "title": "New tab - ICOR - Obsidian 1.14.4",
+      "url": "app://obsidian.md/index.html",
+      "crashed": false
+    }
+  ],
+  "effect": "ENSO preview refused before executeJavaScript because exact target must be uncrashed. No binding/apply/Resume.",
+  "cause": "unattributed",
+  "nativeDeploy": "Sandbox9 candidate014 remains awaiting START; ENSO10 requires supervisor recovery and fresh identity."
+}
