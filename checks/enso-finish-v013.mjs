@@ -1,11 +1,13 @@
 // Settled continuation: retire only. Omni is already restored and is preserved.
 export async function readValidJSON(fs,path,deadline,stable=false){
  const until=Math.min(Date.now()+1000,deadline);let priorRaw=null;
- while(Date.now()<until){const raw=fs.readFileSync(path,'utf8');try{const value=JSON.parse(raw);if(!stable||raw===priorRaw)return {raw,value};priorRaw=raw;}catch(e){if(!(e instanceof SyntaxError))throw e;priorRaw=null;}await new Promise(resolve=>setTimeout(resolve,20));}
+ while(Date.now()<until){const raw=fs.readFileSync(path,'utf8');try{const value=JSON.parse(raw);if(!stable||raw===priorRaw)return {raw,value};priorRaw=raw;}catch(e){if(!(e instanceof SyntaxError))throw e;priorRaw=null;}await new Promise(resolve=>require('timers').setTimeout(resolve,20));}
  throw Error('No stable valid JSON within bounded asynchronous read; preserve');
 }
 export async function readWorkspaceProjection(fs,path,deadline){
- const {value}=await readValidJSON(fs,path,deadline,true);delete value.lastOpenFiles;return JSON.stringify(value);
+ const until=Math.min(Date.now()+1000,deadline);let prior=null;
+ while(Date.now()<until){const {value}=await readValidJSON(fs,path,until);delete value.lastOpenFiles;const projected=JSON.stringify(value);if(projected===prior)return projected;prior=projected;await new Promise(resolve=>require('timers').setTimeout(resolve,20));}
+ throw Error('Workspace structure has no stable valid projection within deadline; preserve');
 }
 export function finishDelivery(r){
  const fs=require('fs'),crypto=require('crypto'),remote=require('@electron/remote'),J=JSON.stringify,sha=x=>crypto.createHash('sha256').update(x).digest('hex');
@@ -30,7 +32,7 @@ export function finishDelivery(r){
  const check=(name,p)=>{q.checks.push({name,pass:!!p});if(!p)throw Error(name);};
  const durable=(p,b)=>{const fd=fs.openSync(p,'wx');try{fs.writeFileSync(fd,b);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}},sync=p=>{const fd=fs.openSync(p,'r');fs.fsyncSync(fd);fs.closeSync(fd);};
  const communityValue=async()=>{gate(false);const v=await readValidJSON(fs,community,r.actionDeadline);gate(false);return v.value;};
- const wait=async pred=>{while(!await pred()){await baseline(false);await new Promise(resolve=>setTimeout(resolve,50));await baseline(false);}};
+ const wait=async pred=>{while(!await pred()){await baseline(false);await new Promise(resolve=>require('timers').setTimeout(resolve,50));await baseline(false);}};
  q.task=(async()=>{try{
   workspaceShape=await shape();workspaceAllowed.add(workspaceShape);gate(false);expectedCommunity=await communityValue();await baseline(false);check('fresh approved State exact',expectedStateHash===r.stateSha&&J(JSON.parse(fs.readFileSync(data,'utf8')))===stateBaseline);
   for(const[p,h]of Object.entries(r.preimages))check('fresh frozen config '+p,hash(p)===h);
