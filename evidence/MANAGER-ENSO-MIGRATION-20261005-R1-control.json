@@ -1,0 +1,33 @@
+{
+  "status": "dispatch-prepared",
+  "pending": true,
+  "request": {
+    "action": "deploy",
+    "token": "MANAGER-ENSO-MIGRATION-20261005-R1",
+    "vault": "ENSO",
+    "window": 10,
+    "wc": 10,
+    "appId": "770c2d6b37fb662f",
+    "root": "/Users/eme/Obsidian/ENSO",
+    "dev": 16777232,
+    "ino": 157927577,
+    "source": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin",
+    "backup": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/release-backups/MANAGER-ENSO-MIGRATION-20261005-R1",
+    "ack": "2026-10-05T14:55:20Z",
+    "startBy": "2026-10-05T14:56:05.000Z",
+    "deadline": 1791212300000,
+    "actionDeadline": 1791212270000,
+    "moduleSha": "a98efcec2262677731d2ee1d403d108b1a84662714bed3e6a014f6bab0553bef",
+    "artifacts": {
+      "main.js": "bce4c84930af05a5d1b3e33abf97b60612f5415a82fe729aaa18b0fadb8dc2a9",
+      "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+      "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+    },
+    "preimages": {
+      "/Users/eme/Obsidian/ENSO/.obsidian/community-plugins.json": "3815aa1128e3aac3f0ef952585fc9a81e7910328310407373903157d9f6c389e",
+      "/Users/eme/Obsidian/ENSO/.obsidian/core-plugins.json": "c8fd6ad86aab7b94a47565a9c4172ee0ddbab611bfa163248c204e2f57af8bf9",
+      "/Users/eme/Obsidian/ENSO/.obsidian/plugins/better-plugins-manager/data.json": "700c94c74d47b991b39a7ef16a9c22c3877a8a9d0db3561a7990f4c30260db24",
+      "/Users/eme/Obsidian/ENSO/.obsidian/plugins/better-plugins-manager-companion/data.json": "323c48e2f4dc1ea80b7b6ccad18d383d71c2ead1a81655b45c761d20dda1bdf0"
+    }
+  }
+}

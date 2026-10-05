@@ -1,0 +1,19 @@
+{
+  "token": "MANAGER-SANDBOX-UI-20261005-R1",
+  "vault": "Sandbox",
+  "window": 9,
+  "wc": 9,
+  "deadline": 1791212106000,
+  "actionDeadline": 1791212076000,
+  "beforeTab": "",
+  "settingsClosed": true,
+  "hashes": {
+    "community-plugins.json": "0635b28cc030a2a27e2243f0fd3042add5a22f518b09537d4522b581e05a815e",
+    "core-plugins.json": "6a6a04f733e0bf3882e30683923857db99fa9f913335c0e9f9c52c31dd14802f",
+    "plugins/aigility-plugin-manager/data.json": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+    "plugins/better-plugins-manager/data.json": "a264beacbadefd3a7aeb2fbbda33e0ab19a24b8589ca3e72918379bab8a4be75",
+    "plugins/better-plugins-manager-companion/data.json": "1813575bf90d4b9fe78ca9e2bf5039aebe7cec957945029635371e6046306e44",
+    "workspace.json": "f9c7279297f9e47eb81e0b57c9b1e077f8af92c0aaebb3d8477d99d15e6877c9",
+    "workspaces.json": "342751ae2558a75bad16823142821633d20cb64b60f459c15ea104d0fa8f9c23"
+  }
+}

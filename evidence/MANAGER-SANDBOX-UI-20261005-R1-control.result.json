@@ -1,0 +1,63 @@
+{
+  "token": "MANAGER-SANDBOX-UI-20261005-R1",
+  "status": "failed",
+  "pending": false,
+  "startedAt": "2026-10-05T14:53:29.255Z",
+  "completedAt": "2026-10-05T14:53:30.042Z",
+  "checks": [
+    {
+      "name": "current loaded 0.1.3",
+      "pass": true
+    },
+    {
+      "name": "native Community tab current",
+      "pass": true
+    },
+    {
+      "name": "one integrated list",
+      "pass": true
+    },
+    {
+      "name": "community rows visible",
+      "pass": true
+    },
+    {
+      "name": "core rows visible",
+      "pass": true
+    },
+    {
+      "name": "native sidebar Options connected",
+      "pass": true
+    },
+    {
+      "name": "recovery banner visible",
+      "pass": true
+    },
+    {
+      "name": "owned Settings restored closed",
+      "pass": true
+    },
+    {
+      "name": "state local filters unchanged",
+      "pass": true
+    },
+    {
+      "name": "all configuration bytes unchanged",
+      "pass": true
+    },
+    {
+      "name": "enabled and foreign instances unchanged",
+      "pass": true
+    },
+    {
+      "name": "core instances unchanged",
+      "pass": true
+    },
+    {
+      "name": "leaves and focus unchanged",
+      "pass": true
+    }
+  ],
+  "captures": [],
+  "error": "Error: UnknownVizError"
+}

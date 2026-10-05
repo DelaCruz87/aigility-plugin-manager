@@ -1,0 +1,18 @@
+{
+  "status": "dispatch-prepared",
+  "pending": true,
+  "request": {
+    "vault": "Sandbox",
+    "token": "MANAGER-SANDBOX-UI-20261005-R1",
+    "window": 9,
+    "wc": 9,
+    "appId": "d137282e82167d84",
+    "root": "/Users/eme/Obsidian/Sandbox",
+    "deadline": 1791212106000,
+    "actionDeadline": 1791212076000,
+    "ack": "2026-10-05T14:53:06Z",
+    "startBy": "2026-10-05T14:53:51.000Z",
+    "output": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/native-ui-v013/MANAGER-SANDBOX-UI-20261005-R1",
+    "moduleSha": "2e951f7dd1b188a61b18b610e16014ec7bbe90c670617ee7d82282b57ca70524"
+  }
+}

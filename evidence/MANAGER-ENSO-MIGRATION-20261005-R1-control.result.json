@@ -1,0 +1,84 @@
+{
+  "token": "MANAGER-ENSO-MIGRATION-20261005-R1",
+  "status": "failed",
+  "phase": "failed-preserved",
+  "pending": false,
+  "startedAt": "2026-10-05T14:55:29.416Z",
+  "completedAt": "2026-10-05T14:55:31.503Z",
+  "checks": [
+    {
+      "name": "new Manager absent",
+      "pass": true
+    },
+    {
+      "name": "late load only",
+      "pass": true
+    },
+    {
+      "name": "legacy source managers present",
+      "pass": true
+    },
+    {
+      "name": "BPM unload has no delay or ribbon side effects",
+      "pass": true
+    },
+    {
+      "name": "Omnisearch baseline",
+      "pass": true
+    },
+    {
+      "name": "frozen source /Users/eme/Obsidian/ENSO/.obsidian/community-plugins.json",
+      "pass": true
+    },
+    {
+      "name": "frozen source /Users/eme/Obsidian/ENSO/.obsidian/core-plugins.json",
+      "pass": true
+    },
+    {
+      "name": "frozen source /Users/eme/Obsidian/ENSO/.obsidian/plugins/better-plugins-manager/data.json",
+      "pass": true
+    },
+    {
+      "name": "frozen source /Users/eme/Obsidian/ENSO/.obsidian/plugins/better-plugins-manager-companion/data.json",
+      "pass": true
+    },
+    {
+      "name": "no stale binding/pending operation",
+      "pass": true
+    },
+    {
+      "name": "only active deferred is Omni",
+      "pass": true
+    },
+    {
+      "name": "source unchanged main.js",
+      "pass": true
+    },
+    {
+      "name": "installed bytes main.js",
+      "pass": true
+    },
+    {
+      "name": "source unchanged manifest.json",
+      "pass": true
+    },
+    {
+      "name": "installed bytes manifest.json",
+      "pass": true
+    },
+    {
+      "name": "source unchanged styles.css",
+      "pass": true
+    },
+    {
+      "name": "installed bytes styles.css",
+      "pass": true
+    },
+    {
+      "name": "loader observer removed",
+      "pass": true
+    }
+  ],
+  "error": "Error: Foreign configuration changed: workspace.json",
+  "result": null
+}
