@@ -147,4 +147,15 @@ Controller de perfiles y runner180/120/60 publicados en f80cdac:40checks offline
 
 ## Recovery refinement checkpoint
 
-2026-10-05, Codex: FIX-14/15/16 comprobados offline sobre candidato 0.1.4. Siete regresiones de lifecycle: cinco fallos originales/de escrituras activas y dos huecos detectados en la revisión del primer parche (resume en cola y refresh tras unload). Antes: recovery-lifecycle-before.txt, recovery-lifecycle-store-before.txt y recovery-lifecycle-peer-before.txt; después: recovery-lifecycle-focused-final.txt con 61 PASS. Candidato LocalState se persiste antes de publicar y conserva su referencia. RuntimeStore usa un guard opcional compatible justo antes de writes. La aceptación nativa, la captura visual y el deployment 0.1.4 siguen pendientes de nuevas ventanas; ENSO conserva 0.1.3 y no se ha vinculado ni aplicado macbook. Revisión crítica peer en curso. Intento GLM sin resultado por timeout y AGY con source entregado pero FAIL de ruta de notes.md conservados como tales.
+2026-10-05, Codex: FIX-14/15/16 comprobados offline sobre candidato 0.1.4. Siete regresiones de lifecycle: cinco fallos originales/de escrituras activas y dos huecos detectados en la revisión del primer parche (resume en cola y refresh tras unload). Antes: recovery-lifecycle-before.txt, recovery-lifecycle-store-before.txt y recovery-lifecycle-peer-before.txt; después: recovery-lifecycle-focused-final.txt con 61 PASS. Candidato LocalState se persiste antes de publicar y conserva su referencia. RuntimeStore usa un guard opcional compatible justo antes de writes. La aceptación nativa, la captura visual y el deployment 0.1.4 siguen pendientes de nuevas ventanas; ENSO conserva 0.1.3 y no se ha vinculado ni aplicado macbook. Revisiones críticas independientes de Tasks y UI aprobadas en lectura de source; no equivalen a aceptación nativa. Intento GLM sin resultado por timeout y AGY con source entregado pero FAIL de ruta de notes.md conservados como tales.
+
+## Recovery acceptance checklist
+
+2026-10-05, Codex, candidato 0.1.4. Estado de esta iteración; el checkpoint de 0.1.3 es histórico.
+
+- [x] Siete regresiones antes/después, 61 pruebas focales y build del candidato final.
+- [x] Dos revisiones de source independientes, con límites de I/O ya enviado explícitos.
+- [x] Adaptador de entrega endurecido y cinco pruebas offline de su código emitido; evidencia recovery-delivery-v014-faults-final.txt. El primer intento de fixture incompleto se conserva como error en recovery-delivery-v014-faults.txt.
+- [ ] Deploy y readback actuales Sandbox: espera START del supervisor tras liberar la operación compartida.
+- [ ] Flujos lifecycle con fixture propio y captura Community/Options/Downloaded/error: adaptaciones en preparación, sin llamadas nativas.
+- [ ] Deploy aceptado y readback ENSO: necesita aceptación Sandbox; no incluye binding, Apply at start ni Resume por inferencia.

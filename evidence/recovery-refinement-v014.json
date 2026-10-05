@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-05T16:42:06.920028+00:00",
+  "at": "2026-10-05T17:04:57.464432+00:00",
   "author": "Codex",
   "version": "0.1.4",
   "status": "offline-checked-native-pending",
@@ -36,7 +36,7 @@
     "peer": "Tasks/Blocks/Links/Companion owner 01a10c7b-886e-71e1-af03-2ecf22a0fa3d",
     "status": "approved-read-only",
     "limits": "Already dispatched I/O is observed; no promise of cancellation or rollback.",
-    "uiPeer": "pending"
+    "uiPeer": "approved-read-only by UI/Tables/Filetree owner 01a10cdc-6ab7-7760-93e4-1ff12ba54f8e"
   },
   "externalAttempts": [
     {
@@ -63,5 +63,14 @@
     "binding": "unchanged, no profile applied",
     "pendingWriter": false
   },
-  "policy": "No startup pause removed, no implicit physical-device binding, no foreign plugin or Sync/mobile operations."
+  "policy": "No startup pause removed, no implicit physical-device binding, no foreign plugin or Sync/mobile operations.",
+  "deliveryAdapter": {
+    "status": "offline-checked-awaiting-supervisor-review-and-START",
+    "passedFaultChecks": 5,
+    "after": "recovery-delivery-v014-faults-final.txt",
+    "initialFixtureError": "recovery-delivery-v014-faults.txt",
+    "nativeCalls": 0,
+    "moduleSha": "e52b5cdae7e56b93c483901f6c3f145743bb08da1c21d3d9956b0f7e1ae8bd79",
+    "pythonSha": "1776a86afd17d9e882effb975377609f708bc691fbd696f7b5076d760b25f269"
+  }
 }

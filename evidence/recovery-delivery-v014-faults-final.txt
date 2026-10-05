@@ -1,0 +1,13 @@
+✔ settled delivery publishes PASS only after durable receipt and exact hook restore (267.292208ms)
+✔ cloned registry after loader await cannot adopt returned Manager or restore hook (246.60325ms)
+✔ expired total lease preserves hook and reports cleanup failure (249.945125ms)
+✔ receipt I/O failure never exposes a PASS through polling (264.289958ms)
+✔ Python begin refuses artifact drift before control creation or native dispatch (48.530916ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1171.388
