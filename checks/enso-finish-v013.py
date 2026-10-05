@@ -9,7 +9,7 @@ import datetime, hashlib, json, os, subprocess, sys, time
 project=Path(__file__).resolve().parent.parent
 action=sys.argv[1]
 source=(project/'checks/enso-finish-v013.mjs').read_text()
-source=source.replace('export function finishDelivery(', 'function finishDelivery(', 1)
+source=source.replace('export async function ', 'async function ').replace('export function ', 'function ')
 digest=lambda b:hashlib.sha256(b).hexdigest()
 epoch=lambda s:int(datetime.datetime.fromisoformat(s.replace('Z','+00:00')).timestamp()*1000)
 def durable(path, data):
@@ -38,6 +38,7 @@ if action=='begin':
     request['stateSha']=digest(statePath.read_bytes())
     request['migratedAt']=json.loads(statePath.read_text())['migration']['migratedAt']
     request['previousToken']='MANAGER-ENSO-MIGRATION-20261005-R1'
+    request['previousFinishToken']='MANAGER-ENSO-FINISH-20261005-R1'
     durable(control,{'status':'dispatch-prepared','pending':True,'request':request})
     inner='(()=>{'+source+';return finishDelivery('+json.dumps(request)+');})()'
 elif action=='poll':
