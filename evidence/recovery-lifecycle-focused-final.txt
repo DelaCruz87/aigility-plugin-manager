@@ -1,0 +1,101 @@
+✔ restricted mode reads actual global app.plugins.isEnabled() (0.395667ms)
+✔ deferred enable uses nonpersistent host load and leaves native IDs excluded (0.294416ms)
+✔ workspace application calls core Workspaces instance (0.082542ms)
+✔ persisted native flag without actual load is a readback failure (0.217208ms)
+✔ a manual equal-value call during an awaited manager load retains its mutation signal (0.420292ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Startup baseline skipped: an interrupted operation is pending recovery. {
+  operationPending: 'profile-apply:interrupted',
+  migrated: false,
+  canonicalState: 'on-disk'
+}
+Plugin automation paused: Interrupted operation: profile-apply:interrupted undefined
+Plugin automation paused: Manager loaded after layout readiness; startup automation was skipped. undefined
+✔ interrupted operation does not prevent the manager from loading its manual recovery UI (58.123792ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ schemaVersion 1 loads without legacy migration and registers stable manager/profile commands (41.071ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ bound and device profile commands preview first and apply only after modal confirmation (43.203167ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ legacy migration stores exact local backups before schemaVersion 1 write and redacts persisted State (39.705917ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Plugin automation paused: Manager loaded after layout readiness; startup automation was skipped. undefined
+✔ credential redaction preserves plugin identities through load save refresh and list (37.079834ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Runtime guard linkResolverSchedule: host signatures differ; native behavior retained undefined
+Runtime guard relatedLinkBatch: metadata cache is absent; native behavior retained undefined
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Plugin automation paused: Manager loaded after layout readiness; startup automation was skipped. undefined
+Runtime guard linkResolverSchedule: host signatures differ; native behavior retained undefined
+Runtime guard relatedLinkBatch: metadata cache is absent; native behavior retained undefined
+✔ early load starts unrestricted and runs layout-ready automation; late load skips it (76.81725ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Plugin automation paused: Obsidian plugin loading is disabled. undefined
+✔ global plugin loading gate drives the restricted pause, independent of the native autostart set (43.199625ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ manager-options command opens the owned options modal instead of searching general setting tabs (35.910834ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ manager-view opens the native community plugins settings tab and restore alias undoes the last profile (43.654125ms)
+✔ guard diagnostics reach plugin.runtime and remain visible for incompatible host signatures (37.227375ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ unload synchronously disposes UI, debug, guards, then runtime without legacy lifecycle calls (41.953542ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ dynamic device profile commands follow queued create, rename, and delete operations (36.395833ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ dynamic command cleanup preserves foreign replacements and later enqueue wrappers (42.163208ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Manager command failed. Error: Installed community plugin "community-one" is no longer available.
+    at AIgilityPluginManager.toggleInstalledPlugin (file:///private/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/aigility-integration-IDEaen/bundle.mjs:17852:22)
+✔ installed community and core aliases use fresh runtime state and exclude protected and manager plugins (39.89575ms)
+✔ unload rejects already queued work before it can save State (1.020417ms)
+✔ resume retains in-memory and durable recovery if local persistence fails (1.079292ms)
+✔ an already running transaction rejects save after unload (0.1475ms)
+✔ unload during State freshness read prevents the later disk write (0.186625ms)
+✔ a pause arriving during resume refresh remains latched (0.1565ms)
+✔ a queued resume cannot acknowledge a pause newer than its request (0.118667ms)
+✔ unload during refresh rejects before publishing a new in-memory State (0.118375ms)
+(node:65930) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ collectObserved distinguishes installed, desired, native autostart, compatibility, and loaded state (0.937833ms)
+✔ complete profile applies tag membership and retains protected, incompatible, and manager plugins (2.078333ms)
+✔ complete profile clears desired=true for an outsider whose native flag is already false (0.256833ms)
+✔ fixture changes only declared members (0.354542ms)
+✔ fixture skips protected, absent and incompatible members visibly while the ordinary member still applies (0.304459ms)
+✔ an invalid fixture key rejects before any declared member is touched (0.221167ms)
+✔ fixture undo leaves a manually reasserted state untouched by its mutation generation (1.221708ms)
+✔ core toggles use wrapper methods and read the wrapper back without invoking bulk enable (0.394541ms)
+✔ a failed host readback rejects and preserves a recovery latch (0.19675ms)
+✔ the shared queue serializes mutations and each write verifies a fresh disk preimage (11.007417ms)
+✔ profile undo skips plugins changed manually after the profile operation (0.474042ms)
+✔ local profile binding is isolated by app id and vault path (0.191667ms)
+✔ deferred plugins are excluded from autostart and enabled once after their delay (0.648ms)
+✔ profile intent schedules a deferred member instead of loading it immediately, then undo restores it (0.507291ms)
+✔ a canceled deferred callback cannot outrun its replacement timer (0.196875ms)
+✔ parked deferred plugins stay off, and pause cancels scheduled timers (0.088166ms)
+✔ manual plugin-off, debug pause, recovery pause, and unload cancel delayed generations (0.427958ms)
+✔ workspace selection occurs only after normal layout-ready startup (0.151167ms)
+✔ normal startup clones desktop workspace d into only missing t and m variants (0.110584ms)
+✔ global plugin disable synchronously pauses and persists before unload, then dispose restores the method (0.137708ms)
+✔ a deferred plugin that leaks into loaded state is removed from native autostart (0.052167ms)
+✔ late load, restricted mode, and interrupted operations persistently pause startup automation (0.115917ms)
+✔ resume refreshes disk state before clearing an interrupted-operation latch (0.174417ms)
+✔ explicit late resume schedules the bound profile after layout readiness (0.103542ms)
+✔ an equal manual enable advances the mutation generation and protects profile undo (0.102792ms)
+✔ queued transaction can save and debug-load without reentering or persisting native enablement (0.089042ms)
+✔ a deferred policy edit on a loaded native plugin drops native autostart, keeps desired, and cancels timers (0.146958ms)
+✔ deferred reconciliation never loads a plugin and ignores membership, and an off policy keeps native off (0.06075ms)
+✔ a deferred policy for the protected manager keeps its native startup, surfaces the conflict, and rejects the edit (0.094542ms)
+✔ an enabled deferred policy for any other protected plugin is refused before the host is touched (0.155458ms)
+✔ a core deferred policy is rejected before its persistent native flag is mutated (0.095292ms)
+✔ unrelated interrupted operations still reject diagnostic host mutations (0.050792ms)
+✔ an interrupted-operation pause is a latch, not a diagnosis, so a diagnostic origin still rejects (0.062666ms)
+✔ unload restores the restricted-mode wrapper and pauses before host unload (0.036083ms)
+✔ effective state is written inside the plugin folder without secrets (0.059375ms)
+ℹ tests 61
+ℹ suites 0
+ℹ pass 61
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 716.826542

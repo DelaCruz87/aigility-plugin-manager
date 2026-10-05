@@ -1,0 +1,67 @@
+{
+  "at": "2026-10-05T16:42:06.920028+00:00",
+  "author": "Codex",
+  "version": "0.1.4",
+  "status": "offline-checked-native-pending",
+  "scope": [
+    "FIX-14 queued and active transaction work after unload",
+    "FIX-15 atomic local recovery acknowledgment",
+    "FIX-16 pauses newer than a resume request"
+  ],
+  "artifacts": {
+    "main.js": "8eb589aad0a6bb6a93a1a2faccfbbc3e8070dda855c9856ffcb63e6856239752",
+    "manifest.json": "df8e023530cbb03431c4bab343b24bb3aae0b601b518e634c2c07d6b1e7c7a91",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "source": {
+    "src/integrated/runtime.ts": "5e8d48daeb7d739afa2a428dbb64f2b0fd706864bbf6ea1c7d2fe7edc49569dd",
+    "src/integrated/store.ts": "a9c5f413f82fad1a6197df09f3432681f832fce1382c93ac0494642dc2738031"
+  },
+  "before": [
+    "recovery-lifecycle-before.txt",
+    "recovery-lifecycle-store-before.txt",
+    "recovery-lifecycle-peer-before.txt"
+  ],
+  "after": "recovery-lifecycle-focused-final.txt",
+  "tests": {
+    "passed": 61,
+    "failed": 0,
+    "newRegressions": 7
+  },
+  "build": {
+    "status": "passed",
+    "evidence": "recovery-build-v014.txt"
+  },
+  "review": {
+    "peer": "Tasks/Blocks/Links/Companion owner 01a10c7b-886e-71e1-af03-2ecf22a0fa3d",
+    "status": "approved-read-only",
+    "limits": "Already dispatched I/O is observed; no promise of cancellation or rollback.",
+    "uiPeer": "pending"
+  },
+  "externalAttempts": [
+    {
+      "runId": "aigility-plugin-manager-startup-20261005T162034Z-p52736",
+      "engine": "glm-plan",
+      "model": "glm-5.3",
+      "status": "TIMEOUT",
+      "attempts": 1,
+      "deliveredSource": false
+    },
+    {
+      "runId": "aigility-plugin-manager-startup-20261005T163105Z-p59899",
+      "engine": "agy",
+      "model": "gemini-3.8-flash-high",
+      "status": "FAIL",
+      "attempts": 1,
+      "deliveredSource": true,
+      "issue": "Expected notes.md missing from assigned task directory; worker wrote its notes into its own Antigravity brain/scratch directory. Original FAIL remains."
+    }
+  ],
+  "native": {
+    "sandbox": "0.1.3 remains installed until new START",
+    "enso": "0.1.3 installed and loaded; both legacy managers retired at prior stage",
+    "binding": "unchanged, no profile applied",
+    "pendingWriter": false
+  },
+  "policy": "No startup pause removed, no implicit physical-device binding, no foreign plugin or Sync/mobile operations."
+}

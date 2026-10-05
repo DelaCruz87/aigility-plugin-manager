@@ -1,0 +1,69 @@
+✖ unload rejects already queued work before it can save State (0.969834ms)
+✖ resume retains in-memory and durable recovery if local persistence fails (1.167ms)
+✖ an already running transaction rejects save after unload (0.145875ms)
+
+Interrupted while running:
+
+⚠ tests/recovery-lifecycle.test.mjs (tests/recovery-lifecycle.test.mjs:1:1)
+✖ tests/recovery-lifecycle.test.mjs (64727.711334ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64730.283334
+
+✖ failing tests:
+
+test at tests/recovery-lifecycle.test.mjs:48:1
+✖ unload rejects already queued work before it can save State (0.969834ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/tests/recovery-lifecycle.test.mjs:63:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /disposed|unloading/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/recovery-lifecycle.test.mjs:68:1
+✖ resume retains in-memory and durable recovery if local persistence fails (1.167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '{"abandonedOperations":[{"operation":"interrupted-operation","abandonedAt":"2026-10-05T16:28:02.646Z","observedHost":[]}]}'
+  - '{"operationPending":"interrupted-operation","recoveryReason":"Existing recovery"}'
+  
+      at TestContext.<anonymous> (file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/tests/recovery-lifecycle.test.mjs:76:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '{"abandonedOperations":[{"operation":"interrupted-operation","abandonedAt":"2026-10-05T16:28:02.646Z","observedHost":[]}]}',
+    expected: '{"operationPending":"interrupted-operation","recoveryReason":"Existing recovery"}',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/recovery-lifecycle.test.mjs:81:1
+✖ an already running transaction rejects save after unload (0.145875ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/tests/recovery-lifecycle.test.mjs:95:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /disposed|unloading/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/recovery-lifecycle.test.mjs:1:1
+✖ tests/recovery-lifecycle.test.mjs (64727.711334ms)
+  'Promise resolution is still pending but the event loop has already resolved'

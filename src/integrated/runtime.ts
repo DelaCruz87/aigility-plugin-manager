@@ -92,7 +92,9 @@ export class ManagerRuntime {
         this.state = state;
         this.localKey = this.makeLocalKey();
         this.local = this.readLocal();
-        this.store = new RuntimeStore(app, plugin, state);
+        this.store = new RuntimeStore(app, plugin, state, () => {
+            if (this.disposed) throw new Error('Manager runtime is disposed.');
+        });
         this.scheduler = new DeferredScheduler(app);
         this.host = createHostAdapter(app, plugin, (reason) => this.pause(reason), (ref: PluginRef) => this.bumpGeneration(ref));
         this.profileUndo = this.readPersistedUndo();
@@ -156,16 +158,40 @@ export class ManagerRuntime {
 
     enqueue<T>(label: string, operation: (tx: RuntimeTransaction) => Promise<T>): Promise<T> {
         if (this.disposed) return Promise.reject(new Error('Manager runtime is disposed.'));
+        const assertActive = () => {
+            if (this.disposed) throw new Error('Manager runtime is disposed.');
+        };
         const tx: RuntimeTransaction = {
-            save: () => this.saveInternal(),
-            setEnabled: (ref, enabled, options) => this.setEnabledInternal(ref, enabled, options),
-            refresh: () => this.refreshInternal(),
-            writeEffectiveState: () => this.writeEffectiveStateInternal(),
+            save: () => {
+                assertActive();
+                return this.saveInternal();
+            },
+            setEnabled: (ref, enabled, options) => {
+                assertActive();
+                return this.setEnabledInternal(ref, enabled, options);
+            },
+            refresh: () => {
+                assertActive();
+                return this.refreshInternal();
+            },
+            writeEffectiveState: () => {
+                assertActive();
+                return this.writeEffectiveStateInternal();
+            },
             // Direct helper on purpose: reconcileDeferredInternal must not
             // re-enqueue, it already runs inside the caller's transaction.
-            reconcileDeferred: (ref, options) => this.reconcileDeferredInternal(ref, options),
+            reconcileDeferred: (ref, options) => {
+                assertActive();
+                return this.reconcileDeferredInternal(ref, options);
+            },
         };
-        const run = this.queue.then(() => operation(tx), () => operation(tx));
+        const execute = () => {
+            if (this.disposed) {
+                return Promise.reject(new Error('Manager runtime is disposed.'));
+            }
+            return operation(tx);
+        };
+        const run = this.queue.then(execute, execute);
         this.queue = run.catch((error) => {
             this.log('error', `Queued operation failed: ${label}`, error);
         });
@@ -318,6 +344,7 @@ export class ManagerRuntime {
     }
 
     private async saveInternal(): Promise<void> {
+        if (this.disposed) throw new Error('Manager runtime is disposed.');
         await this.withPending('save-state', async () => this.store.save(this.state));
     }
 
@@ -442,6 +469,7 @@ export class ManagerRuntime {
 
     bindProfile(id: string): Promise<void> {
         return this.enqueue('bind-profile', async () => {
+            if (this.disposed) throw new Error('Manager runtime is disposed.');
             if (id && !this.state.deviceProfiles.some((profile) => profile.id === id)) throw new Error(`Device profile ${id} does not exist.`);
             const previous = this.local.deviceProfileId;
             if (id) this.local.deviceProfileId = id;
@@ -457,25 +485,50 @@ export class ManagerRuntime {
     }
 
     resume(): Promise<void> {
+        const pauseGen = this.pauseGeneration;
         return this.enqueue('resume-runtime', async () => {
+            if (this.disposed) throw new Error('Manager runtime is disposed.');
+            if (this.pauseGeneration !== pauseGen) throw new Error('Plugin automation resume was cancelled because a new pause arrived.');
             if (this.host.isRestricted() || isDebugging(this.state)) throw new Error('Plugin automation cannot resume while Obsidian plugin loading is disabled or a debug session is active.');
             const pending = this.local.operationPending;
             const refreshed = await this.refreshInternal();
-            if (this.host.isRestricted() || isDebugging(refreshed)) throw new Error('Plugin automation cannot resume while Obsidian plugin loading is disabled or a debug session is active.');
-            if (pending) {
-                const history = Array.isArray((this.local as any).abandonedOperations) ? (this.local as any).abandonedOperations : [];
-                history.push({ operation: pending, abandonedAt: new Date().toISOString(), observedHost: this.host.observe().map((item) => ({ kind: item.ref.kind, id: item.ref.id, nativeAutostart: item.nativeAutostart, loaded: item.loaded })) });
-                (this.local as any).abandonedOperations = history.slice(-50);
+            if (this.disposed) throw new Error('Manager runtime is disposed.');
+            if (this.pauseGeneration !== pauseGen) {
+                throw new Error('Plugin automation resume was cancelled because a new pause arrived.');
             }
+            if (this.host.isRestricted() || isDebugging(refreshed)) throw new Error('Plugin automation cannot resume while Obsidian plugin loading is disabled or a debug session is active.');
+            const candidate: LocalState = clone(this.local);
+            if (pending) {
+                const history = Array.isArray((candidate as any).abandonedOperations) ? [...(candidate as any).abandonedOperations] : [];
+                history.push({
+                    operation: pending,
+                    abandonedAt: new Date().toISOString(),
+                    observedHost: this.host.observe().map((item) => ({
+                        kind: item.ref.kind,
+                        id: item.ref.id,
+                        nativeAutostart: item.nativeAutostart,
+                        loaded: item.loaded,
+                    })),
+                });
+                (candidate as any).abandonedOperations = history.slice(-50);
+            }
+            delete candidate.operationPending;
+            delete candidate.recoveryReason;
+            this.persistLocal(candidate);
+
+            for (const key of Object.keys(this.local)) {
+                if (!(key in candidate)) {
+                    delete (this.local as any)[key];
+                }
+            }
+            Object.assign(this.local, candidate);
+
             this.state = refreshed;
             this.profileUndo = this.readPersistedUndo();
             for (const entry of this.profileUndo?.entries ?? []) {
                 if (!this.generations.has(key(entry.ref))) this.generations.set(key(entry.ref), entry.generation);
             }
             if (!this.state.protected.includes(MANAGER_PROTECTED_KEY)) this.state.protected.push(MANAGER_PROTECTED_KEY);
-            delete this.local.operationPending;
-            delete this.local.recoveryReason;
-            this.persistLocal();
             if (this.layoutReadySeen) {
                 this.startupVerified = true;
                 await this.resumeAutomation();
@@ -484,6 +537,7 @@ export class ManagerRuntime {
     }
 
     pause(reason: string): void {
+        if (this.disposed) return;
         const normalized = String(reason || 'Runtime paused').slice(0, 500);
         this.pauseGeneration++;
         this.local.recoveryReason = normalized;
@@ -562,6 +616,7 @@ export class ManagerRuntime {
     }
 
     private async writeEffectiveStateInternal(): Promise<void> {
+        if (this.disposed) throw new Error('Manager runtime is disposed.');
         const boundProfileId = this.local.deviceProfileId;
         const appliedProfileId = (this.local as any).appliedProfileId;
         const report = {
@@ -614,7 +669,9 @@ export class ManagerRuntime {
     }
 
     private async refreshInternal(): Promise<State> {
+        if (this.disposed) throw new Error('Manager runtime is disposed.');
         const refreshed = await this.store.refresh();
+        if (this.disposed) throw new Error('Manager runtime is disposed.');
         this.state = refreshed;
         // Read the host in the same transaction as disk so recovery diagnostics
         // distinguish persisted intent from native and loaded state.
@@ -805,17 +862,21 @@ export class ManagerRuntime {
     }
 
     private async withPending<T>(label: string, operation: () => Promise<T>): Promise<T> {
+        if (this.disposed) throw new Error('Manager runtime is disposed.');
         if (this.local.operationPending) throw new Error(`Operation ${this.local.operationPending} is pending recovery.`);
         this.local.operationPending = label;
         this.activePauseBaseline = this.pauseGeneration;
         try {
             this.persistLocal();
             const result = await operation();
+            if (this.disposed) throw new Error('Manager runtime is disposed.');
             delete this.local.operationPending;
             this.persistLocal();
             return result;
         } catch (error) {
-            this.pause(`Operation interrupted: ${label}`);
+            if (!this.disposed) {
+                this.pause(`Operation interrupted: ${label}`);
+            }
             this.log('error', `Operation ${label} failed.`, error);
             throw error;
         } finally {
@@ -932,10 +993,11 @@ export class ManagerRuntime {
         }
     }
 
-    private persistLocal(): void {
+    private persistLocal(target: LocalState = this.local): void {
+        if (this.disposed) throw new Error('Manager runtime is disposed.');
         const storage = (globalThis as any).localStorage;
         if (!storage || typeof storage.setItem !== 'function') throw new Error('Persistent localStorage is required for recovery-safe runtime state.');
-        storage.setItem(this.localKey, JSON.stringify(this.local));
+        storage.setItem(this.localKey, JSON.stringify(target));
     }
 }
 

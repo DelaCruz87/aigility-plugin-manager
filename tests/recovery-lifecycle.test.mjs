@@ -78,6 +78,45 @@ test('resume retains in-memory and durable recovery if local persistence fails',
   h.runtime.dispose();
 });
 
+test('an already running transaction rejects save after unload', async () => {
+  const h = harness();
+  let release, entered;
+  const running = new Promise(resolve => { entered = resolve; });
+  const operation = h.runtime.enqueue('running-save', async tx => {
+    entered();
+    await new Promise(resolve => { release = resolve; });
+    h.runtime.state.settings.staggerMs = 21;
+    await tx.save();
+  });
+  await running;
+  h.runtime.dispose();
+  const rejected = assert.rejects(operation, /disposed|unloading/i);
+  release();
+  await rejected;
+  assert.deepEqual(h.writes, []);
+});
+
+test('unload during State freshness read prevents the later disk write', async () => {
+  const h = harness();
+  const read = h.adapter.read;
+  let release, entered;
+  const reading = new Promise(resolve => { entered = resolve; });
+  h.adapter.read = async p => {
+    entered();
+    await new Promise(resolve => { release = resolve; });
+    return read(p);
+  };
+  h.runtime.state.settings.staggerMs = 23;
+  const save = h.runtime.save();
+  await reading;
+  h.adapter.read = read;
+  h.runtime.dispose();
+  const rejected = assert.rejects(save, /disposed|unloading/i);
+  release();
+  await rejected;
+  assert.deepEqual(h.writes, []);
+});
+
 test('a pause arriving during resume refresh remains latched', async () => {
   const h = harness();
   h.runtime.pause('Original recovery');
@@ -99,4 +138,45 @@ test('a pause arriving during resume refresh remains latched', async () => {
   assert.equal(JSON.parse(h.values.get(h.runtime.localKey)).recoveryReason, 'New explicit pause');
   assert.deepEqual(h.writes, []);
   h.runtime.dispose();
+});
+
+test('a queued resume cannot acknowledge a pause newer than its request', async () => {
+  const h = harness();
+  h.runtime.pause('Original recovery');
+  let release;
+  const holder = h.runtime.enqueue('holder', () => new Promise(resolve => { release = resolve; }));
+  await Promise.resolve();
+  const resume = h.runtime.resume();
+  h.runtime.pause('New pause while resume is queued');
+  const rejected = assert.rejects(resume, /pause|cancel/i);
+  release();
+  await holder;
+  await rejected;
+  assert.equal(h.runtime.local.recoveryReason, 'New pause while resume is queued');
+  assert.equal(JSON.parse(h.values.get(h.runtime.localKey)).recoveryReason, 'New pause while resume is queued');
+  h.runtime.dispose();
+});
+
+test('unload during refresh rejects before publishing a new in-memory State', async () => {
+  const h = harness();
+  const state = h.runtime.state;
+  const fresh = JSON.parse(h.files.get(h.path));
+  fresh.settings.staggerMs = 29;
+  h.files.set(h.path, JSON.stringify(fresh));
+  const read = h.adapter.read;
+  let release, entered;
+  const reading = new Promise(resolve => { entered = resolve; });
+  h.adapter.read = async p => {
+    entered();
+    await new Promise(resolve => { release = resolve; });
+    return read(p);
+  };
+  const refresh = h.runtime.refresh();
+  await reading;
+  h.runtime.dispose();
+  const rejected = assert.rejects(refresh, /disposed|unloading/i);
+  release();
+  await rejected;
+  assert.equal(h.runtime.state, state);
+  assert.deepEqual(h.writes, []);
 });

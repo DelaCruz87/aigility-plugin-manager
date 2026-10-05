@@ -25,8 +25,10 @@ export class RuntimeStore {
     private expected: string | null;
     private initialState: State;
     private initialized = false;
+    private assertActive: () => void;
 
-    constructor(private app: any, private plugin: any, initial: State) {
+    constructor(private app: any, private plugin: any, initial: State, assertActive: () => void = () => {}) {
+        this.assertActive = assertActive;
         this.path = statePath(plugin);
         this.initialState = clone(initial);
         const supplied = plugin?.managerRuntimePreimage;
@@ -52,7 +54,9 @@ export class RuntimeStore {
     }
 
     async save(state: State): Promise<void> {
+        this.assertActive();
         await this.assertFresh();
+        this.assertActive();
         const adapter = this.app?.vault?.adapter;
         if (!adapter || typeof adapter.write !== 'function') {
             throw new Error('Vault adapter write method is required for manager state persistence.');
@@ -92,6 +96,7 @@ export class RuntimeStore {
     }
 
     async writeJson(path: string, value: unknown): Promise<void> {
+        this.assertActive();
         const adapter = this.app?.vault?.adapter;
         if (!adapter || typeof adapter.write !== 'function' || typeof adapter.read !== 'function') {
             throw new Error('Vault adapter read/write methods are required for effective-state reporting.');
