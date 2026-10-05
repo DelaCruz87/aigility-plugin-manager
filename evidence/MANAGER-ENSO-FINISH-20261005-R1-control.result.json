@@ -1,0 +1,67 @@
+{
+  "token": "MANAGER-ENSO-FINISH-20261005-R1",
+  "status": "failed",
+  "pending": false,
+  "startedAt": "2026-10-05T15:08:07.827Z",
+  "completedAt": "2026-10-05T15:08:10.231Z",
+  "checks": [
+    {
+      "name": "fresh approved State exact",
+      "pass": true
+    },
+    {
+      "name": "fresh frozen config /Users/eme/Obsidian/ENSO/.obsidian/community-plugins.json",
+      "pass": true
+    },
+    {
+      "name": "fresh frozen config /Users/eme/Obsidian/ENSO/.obsidian/core-plugins.json",
+      "pass": true
+    },
+    {
+      "name": "fresh frozen config /Users/eme/Obsidian/ENSO/.obsidian/plugins/better-plugins-manager/data.json",
+      "pass": true
+    },
+    {
+      "name": "fresh frozen config /Users/eme/Obsidian/ENSO/.obsidian/plugins/better-plugins-manager-companion/data.json",
+      "pass": true
+    },
+    {
+      "name": "R1 legacy actual refs",
+      "pass": true
+    },
+    {
+      "name": "current Manager valid paused migration",
+      "pass": true
+    },
+    {
+      "name": "Omni still absent/excluded",
+      "pass": true
+    },
+    {
+      "name": "same installed main.js",
+      "pass": true
+    },
+    {
+      "name": "same installed manifest.json",
+      "pass": true
+    },
+    {
+      "name": "same installed styles.css",
+      "pass": true
+    },
+    {
+      "name": "legacy unload safe",
+      "pass": true
+    },
+    {
+      "name": "original source raw backup retained",
+      "pass": true
+    },
+    {
+      "name": "loader observer removed",
+      "pass": true
+    }
+  ],
+  "error": "SyntaxError: Unexpected end of JSON input",
+  "result": null
+}
