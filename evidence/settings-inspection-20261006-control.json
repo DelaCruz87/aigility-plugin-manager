@@ -1,0 +1,10 @@
+{
+  "job": "sandbox-settings-inspection-20261006",
+  "token": "627f3ae3-8ccb-4d44-97b7-cf514d9485b7",
+  "ack": "2026-10-06T14:15:49.951842+00:00",
+  "startBy": "2026-10-06T14:16:04.951842+00:00",
+  "actionBy": "2026-10-06T14:18:19.951842+00:00",
+  "totalBy": "2026-10-06T14:18:49.951842+00:00",
+  "registrySha": "a7d1b2d66d00d0420a50dfe143188c5ed0e97ecef705538b1f8ed5508eb96a97",
+  "status": "ACK"
+}
