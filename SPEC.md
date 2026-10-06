@@ -59,6 +59,22 @@ Checkpoint 2026-10-06, Codex: typing local autorizado explícitamente por root c
 
 Checkpoint 2026-10-06 15:23 UTC, Codex, con readback root posterior: entrega única 0.1.5 y aceptación R4 en Sandbox cerradas. Los tres artifacts instalados coinciden con la candidata; instancia y build marker efectivos 0.1.5. JPEG original y DOM de Settings8 propios acreditan FIX-17/FIX-18; el panel se cerró y lastTab se restauró mediante CAS. State, Local, filtros, 42 archivos de configuración e instancias foreign/core permanecieron iguales. Evidencia: [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-panel]], [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-dom]], [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-post]]. Alcance de aceptación: Sandbox desktop; ENSO sigue en preparación separada y no hay aceptación mobile.
 
+## ENSO delivery checkpoint
+
+2026-10-06 15:58 UTC, Codex, con readback independiente posterior de root: Manager 0.1.5 instalado, native enabled y loaded en ENSO; build marker aigility-plugin-manager/0.1.5 y los tres artifacts coinciden con la candidata aceptada en Sandbox. Resultado R2 SETTLED, token fa49a382-7970-41ce-85d6-ee7ce9527308, release durable a las 15:58:57.772 UTC dentro de totalBy 16:01:41.182 UTC. Root confirmó RELEASE_VERIFIED. Este checkpoint sustituye el estado ENSO pendiente de los checkpoints anteriores; esos textos fechados conservan su contexto histórico y no describen la instalación actual.
+
+- [x] Source fix, review readonly independiente, regresión focal UI64/64 y una build 0.1.5.
+- [x] Aceptación visual focal FIX-17/FIX-18 en Sandbox: JPEG original, DOM y readback root R4.
+- [x] Entrega ENSO 0.1.3 a 0.1.5 mediante una descarga/carga propia, loadManifest y CAS de tres archivos. Ningún reinicio global ni cambio de otro plugin.
+- [x] State SHA23c196cd4a240da8345888c3d7d0eb170fcb8ba759ffd7044bfef50b5ec40d07 y Local raw SHA98e17bdfdb975d9ceb3b1f031f9fede7b5fa24f7ae64737046c5d8eace48f4b2 exactos; pausa de carga tardía y Omnisearch descargado/sin autostart conservados.
+- [x] Readback de 42 archivos sin cambios; conserva instancias foreign/core, filtros, perfiles, Settings2 abierto en community-plugins, layout, buffers, leaf y foco Sandbox3. Las ausencias de data.json de Blocks y VoiceInk fueron comprobadas y conservadas.
+- [x] Cierre root y publicación posterior de controles, recibos y controller. Backup State/Local y workspace raw permanecen privados fuera del vault.
+- [ ] Captura visual en ENSO, siguiente arranque y mobile: no ejecutados en este scope. AC-10, que incluye restart, sigue abierto; esta entrega no acredita esas superficies.
+
+El primer grant 46df fue NO_START antes de cualquier llamada nativa: closures separados del REPL no compartían State. Control y error se conservaron; first-action y backup no existían. Root cerró el grant. El controller se corrigió con un único module factory y una prueba CPU de filesystem, reloj y transporte simulados: Begin/guard/Poll compartidos, fsync de archivo y directorio antes de dispatch, rechazo de duplicados, pins alterados y plazos vencidos. R2 utilizó un token nuevo. El fallo original no se presenta como entrega.
+
+Evidencia editable: [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-enso-20261006/Delivery]], [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-enso-20261006/root-verification]].
+
 ## 3. Architecture & Data Model
 
 ### 3.1 Stack

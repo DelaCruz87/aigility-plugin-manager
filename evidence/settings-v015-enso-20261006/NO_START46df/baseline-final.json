@@ -1,0 +1,185 @@
+{
+  "at": "2026-10-06T15:49:38.719Z",
+  "author": "Codex",
+  "history": true,
+  "root": "/Users/eme/Obsidian/ENSO/.obsidian",
+  "files": {
+    "community-plugins.json": {
+      "exists": true,
+      "sha256": "ea8695b0822c9bf5c01e01e4af5a3d095d4f53a3bf38fdf281da409aa1a39c3e"
+    },
+    "core-plugins.json": {
+      "exists": true,
+      "sha256": "c8fd6ad86aab7b94a47565a9c4172ee0ddbab611bfa163248c204e2f57af8bf9"
+    },
+    "workspace.json": {
+      "exists": true,
+      "sha256": "134545c1e44aeb37472b090ab5220e655fed87052106431fb24bcff2a030d773"
+    },
+    "plugins/advanced-exclude/data.json": {
+      "exists": true,
+      "sha256": "9af2ea6495e1fe194abcb6ffaf0d882fa3311ca5d8ee3aa45e4dc2afd718221a"
+    },
+    "plugins/agility-links/data.json": {
+      "exists": true,
+      "sha256": "85c56b99eeca48a806c019e9a4f6ee6ffc7054bf923bc3a9137c1202cd8275c7"
+    },
+    "plugins/aigility-blocks/data.json": {
+      "exists": false,
+      "sha256": null
+    },
+    "plugins/aigility-plugin-manager/data.json": {
+      "exists": true,
+      "sha256": "23c196cd4a240da8345888c3d7d0eb170fcb8ba759ffd7044bfef50b5ec40d07"
+    },
+    "plugins/aigility-ui/data.json": {
+      "exists": true,
+      "sha256": "d1015585650b25dc7c9d957822fee13d941573479d02a9768a1b09a4e655041c"
+    },
+    "plugins/annoteca/data.json": {
+      "exists": true,
+      "sha256": "58719823578df907521545f43308f89db88e3c2538d43d9a2de4296f072e5b29"
+    },
+    "plugins/better-plugins-manager/data.json": {
+      "exists": true,
+      "sha256": "700c94c74d47b991b39a7ef16a9c22c3877a8a9d0db3561a7990f4c30260db24"
+    },
+    "plugins/better-plugins-manager-companion/data.json": {
+      "exists": true,
+      "sha256": "323c48e2f4dc1ea80b7b6ccad18d383d71c2ead1a81655b45c761d20dda1bdf0"
+    },
+    "plugins/callout-manager/data.json": {
+      "exists": true,
+      "sha256": "f1ddeae330c52ee7e73b4b163269a1289ceadf61dbf5accef2fc43a94494aaf9"
+    },
+    "plugins/cmdr/data.json": {
+      "exists": true,
+      "sha256": "eab0100f7b6b516ce19e8f95cf51d9a78e7150549b87c468e2a4327b983ee05a"
+    },
+    "plugins/darlal-switcher-plus/data.json": {
+      "exists": true,
+      "sha256": "17503fc838b974697ff3ffa638add5cd1772d4f014385a9d073b49374cb0a893"
+    },
+    "plugins/document-comments/data.json": {
+      "exists": true,
+      "sha256": "9b288e82cdf77cfbb6667630c29d00b149680d820ba832bfdd5d13cb27adf828"
+    },
+    "plugins/dragger/data.json": {
+      "exists": true,
+      "sha256": "a1c0daf22c48264016b2826f40893d30b3a45de32a05124bdcd19a0cfb126afe"
+    },
+    "plugins/editing-toolbar/data.json": {
+      "exists": true,
+      "sha256": "5b0de9119334de69ba2ce3c024ef463763af568239a1a7046c6a88902ab56968"
+    },
+    "plugins/enhanced-annotations/data.json": {
+      "exists": true,
+      "sha256": "18625c879e4b04c25cffb4b1a51f8059a6a846051e5a7c9aa353470b045d95eb"
+    },
+    "plugins/enhanced-symbols-prettifier/data.json": {
+      "exists": true,
+      "sha256": "ae928af8d36b901b5f096c6dd6149265a8a1164005cb778ad8f4dc9146421813"
+    },
+    "plugins/enso-control-plane/data.json": {
+      "exists": true,
+      "sha256": "1d2ef421ae03d54fedd074aae56b460c73be46ed9951c4c8a6282a9c6dd2d496"
+    },
+    "plugins/enso-filetree-lab/data.json": {
+      "exists": true,
+      "sha256": "9c2e9c7090f6651b05dc2f82319f734d882960fee9e0c6f7c951e6eb3b69531e"
+    },
+    "plugins/enso-secret-placeholders/data.json": {
+      "exists": true,
+      "sha256": "e1cf75c2a0300a1228847e757060c2722743cb240423fce5516f57f63990a3d6"
+    },
+    "plugins/fileclass/data.json": {
+      "exists": true,
+      "sha256": "5863c956a40ca8fd254666384ea37c05b0f226b87ad189dc196ef45a61b9595b"
+    },
+    "plugins/folder-notes/data.json": {
+      "exists": true,
+      "sha256": "83ae7812586e5ad68cc302b9b3c41eed82dc69483e13d80e0132eb8d0902a3c3"
+    },
+    "plugins/gridexplorer/data.json": {
+      "exists": true,
+      "sha256": "344f663d344180e6093ff147020b26ebb1d15b9e3913194f12481a2bbffa96cb"
+    },
+    "plugins/insta-toc/data.json": {
+      "exists": true,
+      "sha256": "fb4ae23f57806dc1c2ff9cd0431eab4551a6b4a88fdae7b14a176f54c1443b6f"
+    },
+    "plugins/keyshots/data.json": {
+      "exists": true,
+      "sha256": "1517411d4326e9a5012535c4510e30400674bc629910bd17db8191722730afa0"
+    },
+    "plugins/nodian/data.json": {
+      "exists": true,
+      "sha256": "2d90a43f059098097253c6108dc5eedf81bcee23c04083d69b89cdb818ab466f"
+    },
+    "plugins/note-toolbar/data.json": {
+      "exists": true,
+      "sha256": "857774d7c3d0cc16325d64133cd1f189594f20c4680cddb0ad95616c627246b4"
+    },
+    "plugins/notebook-navigator/data.json": {
+      "exists": true,
+      "sha256": "ce5b195535d6c6a461cf032b5502e98f0d3ccd7fa1f05a64c82a7af55bc4560a"
+    },
+    "plugins/obsidian-custom-frames/data.json": {
+      "exists": true,
+      "sha256": "da72c95be353dca706732c0fbcb7b969bcd9465994b7cc17223dc22a69acc8cf"
+    },
+    "plugins/obsidian-excalidraw-plugin/data.json": {
+      "exists": true,
+      "sha256": "ec61974021a1f86b9b9e53703a865d996d7f4c58d16ba1bacb1ed2d2c71c4849"
+    },
+    "plugins/obsidian-local-rest-api/data.json": {
+      "exists": true,
+      "sha256": "25e521eb0c0f38c414df5e462dba2b363e0c6eb987b263293c5a31fdf88fd571"
+    },
+    "plugins/obsidian-mindmap-nextgen/data.json": {
+      "exists": true,
+      "sha256": "a91a12b1b48bfb54408739065daa307421db3d8254777f20fc6604ed9122b9f7"
+    },
+    "plugins/obsidian-style-settings/data.json": {
+      "exists": true,
+      "sha256": "a70544ea8d91b9750ccf44af46fdcd854b6eb02a00e7d3c08f1dc64323e0aff3"
+    },
+    "plugins/omnisearch/data.json": {
+      "exists": true,
+      "sha256": "ddc10d757b88d9ed08f037e8e2d4afaafd980a64d7effb385dc996663fd0ecbe"
+    },
+    "plugins/open-ontologies/data.json": {
+      "exists": true,
+      "sha256": "becc90318567da3189ca340cc968af17aa3974d597d7764a6cfa4c14fc4f766d"
+    },
+    "plugins/ribbon-organizer/data.json": {
+      "exists": true,
+      "sha256": "99bc090996d927bcd171009e848cd645491a89b9ff55a1ed3ad443f06b753027"
+    },
+    "plugins/side-comments-origin/data.json": {
+      "exists": true,
+      "sha256": "ac6d28a933d12efde86787330a25c368c62dff08f498a6499085367b3727418d"
+    },
+    "plugins/table-editor-obsidian/data.json": {
+      "exists": true,
+      "sha256": "2a4a38b5acd5a3b0cfe1cfae651a58eef9cb50778e43fb625892da2cb232060f"
+    },
+    "plugins/templater-obsidian/data.json": {
+      "exists": true,
+      "sha256": "922bf64f6f2257833a0fad57d22268502c17a36baedcc7f1f90d068a6c3bea63"
+    },
+    "plugins/voiceink-companion/data.json": {
+      "exists": false,
+      "sha256": null
+    }
+  },
+  "managerArtifacts": {
+    "main.js": "bce4c84930af05a5d1b3e33abf97b60612f5415a82fe729aaa18b0fadb8dc2a9",
+    "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "source": "Fresh ROOT-requested snapshot after workspace drift observed before START; prior whole workspace hash is history, actor unattributed. Raw current workspace preserved privately outside vault.",
+  "nativeCalls": 0,
+  "priorBaselineSha": "5b6498c9ddb3398798c225b147011c7156c86bb62cc5ddb7a2ca77d470493dc2",
+  "priorWorkspaceSha": "7c7730793d1a2d93a67900ce39dab71afa0893902e83c73adb25775527d776da"
+}

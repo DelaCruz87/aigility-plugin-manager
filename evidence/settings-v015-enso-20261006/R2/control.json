@@ -1,0 +1,35 @@
+{
+  "job": "manager-v015-enso-delivery-20261006",
+  "token": "fa49a382-7970-41ce-85d6-ee7ce9527308",
+  "leaseSha": "4acf6070847dff837d18217884432f954c73d48f9ec44a886079d0f0e3b782cb",
+  "rootHardBy": "2026-10-06T16:05:05.998173Z",
+  "acknowledgedAt": "2026-10-06T15:58:41.182Z",
+  "startBy": "2026-10-06T15:58:56.182Z",
+  "actionBy": "2026-10-06T16:00:41.182Z",
+  "totalBy": "2026-10-06T16:01:41.182Z",
+  "root": "/Users/eme/Obsidian/ENSO",
+  "source": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin",
+  "leasePath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/enso-mac-lease-01a0f837-20261006.json",
+  "controlPath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/control.json",
+  "helperPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/checks/settings-enso-delivery-20261006.mjs",
+  "helperSha": "8edaaed870161ff49d25cf24181ae3f41b5bbf29fb13ebddaa1e46c5907f171e",
+  "baselinePath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/baseline.json",
+  "baselineSha": "c9e33b3f29db84b9e80496115c49265d791c7289ab24382f43332bf2c21a89e4",
+  "preimages": {
+    "main.js": "bce4c84930af05a5d1b3e33abf97b60612f5415a82fe729aaa18b0fadb8dc2a9",
+    "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "artifacts": {
+    "main.js": "baed1c7026be103871c4f19beee51fcdbdf3889cac71e01a6f8daeb20f6fb2be",
+    "manifest.json": "ce9b56f77804f83b24b62c3fce07383751200402adc741108842b5043ed10aeb",
+    "styles.css": "918ec84caa360cd4d6a7e79564685203ec0041384a14115c4137f8aa1b5a671b"
+  },
+  "backup": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/private-backup",
+  "resultPath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/result.json",
+  "controllerPath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/controller.mjs",
+  "controllerSha": "f087421015e381a0d4e3ee982ccdb368038152ae8f66b32083f62bfe299c215c",
+  "loadedPath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/loaded.json",
+  "loadedSha": "1bee0adc3fd19942a326215abec9b683e61b9cf3016c074930202498aecf3498",
+  "plan": "Own Manager013 to015 only; no GUI, Local CAS, profile apply, foreign transitions or rollback. All runtime outputs outside vault."
+}

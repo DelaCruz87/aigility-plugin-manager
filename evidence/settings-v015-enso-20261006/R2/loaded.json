@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-06T15:57:09.549Z",
+  "controllerPath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/controller.mjs",
+  "controllerSha": "f087421015e381a0d4e3ee982ccdb368038152ae8f66b32083f62bfe299c215c",
+  "baselinePath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/baseline.json",
+  "baselineSha": "c9e33b3f29db84b9e80496115c49265d791c7289ab24382f43332bf2c21a89e4",
+  "helperPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/checks/settings-enso-delivery-20261006.mjs",
+  "helperSha": "8edaaed870161ff49d25cf24181ae3f41b5bbf29fb13ebddaa1e46c5907f171e",
+  "paths": {
+    "control": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/control.json",
+    "parameters": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/parameters.json",
+    "first": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/first-action.json",
+    "result": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/result.json",
+    "backup": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-R2-mb1D8x/private-backup"
+  },
+  "singleModuleFactory": true,
+  "controllerCpuProofSha": "ae01b83a7b9f5e1ae6fd2f86ec2d38b31e11ada5154737516a885b6ca8955cb2",
+  "emittedSourceCompiled": true,
+  "actualFactoryPrepared": true,
+  "nativeCalls": 0,
+  "productTests": 0
+}

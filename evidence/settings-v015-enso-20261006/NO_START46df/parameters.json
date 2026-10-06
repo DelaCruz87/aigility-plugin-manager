@@ -1,0 +1,31 @@
+{
+  "job": "manager-v015-enso-delivery-20261006",
+  "token": "46df3109-cc8d-418e-b7bd-974a2c109d5f",
+  "leaseSha": "018e2f4e90aa6e8dad0f7d1efaa14389ad49542512a9f537dee5b893554769e7",
+  "rootHardBy": "2026-10-06T16:00:03.632485Z",
+  "acknowledgedAt": "2026-10-06T15:53:24.880Z",
+  "startBy": "2026-10-06T15:53:39.880Z",
+  "actionBy": "2026-10-06T15:55:24.880Z",
+  "totalBy": "2026-10-06T15:56:24.880Z",
+  "root": "/Users/eme/Obsidian/ENSO",
+  "source": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin",
+  "leasePath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/enso-mac-lease-01a0f837-20261006.json",
+  "controlPath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-iDjwYP/control.json",
+  "helperPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/checks/settings-enso-delivery-20261006.mjs",
+  "helperSha": "8edaaed870161ff49d25cf24181ae3f41b5bbf29fb13ebddaa1e46c5907f171e",
+  "baselinePath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-iDjwYP/baseline-final.json",
+  "baselineSha": "607d3ee242227d7bc8f87b456d45cdfdc557bd2a715e1411499188b758f66d95",
+  "preimages": {
+    "main.js": "bce4c84930af05a5d1b3e33abf97b60612f5415a82fe729aaa18b0fadb8dc2a9",
+    "manifest.json": "f93b34b055f3fc46fca8f24b1b3e21efaf07739a647bc614bbc198621a24e3ad",
+    "styles.css": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e"
+  },
+  "artifacts": {
+    "main.js": "baed1c7026be103871c4f19beee51fcdbdf3889cac71e01a6f8daeb20f6fb2be",
+    "manifest.json": "ce9b56f77804f83b24b62c3fce07383751200402adc741108842b5043ed10aeb",
+    "styles.css": "918ec84caa360cd4d6a7e79564685203ec0041384a14115c4137f8aa1b5a671b"
+  },
+  "backup": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-iDjwYP/private-backup",
+  "resultPath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager-enso-v015-iDjwYP/result.json",
+  "controlSha": "d29a87cf87d48249079596dda260345dc74be538f0d349bf1304e86c7d78cb85"
+}

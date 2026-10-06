@@ -1,0 +1,102 @@
+{
+  "at": "2026-10-06T16:01:08.850588+00:00",
+  "author": "Codex",
+  "history": true,
+  "rootThread": "01a0f837-dda7-7b32-b55e-834f9a7d0028",
+  "status": "ROOT_RELEASE_VERIFIED",
+  "token": "fa49a382-7970-41ce-85d6-ee7ce9527308",
+  "source": "Explicit root message received after independent native/42-file readback. Prior NO_START46df closed separately.",
+  "confirmed": {
+    "version": "0.1.5",
+    "loaded": true,
+    "native": true,
+    "build": "aigility-plugin-manager/0.1.5",
+    "files": 42,
+    "drift": [],
+    "artifacts": {
+      "main.js": "baed1c7026be103871c4f19beee51fcdbdf3889cac71e01a6f8daeb20f6fb2be",
+      "manifest.json": "ce9b56f77804f83b24b62c3fce07383751200402adc741108842b5043ed10aeb",
+      "styles.css": "918ec84caa360cd4d6a7e79564685203ec0041384a14115c4137f8aa1b5a671b"
+    },
+    "stateSha": "23c196cd4a240da8345888c3d7d0eb170fcb8ba759ffd7044bfef50b5ec40d07",
+    "localRawSha": "98e17bdfdb975d9ceb3b1f031f9fede7b5fa24f7ae64737046c5d8eace48f4b2",
+    "paused": true,
+    "omnisearchLoaded": false,
+    "omnisearchNativeAutostart": false,
+    "foreignCoreSettingsLayoutBuffersFocusPreserved": true
+  },
+  "scope": {
+    "guiActions": 0,
+    "ensoVisualAcceptance": false,
+    "sandboxVisualAcceptance": "FIX-17/FIX-18 ROOT verified R4 original JPEG and DOM",
+    "restartAcceptance": false,
+    "mobileAcceptance": false
+  },
+  "privateMaterialPublished": false,
+  "publishedExactBytes": {
+    "NO_START46df/control.json": {
+      "sha256": "d29a87cf87d48249079596dda260345dc74be538f0d349bf1304e86c7d78cb85",
+      "exactTempBytes": true
+    },
+    "NO_START46df/parameters.json": {
+      "sha256": "974e9150346cbdfcd415405017c39540f395d66c016bd754a98515eb58b52afc",
+      "exactTempBytes": true
+    },
+    "NO_START46df/no-start.json": {
+      "sha256": "f3a976cd40a3909cefd927f6d6409c892e491bf507ebac13cdb25e3c62fda10e",
+      "exactTempBytes": true
+    },
+    "NO_START46df/controller-final.js": {
+      "sha256": "5eb0b7f9d7758c5a25eeab45228944f9aaa4254b183daf7ff6d5d1f66e98d530",
+      "exactTempBytes": true
+    },
+    "NO_START46df/loaded-final.json": {
+      "sha256": "2b141c95e33f2433f3d040c0b9b6a1570ebb09d9a79f91453c9b13bc20e22b5b",
+      "exactTempBytes": true
+    },
+    "NO_START46df/baseline-final.json": {
+      "sha256": "607d3ee242227d7bc8f87b456d45cdfdc557bd2a715e1411499188b758f66d95",
+      "exactTempBytes": true
+    },
+    "R2/control.json": {
+      "sha256": "78b443cca74e54b9cc4c63c5628a5d7aa23cab3bbc623ef16dc5b932791b796b",
+      "exactTempBytes": true
+    },
+    "R2/parameters.json": {
+      "sha256": "529aa94650f74ae4971fadfa1aa33fb97b16ab599e16fa9a9fa688723e022eb8",
+      "exactTempBytes": true
+    },
+    "R2/first-action.json": {
+      "sha256": "18f99ddcbdd496bc74cb6a51aeee0786f2621c16e40c48289c460c91bece6ee5",
+      "exactTempBytes": true
+    },
+    "R2/result.json": {
+      "sha256": "81dd584bb82172c7750fa7089cfb114276b41d861c84e595fb3b552f05447044",
+      "exactTempBytes": true
+    },
+    "R2/release.json": {
+      "sha256": "662c1e7b5e054e57c90589ff4133b3256906f5d4a6d0c2ccd49566b1c9e808a2",
+      "exactTempBytes": true
+    },
+    "R2/baseline.json": {
+      "sha256": "c9e33b3f29db84b9e80496115c49265d791c7289ab24382f43332bf2c21a89e4",
+      "exactTempBytes": true
+    },
+    "R2/loaded.json": {
+      "sha256": "1bee0adc3fd19942a326215abec9b683e61b9cf3016c074930202498aecf3498",
+      "exactTempBytes": true
+    },
+    "R2/controller-v2.mjs": {
+      "sha256": "f087421015e381a0d4e3ee982ccdb368038152ae8f66b32083f62bfe299c215c",
+      "exactTempBytes": true
+    },
+    "R2/controller-v2-cpu.mjs": {
+      "sha256": "19328aea3eb32ae5ea1cee8b7d1b624b1732fa9344804657aac1c70a142429ca",
+      "exactTempBytes": true
+    },
+    "R2/controller-v2-cpu-proof.json": {
+      "sha256": "ae01b83a7b9f5e1ae6fd2f86ec2d38b31e11ada5154737516a885b6ca8955cb2",
+      "exactTempBytes": true
+    }
+  }
+}

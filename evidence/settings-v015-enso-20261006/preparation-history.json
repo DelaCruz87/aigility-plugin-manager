@@ -1,0 +1,20 @@
+{
+  "author": "Codex",
+  "history": true,
+  "at": "2026-10-06T16:03:18.984564+00:00",
+  "context": "Archived preparation snapshots before NO_START46df and successful NEW grant R2. No native dispatch occurred in these snapshots. Current accepted delivery is R2/root-verification; these pins must not be reused as a current grant or user decision.",
+  "files": {
+    "evidence/settings-v015-enso-filesystem-20261006.json": {
+      "observedAt": "2026-10-06T15:26:14.454040+00:00",
+      "sha256": "a66d0ec84299ab1030c35cd73ee8a3181aa74e3531ad96ab802bd5ca3415f817"
+    },
+    "evidence/settings-v015-enso-baseline-20261006.json": {
+      "observedAt": "2026-10-06T15:35:15.427990+00:00",
+      "sha256": "506cde3a02e272b360a009a18352c318e5524552372fa79d6a2b85df8b66e025"
+    },
+    "evidence/settings-v015-enso-loaded-20261006.json": {
+      "observedAt": "2026-10-06T15:37:19.326Z",
+      "sha256": "eaecc4d946a3bf96f6e03f4c486749114876ffcf5f8f08b542bb556fa3176c10"
+    }
+  }
+}

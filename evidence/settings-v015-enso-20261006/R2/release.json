@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-06T15:58:57.772Z",
+  "token": "fa49a382-7970-41ce-85d6-ee7ce9527308",
+  "job": "manager-v015-enso-delivery-20261006",
+  "status": "SETTLED",
+  "receiptSha": "81dd584bb82172c7750fa7089cfb114276b41d861c84e595fb3b552f05447044",
+  "controlSha": "78b443cca74e54b9cc4c63c5628a5d7aa23cab3bbc623ef16dc5b932791b796b",
+  "parametersSha": "529aa94650f74ae4971fadfa1aa33fb97b16ab599e16fa9a9fa688723e022eb8",
+  "firstActionSha": "18f99ddcbdd496bc74cb6a51aeee0786f2621c16e40c48289c460c91bece6ee5",
+  "filesCount": 42,
+  "drift": [],
+  "installed": {
+    "main.js": "baed1c7026be103871c4f19beee51fcdbdf3889cac71e01a6f8daeb20f6fb2be",
+    "manifest.json": "ce9b56f77804f83b24b62c3fce07383751200402adc741108842b5043ed10aeb",
+    "styles.css": "918ec84caa360cd4d6a7e79564685203ec0041384a14115c4137f8aa1b5a671b"
+  },
+  "artifactMatch": true,
+  "noAuxiliaryResources": true,
+  "uiActions": 0,
+  "withinTotal": true,
+  "totalBy": "2026-10-06T16:01:41.182Z",
+  "rootVerificationPending": true
+}

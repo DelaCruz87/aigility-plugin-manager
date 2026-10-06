@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-06T15:54:17.773Z",
+  "token": "46df3109-cc8d-418e-b7bd-974a2c109d5f",
+  "status": "NO_START",
+  "acknowledgedAt": "2026-10-06T15:53:24.880Z",
+  "error": "Cannot read properties of undefined (reading 'actionBy')",
+  "controlSha": "d29a87cf87d48249079596dda260345dc74be538f0d349bf1304e86c7d78cb85",
+  "firstActionExists": false,
+  "nativeCalls": 0,
+  "artifactWrites": 0,
+  "backupExists": false,
+  "explanation": "Separate REPL function closures did not observe ensoStageState assignment; old guard closure saw undefined. No native dispatch. Requires new shared controller closure and NEW lease."
+}

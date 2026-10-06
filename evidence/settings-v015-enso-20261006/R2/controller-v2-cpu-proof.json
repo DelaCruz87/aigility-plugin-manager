@@ -1,0 +1,108 @@
+{
+  "at": "2026-10-06T15:56:23.598Z",
+  "kind": "CPU-only factory wiring verification",
+  "controllerSha": "f087421015e381a0d4e3ee982ccdb368038152ae8f66b32083f62bfe299c215c",
+  "helperSha": "8edaaed870161ff49d25cf24181ae3f41b5bbf29fb13ebddaa1e46c5907f171e",
+  "actualEmittedFunctionCompiled": true,
+  "nativeCalls": 0,
+  "productTests": 0,
+  "hostIO": 0,
+  "passed": [
+    "begin/guard shared state and SAME-token poll; ACK/params/first-action file+parent fsync precede transport; repeated Begin and foreign lease rejected",
+    "controller/proof/baseline/helper drift fails before first-action/transport",
+    "fake clock action deadline, root hard cap clamp and expired root rejection"
+  ],
+  "events": [
+    {
+      "op": "open",
+      "p": "/fake/control.json",
+      "mode": "wx"
+    },
+    {
+      "op": "write",
+      "p": "/fake/control.json"
+    },
+    {
+      "op": "fsync",
+      "p": "/fake/control.json"
+    },
+    {
+      "op": "open",
+      "p": "/fake",
+      "mode": "r"
+    },
+    {
+      "op": "fsync",
+      "p": "/fake"
+    },
+    {
+      "op": "open",
+      "p": "/fake/parameters.json",
+      "mode": "wx"
+    },
+    {
+      "op": "write",
+      "p": "/fake/parameters.json"
+    },
+    {
+      "op": "fsync",
+      "p": "/fake/parameters.json"
+    },
+    {
+      "op": "open",
+      "p": "/fake",
+      "mode": "r"
+    },
+    {
+      "op": "fsync",
+      "p": "/fake"
+    },
+    {
+      "op": "open",
+      "p": "/fake/first-action.json",
+      "mode": "wx"
+    },
+    {
+      "op": "write",
+      "p": "/fake/first-action.json"
+    },
+    {
+      "op": "fsync",
+      "p": "/fake/first-action.json"
+    },
+    {
+      "op": "open",
+      "p": "/fake",
+      "mode": "r"
+    },
+    {
+      "op": "fsync",
+      "p": "/fake"
+    },
+    {
+      "op": "fake-dispatch",
+      "token": "cpu-token",
+      "args": [
+        "vault=ENSO",
+        "eval"
+      ]
+    },
+    {
+      "op": "fake-dispatch",
+      "token": "cpu-token",
+      "args": [
+        "vault=ENSO",
+        "eval"
+      ]
+    },
+    {
+      "op": "open",
+      "p": "/fake",
+      "mode": "r"
+    },
+    {
+      "op": "fsync",
+      "p": "/fake"
+    }
+  ]
+}
