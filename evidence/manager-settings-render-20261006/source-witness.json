@@ -1,0 +1,41 @@
+{
+  "uiSha": "fa81633e8a70a7f9c3411faa29f7106403ec515506e6e6267c7a9f0e83db287f",
+  "stylesSha": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e",
+  "helperSha": "10990cfaa9ebe54d23ca7d3eec2622349e858e55628983653016f0d3ed5e5ef3",
+  "cases": [
+    {
+      "loaded": true,
+      "nativeAutostart": false,
+      "desired": false,
+      "checked": true,
+      "wrapperEnabled": false,
+      "loadedIndicator": true,
+      "nativeIndicator": false,
+      "desiredIndicator": false,
+      "toolbarCount": 1
+    },
+    {
+      "loaded": false,
+      "nativeAutostart": true,
+      "desired": true,
+      "checked": false,
+      "wrapperEnabled": false,
+      "loadedIndicator": false,
+      "nativeIndicator": true,
+      "desiredIndicator": true,
+      "toolbarCount": 1
+    },
+    {
+      "loaded": true,
+      "nativeAutostart": true,
+      "desired": true,
+      "checked": true,
+      "wrapperEnabled": false,
+      "loadedIndicator": true,
+      "nativeIndicator": true,
+      "desiredIndicator": true,
+      "toolbarCount": 1
+    }
+  ],
+  "nativeOrPixelAcceptance": false
+}
