@@ -1,0 +1,20 @@
+{
+  "job": "manager-aux-jpeg-inspection-20261006",
+  "token": "019a5f58-2333-43ea-b6b6-a362a8322195",
+  "ack": "2026-10-06T14:58:11.163Z",
+  "startBy": "2026-10-06T14:58:26.163Z",
+  "actionBy": "2026-10-06T15:00:11.163Z",
+  "totalBy": "2026-10-06T15:01:11.163Z",
+  "controlPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-control.json",
+  "leasePath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/enso-mac-lease-01a0f837-20261006.json",
+  "leaseSha": "a4704ee7b56caa77c8f9c9db131d7b285fb81ad78dfd010abe6486f3cbc6647d",
+  "helperSha": "ec121824054740e1c84379f4f3c90f98d41fe2730084ecb0d0e7e04fcdc2f6f8",
+  "innerSha": "05a8c38b7132e42640dc4d5de095edbc33a100fab0ee60050b9e412af03fe74e",
+  "innerPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/checks/settings-aux-read-20261006.js",
+  "baselinePath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-baseline.json",
+  "firstActionPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-first-action.json",
+  "imagePath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-panel.jpg",
+  "domPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-dom.json",
+  "resultPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-result.json",
+  "controlSha": "4052511ce2caa38ff8e799250c9fbfc01e8a2b588dab696d8f08c8bc6986cf68"
+}
