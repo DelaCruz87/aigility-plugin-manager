@@ -15,9 +15,9 @@
     for (const sheet of document.styleSheets) {
         try {
             for (const rule of sheet.cssRules) {
-                if (rule.selectorText && /checkbox-container|aigility-toolbar|aigility-switch/.test(rule.selectorText)) rules.push({ selector: rule.selectorText, style: rule.style?.cssText });
+                if (rule.selectorText && /checkbox-container|aigility-(?:manager-)?toolbar|aigility-switch/.test(rule.selectorText)) rules.push({ selector: rule.selectorText, style: rule.style?.cssText });
             }
         } catch {}
     }
-    return JSON.stringify({ at: new Date().toISOString(), document: document.URL, title: document.title, viewport: { width: innerWidth, height: innerHeight }, rootCount: document.querySelectorAll('.aigility-manager-root').length, toolbars: [...document.querySelectorAll('.aigility-toolbar')].map(x => ({ geometry: geometry(x), text: x.textContent, controls: x.querySelectorAll('button,input,select').length })), rows, rules });
+    return JSON.stringify({ at: new Date().toISOString(), document: document.URL, title: document.title, viewport: { width: innerWidth, height: innerHeight }, rootCount: document.querySelectorAll('.aigility-manager-root').length, toolbars: [...document.querySelectorAll('.aigility-manager-root .aigility-manager-toolbar, .aigility-manager-root .aigility-toolbar')].map(x => ({ geometry: geometry(x), text: x.textContent, controls: x.querySelectorAll('button,input,select').length })), rows, rules });
 })()

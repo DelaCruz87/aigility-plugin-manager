@@ -1,0 +1,35 @@
+{
+  "at": "2026-10-06T15:15:16.447Z",
+  "pins": {
+    "helperSha": "ec121824054740e1c84379f4f3c90f98d41fe2730084ecb0d0e7e04fcdc2f6f8",
+    "deliverySha": "e3f75026771fc2b256e6fa80c62c0051f548913d56f6755e67ab1eeacd24fbd9",
+    "innerSha": "64b88eea0d6e096ef8a9c0911356d9378ff60c7b6580a31229f6db94065e8a0d",
+    "baselineSha": "e2e88b3a4572dd0fd450e180dc639578cf817a33b2b77a2a072010e852bbfe62",
+    "artifacts": {
+      "main.js": "baed1c7026be103871c4f19beee51fcdbdf3889cac71e01a6f8daeb20f6fb2be",
+      "manifest.json": "ce9b56f77804f83b24b62c3fce07383751200402adc741108842b5043ed10aeb",
+      "styles.css": "918ec84caa360cd4d6a7e79564685203ec0041384a14115c4137f8aa1b5a671b"
+    }
+  },
+  "deliveryLoaded": true,
+  "deliveryEmittedSourceCompiled": true,
+  "innerCompiled": true,
+  "flowMethods": [
+    "open",
+    "manager",
+    "close"
+  ],
+  "effectiveCaptureFormat": {
+    "mime": "image/jpeg",
+    "extension": ".jpg"
+  },
+  "preparedFunctions": [
+    "begin",
+    "poll",
+    "open",
+    "manager",
+    "close"
+  ],
+  "nativeCalls": 0,
+  "uiActionsExecuted": 0
+}
