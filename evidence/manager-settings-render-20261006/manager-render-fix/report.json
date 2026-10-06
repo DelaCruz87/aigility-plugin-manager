@@ -52,5 +52,20 @@
     "manager-render-review was not launched",
     "capture-contract-fix was not launched; existing writer performed mechanical helper fix",
     "manager-render-fix AGY manifest was not launched; root explicitly authorized existing Codex writer"
-  ]
+  ],
+  "nativeAcceptance": {
+    "at": "2026-10-06T15:23:20.490Z",
+    "environment": "Sandbox desktop Obsidian1.14.4",
+    "version": "0.1.5",
+    "status": "ROOT_RELEASE_VERIFIED",
+    "originalJpegSha": "c998f4d5da191959c56e0bc027ea0b838f2ecd20cad47627f88ae2d8d6eb4667",
+    "domSha": "f7bfa03ed0481f571b90c508af73865b6fd220db511fa5a9d7c7718c362d1c24",
+    "postSha": "8c2c2a63ccc4143a5eee94afcfb70c0628d39cc5d6f44477fb732f2963d56049",
+    "switchTrueLive": true,
+    "switchFalseSourceRegression": true,
+    "toolbarWithinViewport": true,
+    "stateLocalConfigForeignPreserved": true,
+    "ensoAccepted": false,
+    "mobileAccepted": false
+  }
 }
