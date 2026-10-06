@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-06T14:55:48.433Z",
+  "author": "Codex",
+  "history": true,
+  "route": "CPU local outside Ringer, no model or provider invocation",
+  "authorization": "Model coordinator relayed root authorization for mechanical capture/receipt fix",
+  "helperBefore": "3d25017c61312376e45fe476f8077150f23d13769cc92d5d0f564756eda7a163",
+  "helperAfter": "ec121824054740e1c84379f4f3c90f98d41fe2730084ecb0d0e7e04fcdc2f6f8",
+  "checkerBefore": "74d7d9993ae4a269abed50839498be38ec26ea1ec71d2692b720319e838022ca",
+  "checkerAfter": "69bfab692894a6de848faa7c76a0bdea5ff7e8c9e57f869045f173e4eabaf039",
+  "sourceUiSha": "fa81633e8a70a7f9c3411faa29f7106403ec515506e6e6267c7a9f0e83db287f",
+  "innerSha": "05a8c38b7132e42640dc4d5de095edbc33a100fab0ee60050b9e412af03fe74e",
+  "uiActionsExecuted": 0,
+  "sourceProductChanged": false,
+  "red": "Missing captureFormat export on original helper",
+  "green": {
+    "actualJpeg": true,
+    "historicalPngEncodingOnly": true,
+    "crossRealmView": true,
+    "unknownBytesRejected": true,
+    "missingR2Image": true,
+    "actualFlowFailureCleanup": true,
+    "actualFlowJpegSaveAndCleanup": true
+  },
+  "nativeOrPixelAcceptance": false,
+  "guardsReview": "All identity, deadline, token, pinned files, pre/post await, owned auxiliary close and ephemeral CAS guards preserved verbatim. Only capture encoding, metadata and missing capture receipt changed.",
+  "explanation": "Reparación mecánica de JPEG y vista entre realms sin conversión. Check del flujo real con transporte nativo y CUA simulados en directorio temporal propio: ambos recorridos cierran sólo la ventana propia; no se ejecutó UI real. El panel aún requiere evidencia nativa bajo nueva lease."
+}

@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-06T14:55:08.731Z",
+  "helperSha": "ec121824054740e1c84379f4f3c90f98d41fe2730084ecb0d0e7e04fcdc2f6f8",
+  "effectiveFormat": {
+    "mime": "image/jpeg",
+    "extension": ".jpg"
+  },
+  "optionalMissingCapture": null,
+  "exports": [
+    "captureArtifact",
+    "captureFormat",
+    "createFlow"
+  ],
+  "flowMethods": [
+    "open",
+    "manager",
+    "close"
+  ],
+  "uiActionsExecuted": 0
+}
