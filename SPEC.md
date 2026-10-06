@@ -46,6 +46,17 @@ Observaciones reproducidas el 2026-10-05 por Codex sobre 0.1.3; estos casos ampl
 
 La asociación de ENSO permanece sin modificar. Companion legado seleccionaba desktop por plataforma, sin binding físico por appId; macbook/zenbook comparten su origen. La comparación de configuración observada detecta VoiceInk Companion activo fuera del membership macbook. El preview debe preservar su activación recientemente autorizada y separar la vinculación local de las transiciones de plugins. Aplicar ese preview requiere autorización posterior; esta iteración no deduce preferencias nuevas.
 
+### 2.4 Settings rendering fixes (2)
+
+Observación de Codex, 2026-10-06 14:58 UTC, Sandbox 0.1.4 en Obsidian 1.14.4. Es evidencia del estado anterior al fix, no una nueva preferencia de dispositivo. Amplía FR-1/NFR-5.
+
+- [ ] FIX-17 - Fix.checked - Los switches aparecen apagados aunque el input tiene checked=true y el marcador loaded está activo. La ventana auxiliar propia muestra seis wrappers sin is-enabled; las reglas nativas de track y thumb dependen de esa clase. Fuente 0.1.5 sincroniza apariencia con el estado loaded que ya representa el control, incluyendo el rechazo de setEnabled; conserva los tres indicadores independientes, la cola del runtime y los errores visibles. No cambia la semántica a desired/nativeAutostart ni activa plugins como parte del fix. Regresión true/false, rechazo y éxito PASS; aceptación nativa de la candidata pendiente.
+- [ ] FIX-18 - Fix.checked - La toolbar está montada pero queda en y692/height178, fuera del viewport 900x700. Manager y Tables usan la clase global aigility-toolbar; Tables aporta position:absolute/top:100%/max-width420. Fuente 0.1.5 aísla la toolbar de Manager con aigility-manager-toolbar y su CSS correspondiente. Conserva filtros, orden banner-toolbar-list, recuperación pausada y todos los estilos de otros plugins. Un override de position bajo la clase compartida deja otras propiedades globales aplicables y no resuelve el aislamiento. Regresión de namespace y orden PASS; viewport efectivo de la candidata pendiente.
+
+Evidencia before: [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-panel]], [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-dom]], [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-post]]. La inspección cerró sólo su ventana auxiliar y dejó 42 archivos, State y Local sin cambios. La aceptación del fix requiere regresión focal, review independiente, build por cambio de producto y nueva captura/DOM en Sandbox. ENSO y mobile siguen fuera de esta aceptación.
+
+Checkpoint 2026-10-06, Codex: typing local autorizado explícitamente por root como excepción acotada a Ringer. Checker causal PASS, suite focal UI64/64 y una build0.1.5 exit0. Reviews readonly de root, model coordinator y UI owner PASS sobre el diff mínimo. El consumo real del paso Codex que escribió el patch, los hashes y los límites están en [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/manager-settings-render-20261006/manager-render-fix/report]]. No se ejecutó ningún manifest/model adicional; la inferencia del writer Codex no se registra como CPU-only ni cero consumo.
+
 ## 3. Architecture & Data Model
 
 ### 3.1 Stack

@@ -1,6 +1,6 @@
 {
   "name": "aigility-plugin-manager",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Integrated plugin manager for Obsidian.",
   "main": "main.js",
   "scripts": {

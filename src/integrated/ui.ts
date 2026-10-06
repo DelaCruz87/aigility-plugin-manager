@@ -1023,7 +1023,7 @@ export class ManagerUI {
      */
     private renderDailyToolbar(containerEl: HTMLElement): void {
         const toolbar = document.createElement('div');
-        toolbar.className = 'aigility-toolbar';
+        toolbar.className = 'aigility-manager-toolbar';
 
         // Kind selector
         const kindSelect = document.createElement('select');
@@ -1288,13 +1288,16 @@ export class ManagerUI {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = Boolean(plugin.loaded);
+        switchLabel.classList.toggle('is-enabled', checkbox.checked);
         checkbox.onchange = async () => {
             const newWanted = checkbox.checked;
+            switchLabel.classList.toggle('is-enabled', newWanted);
             try {
                 await this.runtime.setEnabled(plugin.ref, newWanted);
                 this.refreshList();
             } catch (err) {
                 checkbox.checked = !newWanted;
+                switchLabel.classList.toggle('is-enabled', checkbox.checked);
                 this.showNotice('Error al cambiar estado: ' + (err as Error).message);
             }
         };

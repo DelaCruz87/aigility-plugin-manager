@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-06T15:03:41.555350+00:00",
+  "author": "Codex",
+  "history": true,
+  "status": "RED_CONFIRMED_BEFORE_SOURCE_FIX",
+  "sourceUiSha": "fa81633e8a70a7f9c3411faa29f7106403ec515506e6e6267c7a9f0e83db287f",
+  "stylesSha": "9a21d84a6c179986d64b8c0c97406ee4332ce6a605ab87766c7ed1dd6ac8e10e",
+  "checkerSha": "7ea53dadb148d00aff7cab52a9d5b8f7d2251384a58a38b961403fd5c4c30b4e",
+  "manifestSha": "685ff155010824f112a64a1d30e89136218c3c433cd640811e523ed57f4ac141",
+  "specSha": "32d8246f8f2e44a58f608d0c481cdcfbc5e293ba1b5497973372e3d4205ee223",
+  "sourceCounterexample": "Actual renderer checked=true with wrapper is-enabled=false; assertion false != true",
+  "nativeCounterexamples": [
+    "Six captured row checked=true wrappers without is-enabled",
+    "Toolbar geometry x472/y692/w420/h178 in viewport900x700",
+    "Toolbar does not precede plugin rows in normal flow"
+  ],
+  "nativeDomSha": "904804f9019244d93700fa7c0a9cdfcbcc99599e237fca393e71365440109c60",
+  "uiActionsExecutedByChecker": 0,
+  "sourceProductChanged": false,
+  "pending": "Root adjudication of useful package, worker code fix, independent adversary, source checks/build, new native lease"
+}

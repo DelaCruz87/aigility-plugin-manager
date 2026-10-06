@@ -1,0 +1,56 @@
+{
+  "at": "2026-10-06T15:07:07.842740+00:00",
+  "author": "Codex",
+  "history": true,
+  "route": "Existing local Codex writer, scoped Ringer typing exception explicitly authorized by root",
+  "manifestExecuted": false,
+  "newProviderOrEngineInvoked": false,
+  "uiSha": "f529d88107fdad5674248a591a439f79011003bdec1be14851619e78efb60c18",
+  "stylesSha": "918ec84caa360cd4d6a7e79564685203ec0041384a14115c4137f8aa1b5a671b",
+  "uiActionsExecuted": 0,
+  "nativeOrPixelAcceptance": false,
+  "explanation": "FIX-17 sincroniza is-enabled al pintar y al cambio, y restaura clase y checked si setEnabled falla. FIX-18 usa aigility-manager-toolbar en fuente y CSS, sin alterar Tables. El checker causal del renderer real pasa true/false, rechazo con Notice, success refresh y marcadores independientes. La suite focal UI pas\u00f364/64. Review readonly root y model coordinator no hallaron cambios ajenos. Falta aceptaci\u00f3n visual de la nueva candidata en Sandbox.",
+  "writerUsage": {
+    "source": "Local Codex session token_count event",
+    "timestamp": "2026-10-06T15:04:47.132Z",
+    "scope": "Sampling step that emitted the source/style patch at15:04:46.799Z; includes reasoning and commentary for that step, not a fabricated whole-task cost",
+    "usage": {
+      "input_tokens": 137530,
+      "cached_input_tokens": 136320,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 755,
+      "reasoning_output_tokens": 339,
+      "total_tokens": 138285
+    }
+  },
+  "checks": {
+    "renderRegression": "PASS",
+    "uiSuite": {
+      "tests": 64,
+      "pass": 64,
+      "fail": 0
+    }
+  },
+  "reviews": {
+    "root": "PASS readonly source diff",
+    "modelCoordinator": "PASS readonly source diff",
+    "uiOwner": "PASS readonly exact source/style diff and checker without repetition"
+  },
+  "build": {
+    "command": "npm run build",
+    "exitCode": 0,
+    "runs": 1,
+    "version": "0.1.5",
+    "at": "2026-10-06T15:08:46.665653+00:00"
+  },
+  "candidate": {
+    "main.js": "baed1c7026be103871c4f19beee51fcdbdf3889cac71e01a6f8daeb20f6fb2be",
+    "manifest.json": "ce9b56f77804f83b24b62c3fce07383751200402adc741108842b5043ed10aeb",
+    "styles.css": "918ec84caa360cd4d6a7e79564685203ec0041384a14115c4137f8aa1b5a671b"
+  },
+  "retiredProposals": [
+    "manager-render-review was not launched",
+    "capture-contract-fix was not launched; existing writer performed mechanical helper fix",
+    "manager-render-fix AGY manifest was not launched; root explicitly authorized existing Codex writer"
+  ]
+}

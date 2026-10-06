@@ -38,7 +38,7 @@
 }
 
 /* Daily Toolbar */
-.aigility-toolbar {
+.aigility-manager-toolbar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
