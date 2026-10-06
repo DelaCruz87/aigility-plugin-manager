@@ -1,0 +1,19 @@
+{
+  "job": "manager-aux-prepared-inspection-20261006",
+  "token": "6f918cd0-a81d-4d06-9e86-b44ca75a184f",
+  "ack": "2026-10-06T14:39:51.195150+00:00",
+  "startBy": "2026-10-06T14:40:06.195150+00:00",
+  "actionBy": "2026-10-06T14:41:51.195150+00:00",
+  "totalBy": "2026-10-06T14:42:51.195150+00:00",
+  "controlPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R2-control.json",
+  "leasePath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/enso-mac-lease-01a0f837-20261006.json",
+  "leaseSha": "fb50031d1337847b40dfd0e9fcb35573b71c52acec323499fa1896def8d68744",
+  "helperSha": "3d25017c61312376e45fe476f8077150f23d13769cc92d5d0f564756eda7a163",
+  "innerSha": "05a8c38b7132e42640dc4d5de095edbc33a100fab0ee60050b9e412af03fe74e",
+  "innerPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/checks/settings-aux-read-20261006.js",
+  "baselinePath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-baseline.json",
+  "firstActionPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R2-first-action.json",
+  "pngPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R2-panel.png",
+  "domPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R2-dom.json",
+  "resultPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R2-result.json"
+}
