@@ -1,0 +1,11 @@
+{
+  "job": "manager-aux-visual-inspection-20261006",
+  "token": "6a6d0c8f-f698-4d2b-a86c-f36f977740c3",
+  "ack": "2026-10-06T14:29:34.865164+00:00",
+  "startBy": "2026-10-06T14:29:49.865164+00:00",
+  "actionBy": "2026-10-06T14:31:34.865164+00:00",
+  "totalBy": "2026-10-06T14:32:34.865164+00:00",
+  "leasePath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/enso-mac-lease-01a0f837-20261006.json",
+  "leaseSha": "57e34714018daa8ec096793aced2a0bf4e348dac8dbe89db10834e71d34b9649",
+  "status": "ACK"
+}

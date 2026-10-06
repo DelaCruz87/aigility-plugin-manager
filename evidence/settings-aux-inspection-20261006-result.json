@@ -1,0 +1,212 @@
+{
+  "job": "manager-aux-visual-inspection-20261006",
+  "token": "6a6d0c8f-f698-4d2b-a86c-f36f977740c3",
+  "at": "2026-10-06T14:30:33.364757+00:00",
+  "status": "NO_START",
+  "pending": false,
+  "reason": "startBy expired before first UI action; guard threw before Cmd+,; no first-action receipt or auxiliary window created",
+  "firstActionAt": null,
+  "files": {
+    "community-plugins.json": {
+      "exists": true,
+      "sha256": "0635b28cc030a2a27e2243f0fd3042add5a22f518b09537d4522b581e05a815e"
+    },
+    "core-plugins.json": {
+      "exists": true,
+      "sha256": "6a6a04f733e0bf3882e30683923857db99fa9f913335c0e9f9c52c31dd14802f"
+    },
+    "workspace.json": {
+      "exists": true,
+      "sha256": "86c75540951d794b9f8f6fea5a511e1956bce546fd7b16827dc7b178359f02dc"
+    },
+    "plugins/advanced-exclude/data.json": {
+      "exists": true,
+      "sha256": "b8a017d99818c6e11ebbfb6c6bbc9facc94dea413a8d734deda9018ade494563"
+    },
+    "plugins/agility-links/data.json": {
+      "exists": true,
+      "sha256": "4280456ca9eb5fd8d37f2e4afd2eb28af9355791929ff171adbab3930374f90b"
+    },
+    "plugins/aigility-blocks/data.json": {
+      "exists": true,
+      "sha256": "1370d5e9522b39debd8d9ccb3b5855aea39f7749d030e4e16c2b8f0b6eef1568"
+    },
+    "plugins/aigility-plugin-manager/data.json": {
+      "exists": true,
+      "sha256": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4"
+    },
+    "plugins/aigility-ui/data.json": {
+      "exists": true,
+      "sha256": "0e46b68fc83028e935e07c23a4604bada954d9c9f43afb3c5527c0c3d274055e"
+    },
+    "plugins/annoteca/data.json": {
+      "exists": true,
+      "sha256": "ce6283e555385276d0faf5ee63051442a6414cc87537c58c4597bf3a868ced0e"
+    },
+    "plugins/better-plugins-manager/data.json": {
+      "exists": true,
+      "sha256": "207d9900e460803a9800b54d032b2c39ff7fa21796dfbfa64ece7b261f671153"
+    },
+    "plugins/better-plugins-manager-companion/data.json": {
+      "exists": true,
+      "sha256": "1813575bf90d4b9fe78ca9e2bf5039aebe7cec957945029635371e6046306e44"
+    },
+    "plugins/callout-manager/data.json": {
+      "exists": true,
+      "sha256": "f1ddeae330c52ee7e73b4b163269a1289ceadf61dbf5accef2fc43a94494aaf9"
+    },
+    "plugins/cmdr/data.json": {
+      "exists": true,
+      "sha256": "eab0100f7b6b516ce19e8f95cf51d9a78e7150549b87c468e2a4327b983ee05a"
+    },
+    "plugins/darlal-switcher-plus/data.json": {
+      "exists": true,
+      "sha256": "17503fc838b974697ff3ffa638add5cd1772d4f014385a9d073b49374cb0a893"
+    },
+    "plugins/document-comments/data.json": {
+      "exists": true,
+      "sha256": "115ccce5b155a44109ca8ac151c91e4c37f84ff82beb454d91079a927d06bbe4"
+    },
+    "plugins/dragger/data.json": {
+      "exists": true,
+      "sha256": "7c604ef6ba43f97a51a2e7645f4513883b6550af2d88f2f387eb79ceaaabe560"
+    },
+    "plugins/editing-toolbar/data.json": {
+      "exists": true,
+      "sha256": "5b0de9119334de69ba2ce3c024ef463763af568239a1a7046c6a88902ab56968"
+    },
+    "plugins/enhanced-annotations/data.json": {
+      "exists": true,
+      "sha256": "8f1bd7ccf2afdf4b0a280cb36fea7fb45c695d5a56a65606ac81ef10584890e0"
+    },
+    "plugins/enhanced-symbols-prettifier/data.json": {
+      "exists": true,
+      "sha256": "ae928af8d36b901b5f096c6dd6149265a8a1164005cb778ad8f4dc9146421813"
+    },
+    "plugins/enso-control-plane/data.json": {
+      "exists": true,
+      "sha256": "1d2ef421ae03d54fedd074aae56b460c73be46ed9951c4c8a6282a9c6dd2d496"
+    },
+    "plugins/enso-filetree-lab/data.json": {
+      "exists": true,
+      "sha256": "9c2e9c7090f6651b05dc2f82319f734d882960fee9e0c6f7c951e6eb3b69531e"
+    },
+    "plugins/enso-secret-placeholders/data.json": {
+      "exists": true,
+      "sha256": "e1cf75c2a0300a1228847e757060c2722743cb240423fce5516f57f63990a3d6"
+    },
+    "plugins/fileclass/data.json": {
+      "exists": true,
+      "sha256": "5863c956a40ca8fd254666384ea37c05b0f226b87ad189dc196ef45a61b9595b"
+    },
+    "plugins/folder-notes/data.json": {
+      "exists": true,
+      "sha256": "c8708fd9394b8af48a928bbba2c3443aa508af9d333e1ea8b295bd08f5e50c3d"
+    },
+    "plugins/gridexplorer/data.json": {
+      "exists": true,
+      "sha256": "344f663d344180e6093ff147020b26ebb1d15b9e3913194f12481a2bbffa96cb"
+    },
+    "plugins/insta-toc/data.json": {
+      "exists": true,
+      "sha256": "fb4ae23f57806dc1c2ff9cd0431eab4551a6b4a88fdae7b14a176f54c1443b6f"
+    },
+    "plugins/keyshots/data.json": {
+      "exists": true,
+      "sha256": "1517411d4326e9a5012535c4510e30400674bc629910bd17db8191722730afa0"
+    },
+    "plugins/nodian/data.json": {
+      "exists": true,
+      "sha256": "17421e566020fe91a50a1b30cbc746b2e88e1ea90457508a38110bb316441176"
+    },
+    "plugins/note-toolbar/data.json": {
+      "exists": true,
+      "sha256": "857774d7c3d0cc16325d64133cd1f189594f20c4680cddb0ad95616c627246b4"
+    },
+    "plugins/notebook-navigator/data.json": {
+      "exists": true,
+      "sha256": "6ff4d1f8c554b35e0d283578506dd8881adaca719e073aa716c1db2f0f6d9505"
+    },
+    "plugins/obsidian-custom-frames/data.json": {
+      "exists": true,
+      "sha256": "da72c95be353dca706732c0fbcb7b969bcd9465994b7cc17223dc22a69acc8cf"
+    },
+    "plugins/obsidian-excalidraw-plugin/data.json": {
+      "exists": true,
+      "sha256": "ec61974021a1f86b9b9e53703a865d996d7f4c58d16ba1bacb1ed2d2c71c4849"
+    },
+    "plugins/obsidian-local-rest-api/data.json": {
+      "exists": true,
+      "sha256": "48fd8c9aed50361af90f35573506eb082ef1dc7ae9cd44a5683299aa4204f5ac"
+    },
+    "plugins/obsidian-mindmap-nextgen/data.json": {
+      "exists": true,
+      "sha256": "a91a12b1b48bfb54408739065daa307421db3d8254777f20fc6604ed9122b9f7"
+    },
+    "plugins/obsidian-style-settings/data.json": {
+      "exists": true,
+      "sha256": "a70544ea8d91b9750ccf44af46fdcd854b6eb02a00e7d3c08f1dc64323e0aff3"
+    },
+    "plugins/omnisearch/data.json": {
+      "exists": true,
+      "sha256": "ddc10d757b88d9ed08f037e8e2d4afaafd980a64d7effb385dc996663fd0ecbe"
+    },
+    "plugins/open-ontologies/data.json": {
+      "exists": true,
+      "sha256": "8fbf46c188b3f320a45560fd65250962beb8b805c53de137d4b4d54f673cc1cd"
+    },
+    "plugins/ribbon-organizer/data.json": {
+      "exists": true,
+      "sha256": "99bc090996d927bcd171009e848cd645491a89b9ff55a1ed3ad443f06b753027"
+    },
+    "plugins/side-comments-origin/data.json": {
+      "exists": true,
+      "sha256": "ab52731ab07ed3d79f9762529820f3b274b9a49208d12ca4e745e5405104bba8"
+    },
+    "plugins/table-editor-obsidian/data.json": {
+      "exists": true,
+      "sha256": "6525d5e0734cc16cc753d3cddc9e2385890506c462ca33b48cc24ce804587b7a"
+    },
+    "plugins/templater-obsidian/data.json": {
+      "exists": true,
+      "sha256": "922bf64f6f2257833a0fad57d22268502c17a36baedcc7f1f90d068a6c3bea63"
+    },
+    "plugins/voiceink-companion/data.json": {
+      "exists": true,
+      "sha256": "350824fa0a3a8937fde811ab2ca8e4c7d39c4fe8ccc4b123eb20418e654ca173"
+    }
+  },
+  "fileDrift": [],
+  "native": {
+    "at": "2026-10-06T14:30:33.346Z",
+    "settingsOpen": false,
+    "lastTab": "",
+    "leaf": "45f0859ed1d9c012",
+    "focus": "BODY",
+    "focusedOS": "Recent files - Sandbox - Obsidian 1.14.4",
+    "state": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+    "local": "967db62c4213832e1bb5968b8af3c92ec11a2cff9279d4da6860a83f5089835b",
+    "windows": [
+      {
+        "id": 3,
+        "wc": 3,
+        "title": "Recent files - Sandbox - Obsidian 1.14.4",
+        "crashed": false
+      },
+      {
+        "id": 2,
+        "wc": 2,
+        "title": "Settings - ENSO - Obsidian 1.14.4",
+        "crashed": false
+      },
+      {
+        "id": 1,
+        "wc": 1,
+        "title": "Recent files - ENSO - Obsidian 1.14.4",
+        "crashed": false
+      }
+    ]
+  },
+  "pngPaths": [],
+  "sourceProductChanged": false
+}
