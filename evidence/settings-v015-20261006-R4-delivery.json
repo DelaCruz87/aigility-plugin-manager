@@ -1,0 +1,27 @@
+{
+  "token": "261a91dd-9a45-4f79-9eca-dd73cba478ac",
+  "status": "SETTLED",
+  "pending": false,
+  "startedAt": "2026-10-06T15:22:05.816Z",
+  "completedAt": "2026-10-06T15:22:06.112Z",
+  "phase": "loading",
+  "result": {
+    "version": "0.1.5",
+    "build": "aigility-plugin-manager/0.1.5",
+    "loaded": true,
+    "native": true,
+    "stateSha": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+    "localSha": "967db62c4213832e1bb5968b8af3c92ec11a2cff9279d4da6860a83f5089835b",
+    "filesUnchanged": 42,
+    "foreignInstancesPreserved": true,
+    "coreInstancesPreserved": true,
+    "filtersPreserved": true,
+    "backup": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/release-backups/settings-v015-20261006-R4",
+    "artifacts": {
+      "main.js": "baed1c7026be103871c4f19beee51fcdbdf3889cac71e01a6f8daeb20f6fb2be",
+      "manifest.json": "ce9b56f77804f83b24b62c3fce07383751200402adc741108842b5043ed10aeb",
+      "styles.css": "918ec84caa360cd4d6a7e79564685203ec0041384a14115c4137f8aa1b5a671b"
+    }
+  },
+  "error": null
+}

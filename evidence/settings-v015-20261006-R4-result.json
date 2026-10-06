@@ -1,0 +1,55 @@
+{
+  "job": "manager-settings-v015-acceptance-20261006",
+  "token": "261a91dd-9a45-4f79-9eca-dd73cba478ac",
+  "at": "2026-10-06T15:22:30.153Z",
+  "status": "SETTLED",
+  "pending": false,
+  "native": {
+    "vault": "Sandbox",
+    "appId": "d137282e82167d84",
+    "root": "/Users/eme/Obsidian/Sandbox",
+    "dev": 16777230,
+    "ino": 237131121,
+    "window": 3,
+    "wc": 3,
+    "document": "app://obsidian.md/index.html",
+    "crashed": false,
+    "settingsOpen": false,
+    "lastTab": "",
+    "leaf": "45f0859ed1d9c012",
+    "focus": "BODY",
+    "focusedOS": "Recent files - Sandbox - Obsidian 1.14.4",
+    "state": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+    "local": "967db62c4213832e1bb5968b8af3c92ec11a2cff9279d4da6860a83f5089835b",
+    "windows": [
+      {
+        "id": 3,
+        "wc": 3,
+        "title": "Recent files - Sandbox - Obsidian 1.14.4",
+        "url": "app://obsidian.md/index.html",
+        "crashed": false
+      },
+      {
+        "id": 2,
+        "wc": 2,
+        "title": "Settings - ENSO - Obsidian 1.14.4",
+        "url": "about:blank",
+        "crashed": false
+      },
+      {
+        "id": 1,
+        "wc": 1,
+        "title": "Recent files - ENSO - Obsidian 1.14.4",
+        "url": "app://obsidian.md/index.html",
+        "crashed": false
+      }
+    ],
+    "extra": []
+  },
+  "capture": {
+    "path": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-panel.jpg",
+    "sha256": "c998f4d5da191959c56e0bc027ea0b838f2ecd20cad47627f88ae2d8d6eb4667",
+    "mime": "image/jpeg"
+  },
+  "domPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-dom.json"
+}

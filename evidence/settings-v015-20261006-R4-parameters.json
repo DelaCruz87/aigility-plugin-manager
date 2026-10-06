@@ -1,0 +1,20 @@
+{
+  "job": "manager-settings-v015-acceptance-20261006",
+  "token": "261a91dd-9a45-4f79-9eca-dd73cba478ac",
+  "leaseSha": "a26fe4aeaf6327aa80d9cf9822226cc56d1366c202e8b7bf72f1de51043ffe1a",
+  "ack": "2026-10-06T15:22:05.776Z",
+  "startBy": "2026-10-06T15:22:20.776Z",
+  "actionBy": "2026-10-06T15:24:05.776Z",
+  "totalBy": "2026-10-06T15:25:05.776Z",
+  "leasePath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/enso-mac-lease-01a0f837-20261006.json",
+  "controlPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-control.json",
+  "helperSha": "ec121824054740e1c84379f4f3c90f98d41fe2730084ecb0d0e7e04fcdc2f6f8",
+  "innerSha": "64b88eea0d6e096ef8a9c0911356d9378ff60c7b6580a31229f6db94065e8a0d",
+  "innerPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/checks/settings-aux-read-20261006.js",
+  "baselinePath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-aux-inspection-20261006-R3-baseline.json",
+  "firstActionPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-first-gui.json",
+  "imagePath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-panel.jpg",
+  "domPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-dom.json",
+  "resultPath": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-v015-20261006-R4-result.json",
+  "controlSha": "8ce295cc0318c7d12331c84da34a4bfffac0827a037a745943076a2071048703"
+}

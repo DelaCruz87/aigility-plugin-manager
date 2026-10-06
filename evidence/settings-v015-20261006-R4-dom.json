@@ -1,0 +1,542 @@
+{
+  "aux": {
+    "id": 8,
+    "wc": 8,
+    "title": "Settings - Sandbox - Obsidian 1.14.4",
+    "url": "about:blank",
+    "crashed": false
+  },
+  "at": "2026-10-06T15:22:28.598Z",
+  "document": "about:blank",
+  "title": "Settings - Sandbox - Obsidian 1.14.4",
+  "viewport": {
+    "width": 900,
+    "height": 700
+  },
+  "rootCount": 1,
+  "toolbars": [
+    {
+      "geometry": {
+        "x": 261,
+        "y": 178.5,
+        "width": 599,
+        "height": 120,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgba(0, 0, 0, 0)",
+        "minHeight": "auto"
+      },
+      "text": "\n            Todos los tipos\n            Community\n            Core\n        Todas las tags📦 Installed by BPM🚫 Ignored by BPM🧬 Eondr Plugin🖥️ Desktop-only (manifest)📅 Agenda🤖 Agents🧱 Bases🗓️ Calendar🎨 Canvas⌘ Commands🧩 Companion🛡️ Consistency🌀 Custom🔎 Data🛠️ Development🗺️ DFP🔷 Diagram📚 Documents🖌️ Draw✍️ Editing📝 Editor📕 EPUB🗂️ Explorer🔱 Fork🌐 HTML{} JSON📋 Kanban⌨️ Keyboard🔗 Links🔌 MCP🗺️ MOC🧭 Navigation📐 OKF📄 PDF✏️ Pencil🧠 PKM🧩 Plugins🐍 Python📖 Reading📜 Scripts🔍 Search🗄️ SQL🚀 Startup🎛️ Style🔄 Sync✅ Tasks🧰 Templates⚖️ Testing🖼️ UI🌐 Web🧠 Wiki🧾 YAMLBaselineSpatialNotes Tasks PDFAgents LLMBeta securityAgent consolesAPI & MCPKnowledge automationDashboardSemantic searchAgent skillsJSON & dataSecrets & auth📱 Tablet📱 Mobile🖥️ DesktopTOCmacbookzenbookiphoneipads24lenovo tabboox tab mini cTodos los gruposObsidian CoreCommunity PluginLang-Fork Plugin🔱  Forked PluginCustom PluginsOpciones",
+      "controls": 5
+    }
+  ],
+  "rows": [
+    {
+      "name": "Advanced Exclude",
+      "row": {
+        "x": 261,
+        "y": 341.0703125,
+        "width": 599,
+        "height": 88.75,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(242, 240, 229)",
+        "minHeight": "48px"
+      },
+      "switchClass": "checkbox-container aigility-switch is-enabled",
+      "checked": true,
+      "switch": {
+        "x": 685,
+        "y": 361.4453125,
+        "width": 48,
+        "height": 48,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(203, 85, 22)",
+        "minHeight": "48px"
+      },
+      "input": {
+        "x": 685,
+        "y": 361.4453125,
+        "width": 15,
+        "height": 48,
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "0",
+        "background": "rgb(102, 128, 11)",
+        "minHeight": "48px"
+      },
+      "indicators": [
+        {
+          "title": "Deseado: Activo en configuración del gestor",
+          "active": true
+        },
+        {
+          "title": "Autostart nativo: Habilitado en el inicio de Obsidian",
+          "active": true
+        },
+        {
+          "title": "Cargado: Activo en memoria",
+          "active": true
+        }
+      ]
+    },
+    {
+      "name": "AIgility Links",
+      "row": {
+        "x": 261,
+        "y": 435.8203125,
+        "width": 599,
+        "height": 70,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(242, 240, 229)",
+        "minHeight": "48px"
+      },
+      "switchClass": "checkbox-container aigility-switch is-enabled",
+      "checked": true,
+      "switch": {
+        "x": 685,
+        "y": 446.8203125,
+        "width": 48,
+        "height": 48,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(203, 85, 22)",
+        "minHeight": "48px"
+      },
+      "input": {
+        "x": 685,
+        "y": 446.8203125,
+        "width": 15,
+        "height": 48,
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "0",
+        "background": "rgb(102, 128, 11)",
+        "minHeight": "48px"
+      },
+      "indicators": [
+        {
+          "title": "Deseado: Activo en configuración del gestor",
+          "active": true
+        },
+        {
+          "title": "Autostart nativo: Habilitado en el inicio de Obsidian",
+          "active": true
+        },
+        {
+          "title": "Cargado: Activo en memoria",
+          "active": true
+        }
+      ]
+    },
+    {
+      "name": "AIgility Blocks",
+      "row": {
+        "x": 261,
+        "y": 511.8203125,
+        "width": 599,
+        "height": 70,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(242, 240, 229)",
+        "minHeight": "48px"
+      },
+      "switchClass": "checkbox-container aigility-switch is-enabled",
+      "checked": true,
+      "switch": {
+        "x": 685,
+        "y": 522.8203125,
+        "width": 48,
+        "height": 48,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(203, 85, 22)",
+        "minHeight": "48px"
+      },
+      "input": {
+        "x": 685,
+        "y": 522.8203125,
+        "width": 15,
+        "height": 48,
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "0",
+        "background": "rgb(102, 128, 11)",
+        "minHeight": "48px"
+      },
+      "indicators": [
+        {
+          "title": "Deseado: Activo en configuración del gestor",
+          "active": true
+        },
+        {
+          "title": "Autostart nativo: Habilitado en el inicio de Obsidian",
+          "active": true
+        },
+        {
+          "title": "Cargado: Activo en memoria",
+          "active": true
+        }
+      ]
+    },
+    {
+      "name": "AIgility Tasks",
+      "row": {
+        "x": 261,
+        "y": 587.8203125,
+        "width": 599,
+        "height": 70,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(242, 240, 229)",
+        "minHeight": "48px"
+      },
+      "switchClass": "checkbox-container aigility-switch is-enabled",
+      "checked": true,
+      "switch": {
+        "x": 685,
+        "y": 598.8203125,
+        "width": 48,
+        "height": 48,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(203, 85, 22)",
+        "minHeight": "48px"
+      },
+      "input": {
+        "x": 685,
+        "y": 598.8203125,
+        "width": 15,
+        "height": 48,
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "0",
+        "background": "rgb(102, 128, 11)",
+        "minHeight": "48px"
+      },
+      "indicators": [
+        {
+          "title": "No deseado: Inactivo en configuración del gestor",
+          "active": false
+        },
+        {
+          "title": "Autostart nativo: Habilitado en el inicio de Obsidian",
+          "active": true
+        },
+        {
+          "title": "Cargado: Activo en memoria",
+          "active": true
+        }
+      ]
+    },
+    {
+      "name": "AIgility Plugin Manager",
+      "row": {
+        "x": 261,
+        "y": 663.8203125,
+        "width": 599,
+        "height": 70,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(242, 240, 229)",
+        "minHeight": "48px"
+      },
+      "switchClass": "checkbox-container aigility-switch is-enabled",
+      "checked": true,
+      "switch": {
+        "x": 685,
+        "y": 674.8203125,
+        "width": 48,
+        "height": 48,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(203, 85, 22)",
+        "minHeight": "48px"
+      },
+      "input": {
+        "x": 685,
+        "y": 674.8203125,
+        "width": 15,
+        "height": 48,
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "0",
+        "background": "rgb(102, 128, 11)",
+        "minHeight": "48px"
+      },
+      "indicators": [
+        {
+          "title": "Deseado: Activo en configuración del gestor",
+          "active": true
+        },
+        {
+          "title": "Autostart nativo: Habilitado en el inicio de Obsidian",
+          "active": true
+        },
+        {
+          "title": "Cargado: Activo en memoria",
+          "active": true
+        }
+      ]
+    },
+    {
+      "name": "AIgility Tables",
+      "row": {
+        "x": 261,
+        "y": 739.8203125,
+        "width": 599,
+        "height": 70,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(242, 240, 229)",
+        "minHeight": "48px"
+      },
+      "switchClass": "checkbox-container aigility-switch is-enabled",
+      "checked": true,
+      "switch": {
+        "x": 685,
+        "y": 750.8203125,
+        "width": 48,
+        "height": 48,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "background": "rgb(203, 85, 22)",
+        "minHeight": "48px"
+      },
+      "input": {
+        "x": 685,
+        "y": 750.8203125,
+        "width": 15,
+        "height": 48,
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "0",
+        "background": "rgb(102, 128, 11)",
+        "minHeight": "48px"
+      },
+      "indicators": [
+        {
+          "title": "Deseado: Activo en configuración del gestor",
+          "active": true
+        },
+        {
+          "title": "Autostart nativo: Habilitado en el inicio de Obsidian",
+          "active": true
+        },
+        {
+          "title": "Cargado: Activo en memoria",
+          "active": true
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "selector": ".mod-rtl .search-input-container::before, .mod-rtl .checkbox-container",
+      "style": "transform: scale(-1, 1);"
+    },
+    {
+      "selector": ".checkbox-container",
+      "style": "app-region: no-drag; cursor: var(--cursor); background-color: var(--background-modifier-border-hover); border-radius: var(--toggle-radius); display: inline-block; flex-shrink: 0; position: relative; user-select: none; box-shadow: rgba(0, 0, 0, 0.07) 0px 4px 10px inset; transition: box-shadow 0.15s ease-in-out, outline 0.15s ease-in-out, border 0.15s ease-in-out, opacity 0.15s ease-in-out; outline: 0 solid var(--background-modifier-border-focus); width: var(--toggle-s-width); height: calc(var(--toggle-s-thumb-height) + var(--toggle-s-border-width) * 2);"
+    },
+    {
+      "selector": ".checkbox-container input[type=\"checkbox\"]",
+      "style": "position: absolute; opacity: 0; left: 0px;"
+    },
+    {
+      "selector": ".checkbox-container.is-enabled",
+      "style": "background-color: var(--interactive-accent);"
+    },
+    {
+      "selector": ".checkbox-container.is-disabled",
+      "style": "cursor: not-allowed; opacity: 0.5;"
+    },
+    {
+      "selector": ".checkbox-container::before",
+      "style": "content: \"\"; display: block; position: absolute; inset: 0px; opacity: 0;"
+    },
+    {
+      "selector": ".checkbox-container::after",
+      "style": "pointer-events: none; content: \"\"; display: block; position: absolute; background-color: var(--toggle-thumb-color); border-radius: var(--toggle-thumb-radius); transition: transform 0.15s ease-in-out, width 0.1s ease-in-out 0.05s, height 0.1s ease-in-out 0.05s, margin-top 0.1s ease-in-out 0.05s, left 0.1s ease-in-out 0.05s, opacity 0.1s ease-in-out 0.05s; left: 0px; box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 2px;"
+    },
+    {
+      "selector": ".checkbox-container:focus-visible",
+      "style": "outline: var(--toggle-s-border-width) solid var(--background-modifier-border-focus);"
+    },
+    {
+      "selector": ".checkbox-container::after",
+      "style": "width: var(--toggle-s-thumb-width); height: var(--toggle-s-thumb-height); margin: var(--toggle-s-border-width) 0 0 0; transform: translate3d(var(--toggle-s-border-width), 0, 0);"
+    },
+    {
+      "selector": ".checkbox-container.is-enabled::after",
+      "style": "transform: translate3d(calc(var(--toggle-s-width) - var(--toggle-s-thumb-width) - var(--toggle-s-border-width)), 0, 0);"
+    },
+    {
+      "selector": ".checkbox-container:where(:not(.is-disabled)):active::after",
+      "style": "opacity: var(--toggle-thumb-opacity-active); width: calc(var(--toggle-s-thumb-width) + var(--toggle-s-border-width) * 2); height: calc(var(--toggle-s-thumb-height) + var(--toggle-s-border-width) * 2); margin-top: 0px;"
+    },
+    {
+      "selector": ".modal .checkbox-container",
+      "style": "width: var(--toggle-width); height: calc(var(--toggle-thumb-height) + var(--toggle-border-width) * 2);"
+    },
+    {
+      "selector": ".modal .checkbox-container:focus-visible",
+      "style": "outline: var(--toggle-border-width) solid var(--background-modifier-border-focus);"
+    },
+    {
+      "selector": ".modal .checkbox-container::after",
+      "style": "width: var(--toggle-thumb-width); height: var(--toggle-thumb-height); margin: var(--toggle-border-width) 0 0 0; transform: translate3d(var(--toggle-border-width), 0, 0);"
+    },
+    {
+      "selector": ".modal .checkbox-container.is-enabled::after",
+      "style": "transform: translate3d(calc(var(--toggle-width) - var(--toggle-thumb-width) - var(--toggle-border-width)), 0, 0);"
+    },
+    {
+      "selector": ".modal .checkbox-container.is-enabled:where(:not(.is-disabled)):active::after",
+      "style": "left: -4px;"
+    },
+    {
+      "selector": ".modal .checkbox-container:where(:not(.is-disabled)):active::after",
+      "style": "opacity: var(--toggle-thumb-opacity-active); width: calc(var(--toggle-thumb-width) + var(--toggle-border-width) * 4); height: calc(var(--toggle-thumb-height) + var(--toggle-border-width) * 4); margin-top: calc(var(--toggle-border-width) * -1);"
+    },
+    {
+      "selector": "body:not(.is-mobile) .setting-group.mod-list .checkbox-container",
+      "style": "width: var(--toggle-s-width); height: calc(var(--toggle-s-thumb-height) + var(--toggle-s-border-width) * 2);"
+    },
+    {
+      "selector": "body:not(.is-mobile) .setting-group.mod-list .checkbox-container:focus-visible",
+      "style": "outline: var(--toggle-s-border-width) solid var(--background-modifier-border-focus);"
+    },
+    {
+      "selector": "body:not(.is-mobile) .setting-group.mod-list .checkbox-container::after",
+      "style": "width: var(--toggle-s-thumb-width); height: var(--toggle-s-thumb-height); margin: var(--toggle-s-border-width) 0 0 0; transform: translate3d(var(--toggle-s-border-width), 0, 0);"
+    },
+    {
+      "selector": "body:not(.is-mobile) .setting-group.mod-list .checkbox-container.is-enabled::after",
+      "style": "transform: translate3d(calc(var(--toggle-s-width) - var(--toggle-s-thumb-width) - var(--toggle-s-border-width)), 0, 0);"
+    },
+    {
+      "selector": "body:not(.is-mobile) .setting-group.mod-list .checkbox-container:where(:not(.is-disabled)):active::after",
+      "style": "opacity: var(--toggle-thumb-opacity-active); width: calc(var(--toggle-s-thumb-width) + var(--toggle-s-border-width) * 2); height: calc(var(--toggle-s-thumb-height) + var(--toggle-s-border-width) * 2); margin-top: 0px;"
+    },
+    {
+      "selector": ".checkbox-container.mod-small",
+      "style": "width: var(--toggle-s-width); height: calc(var(--toggle-s-thumb-height) + var(--toggle-s-border-width) * 2);"
+    },
+    {
+      "selector": ".checkbox-container.mod-small:focus-visible",
+      "style": "outline: var(--toggle-s-border-width) solid var(--background-modifier-border-focus);"
+    },
+    {
+      "selector": ".checkbox-container.mod-small::after",
+      "style": "width: var(--toggle-s-thumb-width); height: var(--toggle-s-thumb-height); margin: var(--toggle-s-border-width) 0 0 0; transform: translate3d(var(--toggle-s-border-width), 0, 0);"
+    },
+    {
+      "selector": ".checkbox-container.mod-small.is-enabled::after",
+      "style": "transform: translate3d(calc(var(--toggle-s-width) - var(--toggle-s-thumb-width) - var(--toggle-s-border-width)), 0, 0);"
+    },
+    {
+      "selector": ".checkbox-container.mod-small:where(:not(.is-disabled)):active::after",
+      "style": "opacity: var(--toggle-thumb-opacity-active); width: calc(var(--toggle-s-thumb-width) + var(--toggle-s-border-width) * 2); height: calc(var(--toggle-s-thumb-height) + var(--toggle-s-border-width) * 2); margin-top: 0px;"
+    },
+    {
+      "selector": ".sync-history-content .setting-item-control .checkbox-container",
+      "style": "margin-inline-end: var(--size-4-3);"
+    },
+    {
+      "selector": ".aigility-toolbar",
+      "style": "display: flex; flex-wrap: wrap; gap: 4px; padding: 2px 0px 4px;"
+    },
+    {
+      "selector": ".aigility-table-container.aigility-pending .aigility-toolbar, .aigility-table-container.aigility-pending .aigility-table",
+      "style": "pointer-events: none; opacity: 0.85;"
+    },
+    {
+      "selector": ".aigility-toolbar",
+      "style": "position: absolute; top: 100%; right: 0px; z-index: 15; width: max-content; max-width: min(420px, -16px + 100vw); padding: 5px; border: 1px solid var(--background-modifier-border); border-radius: var(--radius-m, 6px); background: var(--background-primary); box-shadow: var(--shadow-s, 0 2px 8px rgba(0, 0, 0, 0.15));"
+    },
+    {
+      "selector": ".aigility-toolbar[hidden]",
+      "style": "display: none;"
+    },
+    {
+      "selector": ".manager-container .manager-plugin-card__actions .checkbox-container",
+      "style": "margin-left: 4px;"
+    },
+    {
+      "selector": ".manager-tag-editor__item-actions.setting-item-control .checkbox-container",
+      "style": "justify-self: end; margin: 0px;"
+    },
+    {
+      "selector": ".manager-tag-editor .checkbox-container.manager-tag-editor__toggle",
+      "style": "position: relative !important; display: inline-flex !important; flex: 0 0 38px !important; align-items: center !important; width: 38px !important; min-width: 38px !important; height: 22px !important; min-height: 22px !important; margin: 0px !important; padding: 0px !important; border-radius: 999px !important; background: color-mix(in srgb, var(--text-muted) 28%, var(--background-secondary)) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--background-modifier-border) 70%, transparent) !important;"
+    },
+    {
+      "selector": ".manager-tag-editor .checkbox-container.manager-tag-editor__toggle.is-enabled",
+      "style": "background: color-mix(in srgb, var(--interactive-accent) 82%, var(--background-secondary)) !important; box-shadow: none !important;"
+    },
+    {
+      "selector": ".manager-tag-editor .checkbox-container.manager-tag-editor__toggle::after",
+      "style": "top: 2px !important; left: 2px !important; width: 18px !important; height: 18px !important; margin: 0px !important; border-radius: 999px !important; transform: translateX(0px) !important; background: var(--background-primary) !important; box-shadow: rgba(0, 0, 0, 0.24) 0px 1px 3px !important;"
+    },
+    {
+      "selector": ".manager-tag-editor .checkbox-container.manager-tag-editor__toggle.is-enabled::after",
+      "style": "transform: translateX(16px) !important;"
+    },
+    {
+      "selector": ".manager-tag-editor .checkbox-container.manager-tag-editor__toggle input",
+      "style": "width: 100% !important; height: 100% !important;"
+    },
+    {
+      "selector": ".excalidraw .library-unit__checkbox-container, .excalidraw .library-unit__checkbox-container:active, .excalidraw .library-unit__checkbox-container:hover",
+      "style": "align-items: center; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; bottom: 2rem; color: var(--icon-fill-color); cursor: pointer; display: flex; justify-content: center; left: 2rem; margin: 0px; padding: 0.5rem; position: absolute;"
+    },
+    {
+      "selector": ".excalidraw .library-unit__checkbox-container input, .excalidraw .library-unit__checkbox-container:active input, .excalidraw .library-unit__checkbox-container:hover input",
+      "style": "cursor: pointer;"
+    },
+    {
+      "selector": ".aigility-manager-toolbar",
+      "style": "display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 0px;"
+    },
+    {
+      "selector": ".aigility-toolbar-options-btn, .aigility-undo-btn",
+      "style": "min-height: 48px; white-space: nowrap;"
+    },
+    {
+      "selector": ".aigility-switch",
+      "style": "display: inline-flex; align-items: center; min-height: 48px; min-width: 48px; justify-content: center;"
+    },
+    {
+      "selector": ".checkbox-container",
+      "style": "background-color: var(--toggle-track-color); box-shadow: var(--toggle-track-shadow);"
+    },
+    {
+      "selector": ".checkbox-container.is-enabled",
+      "style": "background-color: var(--toggle-track-enabled-color);"
+    },
+    {
+      "selector": ".checkbox-container::after",
+      "style": "background-color: var(--toggle-thumb-color); box-shadow: var(--toggle-thumb-shadow);"
+    },
+    {
+      "selector": ".checkbox-container.is-enabled::after",
+      "style": "background-color: var(--toggle-thumb-enabled-color); box-shadow: var(--toggle-thumb-enabled-shadow);"
+    }
+  ]
+}
