@@ -2,7 +2,7 @@
   "at": "2026-10-06T14:55:48.433Z",
   "author": "Codex",
   "history": true,
-  "route": "CPU local outside Ringer, no model or provider invocation",
+  "route": "Existing Codex writer outside Ringer for mechanical helper fix; verification ran on local CPU; no additional worker/model/provider dispatch",
   "authorization": "Model coordinator relayed root authorization for mechanical capture/receipt fix",
   "helperBefore": "3d25017c61312376e45fe476f8077150f23d13769cc92d5d0f564756eda7a163",
   "helperAfter": "ec121824054740e1c84379f4f3c90f98d41fe2730084ecb0d0e7e04fcdc2f6f8",
@@ -24,5 +24,20 @@
   },
   "nativeOrPixelAcceptance": false,
   "guardsReview": "All identity, deadline, token, pinned files, pre/post await, owned auxiliary close and ephemeral CAS guards preserved verbatim. Only capture encoding, metadata and missing capture receipt changed.",
-  "explanation": "Reparación mecánica de JPEG y vista entre realms sin conversión. Check del flujo real con transporte nativo y CUA simulados en directorio temporal propio: ambos recorridos cierran sólo la ventana propia; no se ejecutó UI real. El panel aún requiere evidencia nativa bajo nueva lease."
+  "explanation": "Reparaci\u00f3n mec\u00e1nica de JPEG y vista entre realms sin conversi\u00f3n. Check del flujo real con transporte nativo y CUA simulados en directorio temporal propio: ambos recorridos cierran s\u00f3lo la ventana propia; no se ejecut\u00f3 UI real. El panel a\u00fan requiere evidencia nativa bajo nueva lease.",
+  "writerUsage": {
+    "source": "Local Codex token_count event",
+    "patchAt": "2026-10-06T14:54:24.745Z",
+    "timestamp": "2026-10-06T14:54:24.983Z",
+    "scope": "Sampling step that emitted the mechanical driver patch, including its reasoning/commentary; not a whole-task cost",
+    "usage": {
+      "input_tokens": 56448,
+      "cached_input_tokens": 51712,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 967,
+      "reasoning_output_tokens": 103,
+      "total_tokens": 57415
+    }
+  },
+  "provenanceClarification": "The CPU label describes checker execution. Existing Codex writer inference was nonzero; no new Ringer model or engine was invoked."
 }
