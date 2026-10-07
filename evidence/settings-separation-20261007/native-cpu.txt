@@ -1,0 +1,5 @@
+PASS: emitted helper ownership scenario normal
+PASS: emitted helper ownership scenario source-after-preflight
+PASS: emitted helper ownership scenario reserved-record
+PASS: emitted helper ownership scenario foreign-effective
+PASS: emitted helper ownership scenario foreign-community

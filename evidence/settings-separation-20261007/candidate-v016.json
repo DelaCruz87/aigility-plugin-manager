@@ -1,0 +1,17 @@
+{
+  "version": "0.1.6",
+  "source": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin",
+  "artifacts": {
+    "main.js": "bf1d245660349e4f1f4578a38a4563eee15bd5a5833c12639468d75aff201223",
+    "manifest.json": "1d08012e04dfbd2edeaf5833813af8101afdb7438c9d220019ec39b97f7567c4",
+    "styles.css": "c5b8a3d5fd8250e3fd1156325164aaab83db70d0a68ff31cbc126be691cbf95a"
+  },
+  "fixtureSource": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-separation-20261007/fixture",
+  "fixtureArtifacts": {
+    "main.js": "dbeea01f9db36f47a0a9adefb9ba26580beeac5408819aafa1b8a3c85bab7fad",
+    "manifest.json": "53bcbe8a8fba64b02cc38989ae84e3bc882620dfd267e6cf7fd012c93fe4198e",
+    "styles.css": "ac331e588577aa6ea63c01f9672315af7819b3b824c4e1d1fe67230758ce53d3"
+  },
+  "nativeHelperSha": "91e0420ee4bc61756b38c78f78d116663fcef30d93082f7c51fc02c16f2dc465",
+  "controllerSha": "972c1d6f1e42cf6731f3d52a539b0ea487cf320568ee96eb9597b9afa12f0b63"
+}
