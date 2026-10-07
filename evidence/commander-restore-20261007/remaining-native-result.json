@@ -1,0 +1,59 @@
+{
+  "job": "commander-restore-remaining-two-20261007",
+  "token": "eb806ea1-e6d9-435d-97ee-ed8c0a3e6993",
+  "status": "SETTLED",
+  "pending": false,
+  "phase": "final-readback",
+  "results": [
+    {
+      "job": "commander-restore-remaining-two-20261007",
+      "token": "eb806ea1-e6d9-435d-97ee-ed8c0a3e6993",
+      "status": "SETTLED",
+      "pending": false,
+      "phase": "readback",
+      "loaded": true,
+      "native": true,
+      "configsPreserved": true,
+      "foreignPreserved": true,
+      "artifacts": {
+        "main.js": "d33ccd350ae2b642c65fed2a562808640bbef060b1705e7b110ea1b43ba942d2",
+        "manifest.json": "36c2b6e17b2dd3f06930d0b11700581393c60a855b7ee031e0989f46ab2b26ec",
+        "styles.css": "fa41476fda982d376ee358c54978d9b072fd462d2cecc82305912126f7a260a9"
+      },
+      "workspacePostSha": "680249fea2889b38646c21cb2e5d63624043630c4e0e6b5cf120e8fb49efe525",
+      "ownRibbonKeys": {
+        "cmdr:Open settings": false,
+        "cmdr:Web viewer: Search the web": false,
+        "cmdr:Web viewer: Open web viewer": false
+      },
+      "firstGuardFailure": null,
+      "at": "2026-10-07T13:13:55.103Z"
+    },
+    {
+      "job": "commander-restore-remaining-two-20261007",
+      "token": "eb806ea1-e6d9-435d-97ee-ed8c0a3e6993",
+      "status": "SETTLED",
+      "pending": false,
+      "phase": "readback",
+      "loaded": true,
+      "native": true,
+      "configsPreserved": true,
+      "foreignPreserved": true,
+      "artifacts": {
+        "main.js": "d33ccd350ae2b642c65fed2a562808640bbef060b1705e7b110ea1b43ba942d2",
+        "manifest.json": "36c2b6e17b2dd3f06930d0b11700581393c60a855b7ee031e0989f46ab2b26ec",
+        "styles.css": "fa41476fda982d376ee358c54978d9b072fd462d2cecc82305912126f7a260a9"
+      },
+      "workspacePostSha": "2a2c6946f46200f711d62420378750b857bfd873c4dc10aecab00cc486ef8884",
+      "ownRibbonKeys": {
+        "cmdr:Open settings": false,
+        "cmdr:Web viewer: Search the web": false,
+        "cmdr:Web viewer: Open web viewer": false
+      },
+      "firstGuardFailure": null,
+      "at": "2026-10-07T13:13:55.866Z"
+    }
+  ],
+  "error": null,
+  "at": "2026-10-07T13:13:55.914Z"
+}

@@ -1,0 +1,9 @@
+{
+  "job": "commander-restore-remaining-two-20261007",
+  "token": "eb806ea1-e6d9-435d-97ee-ed8c0a3e6993",
+  "status": "SETTLED",
+  "pending": false,
+  "error": null,
+  "requiresRootClosure": true,
+  "at": "2026-10-07T13:13:56.060Z"
+}

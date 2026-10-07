@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-07T13:13:06.246Z",
+  "token": "d367e8e9-0f1a-4dfc-b165-c009f72962d5",
+  "nativeJobAbsent": true,
+  "nodeExitCode": 1,
+  "error": "No exact fresh ROOT grant",
+  "reason": "ACK deadline expired before control or Begin",
+  "controlAbsent": true,
+  "firstActionAbsent": true,
+  "actualEmissionsAbsent": true,
+  "actualCompilationAbsent": true,
+  "resultAbsent": true,
+  "status": "NO_BEGIN_PREACK"
+}

@@ -1,6 +1,6 @@
 # Commander Restore Runner Review
 
-2026-10-07, Codex. Preparación solicitada por ROOT dentro de la creación de tres Sandbox con plugins operativos. Este bundle es una herramienta de mantenimiento; no modifica producto Manager ni fuente Commander. Ninguna ejecución nativa de instalación ha ocurrido.
+2026-10-07, Codex. Preparación solicitada por ROOT dentro de la creación de tres Sandbox con plugins operativos. Este bundle es una herramienta de mantenimiento; no modifica producto Manager ni fuente Commander. La preparación y los resultados nativos se distinguen en el historial y checklist siguientes.
 
 ## Routing and Ownership
 
@@ -43,6 +43,10 @@ El preparador devuelve un path privado fuera del vault. Allí guarda native.json
 - [x] Lectura nativa de preparación y compilación completa del paquete.
 - [x] Peer delta final: PASS_FOCAL_STATIC_AND_CPU, 12 checks privados y cero findings nuevos; reporte preservado en peer-final-review.json.
 - [x] Primer grant y Begin únicos: token63abeb26, ACK12:42:28.620Z. Original own3 copiados y Commander loaded/native true; guard workspace-buffers falla12:42:34.364Z, sin acciones en 2/3. Receipt FAILED_PRESERVED conservado. ROOT cierre independiente12:45:54.783Z/RELEASE posterior, taskSettled true, 143/145 configs raw iguales. Cambios posteriores community/workspace y nuevo Open Brain se conservan, causa del FAIL no atribuida. Buffers hash igual; activeLeaf/layout distintos al diagnóstico posterior.
-- [ ] Aceptación completa: no alcanzada por ese grant. ROOT autoriza una unidad nueva explícitamente limitada a 2/3, después del cierre, con allowlist de tres keys Commander del ribbon y todo el resto del layout/leaf/buffers estricto. No se reejecuta ni se restaura el original.
+- [x] Primer grant cerrado como fallo conservado, sin convertirlo en PASS. Aceptación completa: no alcanzada por ese grant. ROOT autoriza una unidad nueva explícitamente limitada a 2/3, después del cierre, con allowlist de tres keys Commander del ribbon y todo el resto del layout/leaf/buffers estricto. No se reejecuta ni se restaura el original.
 
 Los PASS anteriores acreditan preparación y checks simulados; no acreditan instalación ni funcionamiento real de Commander.
+
+## Remaining Two Closure
+
+2026-10-07, Codex. Nueva unidad explícita limitada a Sandbox 2/3, con excepción de tres keys propias del ribbon. Dieciocho checks CPU y review focal PASS. Snapshot final d9ie4W y review refresh PASS; el grant d367e8e9 nunca inició, confirmado por ROOT. Grant nuevo eb806ea1 ejecutado una vez: ambos targets SETTLED 13:13:55.914Z, loaded/native true, artefactos exactos, configs y estado ajeno preservados. ROOT RELEASE_VERIFIED 13:15:32.649669Z, taskSettled=true/pending=false, 94 configs sin drift, workspace sólo tres keys permitidas con false y ventanas/foco exactos. Commander 0.5.13 está cargado en los tres Sandbox; este resultado no acredita clicks de comandos, pixels ni mobile. API calls=0. Recibos finales en el bundle padre.

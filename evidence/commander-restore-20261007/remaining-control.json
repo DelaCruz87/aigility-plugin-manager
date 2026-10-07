@@ -1,0 +1,10 @@
+{
+  "job": "commander-restore-remaining-two-20261007",
+  "token": "eb806ea1-e6d9-435d-97ee-ed8c0a3e6993",
+  "acknowledgedAt": "2026-10-07T13:13:51.547Z",
+  "startBy": "2026-10-07T13:14:06.547Z",
+  "actionBy": "2026-10-07T13:15:51.547Z",
+  "totalBy": "2026-10-07T13:16:51.547Z",
+  "rootHardBy": "2026-10-07T13:20:08.101218+00:00",
+  "leaseSha": "3d589a2cab5c4f759faa48d3655916a5cf0ae358f8b956151aaec5ac3038ab04"
+}

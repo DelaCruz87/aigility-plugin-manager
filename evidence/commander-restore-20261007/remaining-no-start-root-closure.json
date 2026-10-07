@@ -1,0 +1,40 @@
+{
+  "status": "NO_START_VERIFIED",
+  "token": "d367e8e9-0f1a-4dfc-b165-c009f72962d5",
+  "at": "2026-10-07T13:13:08.101218+00:00",
+  "dispatchFilesAbsent": true,
+  "native": {
+    "jobAbsent": true,
+    "windows": [
+      {
+        "id": 18,
+        "wc": 21,
+        "crashed": false
+      },
+      {
+        "id": 15,
+        "wc": 17,
+        "crashed": false
+      },
+      {
+        "id": 2,
+        "wc": 2,
+        "crashed": false
+      },
+      {
+        "id": 13,
+        "wc": 15,
+        "crashed": false
+      },
+      {
+        "id": 12,
+        "wc": 14,
+        "crashed": false
+      }
+    ],
+    "focus": null
+  },
+  "pinDrift": [],
+  "cause": "ACK deadline expired before owner dispatch; matching owner/job/loaded SHA",
+  "noRetryStartedJob": true
+}

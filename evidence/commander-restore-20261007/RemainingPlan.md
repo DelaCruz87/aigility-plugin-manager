@@ -28,7 +28,11 @@ Paquete leído el 2026-10-07T12:54:49.341Z: cmdr3-ready-KxCFgu, loadedSHA1c6149c
 - [x] Scope nuevo 2/3 exclusivamente y anchor independiente del original.
 - [x] Excepción de layout exacta, con faults causales y 18 checks.
 - [x] Lectura/compilación de paquete privado nuevas, sin instalación.
-- [ ] Peer del nuevo delta: solicitado con source congelado; pendiente.
-- [ ] Grant/Begin/readback/cierre ROOT: no ejecutados.
+- [x] Peer del nuevo delta: PASS_FOCAL_STATIC_AND_CPU, 18 checks, seguido de PASS_FOCAL_SNAPSHOT_REFRESH del paquete final d9ie4W.
+- [x] Grant/Begin/readback/cierre ROOT: token eb806ea1, SETTLED 13:13:55.914Z, RELEASE_VERIFIED independiente 13:15:32.649669Z, pending=false/taskSettled=true, 94 configs sin drift.
 
 El paquete no se actualiza mientras espera review/grant. ROOT verifica sus pins, baseline y estado actual antes de emitir el grant. Si esa baseline cambió, se conserva y reconcilia primero; no se reejecuta un job ni se restaura un backup para forzar coincidencia.
+
+## Execution Record
+
+2026-10-07, Codex. El paquete KxCFgu de preparación quedó histórico al cambiar el conjunto de ventanas. Se usó el paquete fresco d9ie4W, loadedSHA 9af2971a18a028a77b924d46aaecbd279af8b4de65ee9a27608b72fb0ddb48c5. El grant d367e8e9 expiró antes del ACK: NO_START_VERIFIED, job ausente y sin writes. ROOT emitió un grant nuevo eb806ea1; el dispatcher único terminó con ambos targets loaded/native true y sólo las tres keys Commander con false permitidas. La lectura independiente confirmó 94 configs raw iguales, ventanas/foco iguales y tarea resuelta. No se ejecutó de nuevo el original, ni se restauraron backups.

@@ -1,0 +1,42 @@
+{
+  "status": "RELEASE_VERIFIED",
+  "token": "eb806ea1-e6d9-435d-97ee-ed8c0a3e6993",
+  "at": "2026-10-07T13:15:32.649669+00:00",
+  "native": {
+    "status": "SETTLED",
+    "pending": false,
+    "taskSettled": true,
+    "windows": [
+      {
+        "id": 18,
+        "wc": 21,
+        "crashed": false
+      },
+      {
+        "id": 15,
+        "wc": 17,
+        "crashed": false
+      },
+      {
+        "id": 2,
+        "wc": 2,
+        "crashed": false
+      },
+      {
+        "id": 13,
+        "wc": 15,
+        "crashed": false
+      },
+      {
+        "id": 12,
+        "wc": 14,
+        "crashed": false
+      }
+    ],
+    "focus": null
+  },
+  "protectedFileCount": 94,
+  "protectedDrift": [],
+  "targetArtifactsLoadedNativeVerified": 2,
+  "workspaceOnlyOwnThreeFalseKeys": true
+}

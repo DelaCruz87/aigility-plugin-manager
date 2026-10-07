@@ -1,0 +1,16 @@
+{
+  "status": "GRANTED",
+  "token": "eb806ea1-e6d9-435d-97ee-ed8c0a3e6993",
+  "owner": "01a10c7c-6e4a-7ad0-8e52-5e0c9bb51484",
+  "executor": "01a10c7c-6e4a-7ad0-8e52-5e0c9bb51484",
+  "job": "commander-restore-remaining-two-20261007",
+  "packageDirectory": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/cmdr3-ready-d9ie4W",
+  "loadedSHA": "9af2971a18a028a77b924d46aaecbd279af8b4de65ee9a27608b72fb0ddb48c5",
+  "peerSHA": "d2ec1c30a654fef8e9167a041f38dc0f76c4457842ea3181c05f628d07366674",
+  "grantedAt": "2026-10-07T13:13:08.101218+00:00",
+  "ackBy": "2026-10-07T13:16:08.101218+00:00",
+  "absoluteHardDeadline": "2026-10-07T13:20:08.101218+00:00",
+  "pendingWriter": true,
+  "scope": "Restore cmdr own3 and load only Sandbox 2/3; exact3 absent cmdr ribbon keys may be added false, all foreign layouts/buffers/configs preserved. No Sandbox original writes/load; ACK/Begin once/SAME settled poll.",
+  "previousNoStartToken": "d367e8e9-0f1a-4dfc-b165-c009f72962d5"
+}
