@@ -48,13 +48,13 @@ export async function dispatch(packageDir){
   for(const[p,s]of Object.entries(pins))if(sha(p)!==s)throw Error('Controller pin drift '+p);
   if(sha(r.emissionPath)!==r.emissionSha||sha(path.join(packageDir,'actual-compilation.json'))!==actualProofSha)throw Error('Actual compiled emissions pin drift');
  };
- const cli=(code,poll=false)=>{new vm.Script(code);guard(poll);const raw=execFileSync('obsidian',['vault=Sandbox','eval','code='+code],{encoding:'utf8',timeout:10000}).trim();guard(poll);if(!raw.startsWith('=> '))throw Error('Unknown CLI return; SAME job only');return JSON.parse(raw.slice(3));};
+ const cli=(code,poll=false)=>{new vm.Script(code);guard(poll);const raw=execFileSync('obsidian',['vault='+c.native.vault,'eval','code='+code],{encoding:'utf8',timeout:10000}).trim();guard(poll);if(!raw.startsWith('=> '))throw Error('Unknown CLI return; SAME job only');return JSON.parse(raw.slice(3));};
  let receipt=null,error=null;
  try{
   guard(false);if(Date.now()>=Date.parse(control.startBy))throw Error('NO_START expired');
   save(path.join(packageDir,'first-action.json'),{job:c.job,token:lease.token,at:new Date().toISOString(),action:'Single Commander outer Begin'});
   save(path.join(packageDir,'begin-return.json'),cli(actualOuterInvocation));
-  const pollCode='(()=>{const w=require("electron").remote.getCurrentWindow();if(app.appId!=='+JSON.stringify(c.native.appId)+'||app.vault.getName()!=="Sandbox"||w.id!=='+c.native.window+'||w.webContents.id!=='+c.native.wc+')throw Error("Poll exact realm");const q=window.__commanderRestoreJobs?.get('+JSON.stringify(lease.token)+');return JSON.stringify(q?.receipt??{status:q?.status??"UNKNOWN",pending:q?.pending??true,taskSettled:q?.taskSettled??false});})()';new vm.Script(pollCode);
+  const pollCode='(()=>{const w=require("electron").remote.getCurrentWindow();if(app.appId!=='+JSON.stringify(c.native.appId)+'||app.vault.getName()!=='+JSON.stringify(c.native.vault)+'||w.id!=='+c.native.window+'||w.webContents.id!=='+c.native.wc+')throw Error("Poll exact realm");const q=window.__commanderRestoreJobs?.get('+JSON.stringify(lease.token)+');return JSON.stringify(q?.receipt??{status:q?.status??"UNKNOWN",pending:q?.pending??true,taskSettled:q?.taskSettled??false});})()';new vm.Script(pollCode);
   for(;;){const out=cli(pollCode,true);if(out.status==='UNKNOWN')throw Error('UNKNOWN preserved; no retry');if(!out.pending||out.status==='FAILED_PRESERVED'){receipt=out;break;}guard(true);await new Promise(done=>setTimeout(done,150));guard(true);}
  }catch(e){error=String(e);save(path.join(packageDir,'dispatch-error.json'),{error,preserve:true,noRetry:true,at:new Date().toISOString()});}
  const report={job:c.job,token:lease.token,status:receipt?.status??'UNKNOWN_PRESERVED',pending:receipt?.pending??true,error,requiresRootClosure:true,at:new Date().toISOString()};save(path.join(packageDir,'dispatch-return.json'),report);return report;

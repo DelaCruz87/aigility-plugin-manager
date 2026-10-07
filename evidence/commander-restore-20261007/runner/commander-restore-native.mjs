@@ -6,6 +6,10 @@ export async function runInner(r) {
  const stable=o=>J(Array.isArray(o)?o.map(x=>JSON.parse(stable(x))):o&&typeof o==='object'?Object.fromEntries(Object.keys(o).sort().map(k=>[k,JSON.parse(stable(o[k]))])):o);
  let phase='preflight',started=false,firstGuardFailure=null;
  const ownExpected={...r.preimages},pins=r.pins;
+ const ribbonKeys=['cmdr:Open settings','cmdr:Web viewer: Search the web','cmdr:Web viewer: Open web viewer'];
+ if(r.targetScope==='remaining-two'&&!['Sandbox 2','Sandbox 3'].includes(r.vault))throw Error('Remaining scope forbids original target');
+ const normalizeOwnRibbon=value=>{const copy=JSON.parse(J(value)),hidden=copy['left-ribbon']?.hiddenItems;if(r.allowOwnRibbon&&hidden){for(const k of ribbonKeys)if(k in hidden){if(hidden[k]!==false)throw Error('Unexpected own ribbon value '+k);delete hidden[k];}}return J(copy);};
+ const workspaceGuard=()=>{if(!r.workspacePath)return;const current=fs.readFileSync(r.workspacePath);if(!['load','readback'].includes(phase)){if(hash(current)!==r.workspaceSha)throw Error('Workspace preimage changed before own lifecycle');}else if(normalizeOwnRibbon(JSON.parse(current.toString()))!==normalizeOwnRibbon(r.workspaceBefore))throw Error('Foreign workspace file changed');};
  const identity=()=>{
   const st=fs.statSync(app.vault.adapter.getBasePath());
   if(app!==host||document!==doc||pm!==app.plugins||app.appId!==r.native.appId||app.vault.getName()!==r.native.vault||app.vault.adapter.getBasePath()!==r.root||fs.realpathSync(r.root)!==r.native.physicalRoot||st.dev!==r.native.dev||st.ino!==r.native.ino||win.id!==r.native.window||win.webContents.id!==r.native.wc||win.webContents.isCrashed()||document.URL!==r.native.document)throw Error('Native identity changed');
@@ -17,6 +21,7 @@ export async function runInner(r) {
   for(const [p,s]of Object.entries(r.protectedFiles))if(sha(p)!==s)throw Error('Protected config changed '+p);
   for(const [n,s]of Object.entries(ownExpected))if(sha(target+'/'+n)!==s)throw Error('Own artifact CAS drift '+n);
   for(const [n,a]of Object.entries(r.artifacts))if(sha(a.source)!==a.sha)throw Error('Candidate source drift '+n);
+  workspaceGuard();
  };
  identity();files();
  if(Boolean(pm.plugins[ID]?._loaded)!==r.expectedLoaded||pm.enabledPlugins.has(ID)!==r.expectedNative||r.expectedLoaded)throw Error('NO_START Commander profile changed/already loaded');
@@ -27,7 +32,7 @@ export async function runInner(r) {
  if(manifest.id!==ID||stable(manifest)!==stable(hostManifest(pm.manifests[ID])))throw Error('Registered manifest differs semantically');
  const dataPath=target+'/data.json',cfg=JSON.parse(fs.readFileSync(dataPath,'utf8'));
  if(cfg.spacingReset!==true||['seenEditorMenuItems','seenFileMenuItems'].some(k=>k in (cfg.hide??{}))||(cfg.macros??[]).some(m=>m.startup))throw Error('NO_START Commander migration/startup macro would alter protected state');
- const settings=app.setting,settingValues=[settings.isOpen,settings.lastTabId,settings.doc,settings.modalEl],leaf=app.workspace.activeLeaf,layout=J(app.workspace.getLayout()),focus=document.activeElement;
+ const settings=app.setting,settingValues=[settings.isOpen,settings.lastTabId,settings.doc,settings.modalEl],leaf=app.workspace.activeLeaf,layout=J(app.workspace.getLayout()),layoutNormalized=normalizeOwnRibbon(app.workspace.getLayout()),focus=document.activeElement;
  const buffers=()=>{const b=[];app.workspace.iterateAllLeaves(l=>b.push([l.id,l.view?.getViewType?.(),l.view?.editor?.getValue?hash(l.view.editor.getValue()):null]));return J(b);},beforeBuffers=buffers();
  const foreign=Object.entries(pm.plugins).filter(([id])=>id!==ID),foreignKeys=foreign.map(([id])=>id).sort(),nativeOrder=J([...pm.enabledPlugins]);
  const cores=Object.entries(app.internalPlugins.plugins).map(([id,p])=>[id,p.enabled,p.instance]);
@@ -40,10 +45,12 @@ export async function runInner(r) {
   if(J(Object.keys(pm.plugins).filter(id=>id!==ID).sort())!==J(foreignKeys)||foreign.some(([id,p])=>pm.plugins[id]!==p))failures.push('foreign-plugins');
   if(cores.some(([id,on,i])=>app.internalPlugins.plugins[id]?.enabled!==on||app.internalPlugins.plugins[id]?.instance!==i))failures.push('core');
   if(app.setting!==settings||settings.isOpen!==settingValues[0]||settings.lastTabId!==settingValues[1]||settings.doc!==settingValues[2]||settings.modalEl!==settingValues[3])failures.push('settings');
-  if(app.workspace.activeLeaf!==leaf||J(app.workspace.getLayout())!==layout||buffers()!==beforeBuffers)failures.push('workspace-buffers');
+  if(app.workspace.activeLeaf!==leaf)failures.push('active-leaf');
+  if(normalizeOwnRibbon(app.workspace.getLayout())!==layoutNormalized)failures.push('foreign-layout');
+  if(buffers()!==beforeBuffers)failures.push('buffers');
   const ws=remote.BrowserWindow.getAllWindows();if(ws.length!==windows.length||windowState.some(([w,c,crashed])=>!ws.includes(w)||w.webContents!==c||c.isCrashed()!==crashed))failures.push('windows-crash-flags');
   if(document.activeElement!==focus||(remote.BrowserWindow.getFocusedWindow?.()??remote.getFocusedWindow?.()??null)!==focused)failures.push('focus');
-  if(failures.length){firstGuardFailure??={phase,failed:failures,at:new Date().toISOString()};throw Error('Preservation guard failed '+failures.join(','));}
+  if(failures.length){firstGuardFailure??={phase,failed:failures,before:{activeLeaf:leaf?.id??null,layoutHash:hash(layout),buffersHash:hash(beforeBuffers)},after:{activeLeaf:app.workspace.activeLeaf?.id??null,layoutHash:hash(J(app.workspace.getLayout())),buffersHash:hash(buffers())},at:new Date().toISOString()};throw Error('Preservation guard failed '+failures.join(','));}
  };
  if(r.runtimeBefore){
   const current={native:JSON.parse(nativeOrder),foreign:foreign.map(([id,p])=>({id,loaded:Boolean(p._loaded),native:pm.enabledPlugins.has(id)})).sort((a,b)=>a.id.localeCompare(b.id)),core:cores.map(([id,on,i])=>({id,enabled:on,hasInstance:Boolean(i)})).sort((a,b)=>a.id.localeCompare(b.id)),settings:{open:settings.isOpen,last:settings.lastTabId,doc:settings.doc?.URL??null,modalDoc:settings.modalEl?.ownerDocument?.URL??null},activeLeaf:leaf?.id??null,layoutHash:hash(layout),buffersHash:hash(beforeBuffers)};
@@ -57,13 +64,14 @@ export async function runInner(r) {
   phase='backup';fs.mkdirSync(r.backupPath);started=true;
   const protectedBytes=Object.fromEntries(Object.keys(r.protectedFiles).map(p=>[p,fs.existsSync(p)?fs.readFileSync(p):null]));
   let k=0;for(const[p,b]of Object.entries(protectedBytes))if(b!==null)durable(r.backupPath+'/protected-'+(++k)+'.bak',b);
+  if(r.workspacePath)durable(r.backupPath+'/workspace.json.bak',fs.readFileSync(r.workspacePath));
   for(const n of Object.keys(candidate))if(fs.existsSync(target+'/'+n))durable(r.backupPath+'/'+n+'.bak',fs.readFileSync(target+'/'+n));
   durable(r.backupPath+'/baseline.json',J({job:r.job,token:r.token,preimages:r.preimages,protectedFiles:r.protectedFiles,nativeOrder:JSON.parse(nativeOrder)},null,2));sync(r.backupPath);sync(path.dirname(r.backupPath));foreignUnchanged();
   phase='copy';for(const[n,b]of Object.entries(candidate)){foreignUnchanged();const fd=fs.openSync(target+'/'+n,'w');try{fs.writeFileSync(fd,b);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}ownExpected[n]=hash(b);if(sha(target+'/'+n)!==ownExpected[n])throw Error('Own copy readback failed '+n);}
   sync(target);foreignUnchanged();
   if(r.expectedNative){phase='load';foreignUnchanged();await pm.loadPlugin(ID);foreignUnchanged();if(!pm.plugins[ID]?._loaded||stable(hostManifest(pm.plugins[ID].manifest))!==stable(manifest))throw Error('Commander load readback failed');}
   phase='readback';foreignUnchanged();
-  const receipt={job:r.job,token:r.token,status:'SETTLED',pending:false,phase,loaded:Boolean(pm.plugins[ID]?._loaded),native:pm.enabledPlugins.has(ID),configsPreserved:true,foreignPreserved:true,artifacts:ownExpected,firstGuardFailure:null,at:new Date().toISOString()};
+  const receipt={job:r.job,token:r.token,status:'SETTLED',pending:false,phase,loaded:Boolean(pm.plugins[ID]?._loaded),native:pm.enabledPlugins.has(ID),configsPreserved:true,foreignPreserved:true,artifacts:ownExpected,workspacePostSha:r.workspacePath?sha(r.workspacePath):null,ownRibbonKeys:r.allowOwnRibbon?Object.fromEntries(ribbonKeys.map(k=>[k,app.workspace.getLayout()['left-ribbon']?.hiddenItems?.[k]??null])):null,firstGuardFailure:null,at:new Date().toISOString()};
   cleanupGate();durable(r.resultPath,J(receipt,null,2));sync(path.dirname(r.resultPath));return receipt;
  }catch(e){
   const receipt={job:r.job,token:r.token,status:'FAILED_PRESERVED',pending:true,phase,error:String(e),firstGuardFailure,started,at:new Date().toISOString()};
@@ -78,7 +86,9 @@ export function runOuter(r){
  const hash=b=>crypto.createHash('sha256').update(b).digest('hex'),sha=p=>fs.existsSync(p)?hash(fs.readFileSync(p)):null,J=JSON.stringify;
  const host=app,doc=document,win=remote.getCurrentWindow();
  const windows=remote.BrowserWindow.getAllWindows(),captured=windows.map(w=>[w,w.webContents,w.webContents.isCrashed()]),focus=remote.BrowserWindow.getFocusedWindow();
- const expected={...r.baselineFiles};
+ const expected={...r.baselineFiles},startedWorkspaces=new Set();
+ const ribbonKeys=['cmdr:Open settings','cmdr:Web viewer: Search the web','cmdr:Web viewer: Open web viewer'];
+ const normalize=value=>{const c=JSON.parse(J(value)),h=c['left-ribbon']?.hiddenItems;if(h)for(const k of ribbonKeys)if(k in h){if(h[k]!==false)throw Error('Unexpected own ribbon value');delete h[k];}return J(c);};
  const gate=()=>{
   if(app!==host||document!==doc||app.appId!==r.native.appId||app.vault.getName()!==r.native.vault||fs.realpathSync(app.vault.adapter.getBasePath())!==r.native.physicalRoot||win.id!==r.native.window||win.webContents.id!==r.native.wc||win.webContents.isCrashed()||document.URL!==r.native.document)throw Error('Outer identity changed');
   const st=fs.statSync(app.vault.adapter.getBasePath());if(st.dev!==r.native.dev||st.ino!==r.native.ino)throw Error('Outer physical root changed');
@@ -86,6 +96,7 @@ export function runOuter(r){
   for(const[p,s]of Object.entries(r.pins))if(sha(p)!==s)throw Error('Outer frozen pin changed '+p);
   if(sha(r.emissionPath)!==r.emissionSha)throw Error('Actual emission file changed');
   for(const[p,s]of Object.entries(r.protectedFiles))if(sha(p)!==s)throw Error('Outer protected config changed '+p);
+  for(const t of r.targets)if(t.workspacePath){if(!startedWorkspaces.has(t.workspacePath)){if(sha(t.workspacePath)!==t.workspaceSha)throw Error('Outer workspace preimage changed');}else if(normalize(JSON.parse(fs.readFileSync(t.workspacePath,'utf8')))!==normalize(t.workspaceBefore))throw Error('Outer foreign workspace changed');}
   if(!fs.readFileSync(r.leasePath,'utf8').includes(r.token))throw Error('Outer lease token changed');
   const ws=remote.BrowserWindow.getAllWindows();if(ws.length!==windows.length||captured.some(([w,c,x])=>!ws.includes(w)||w.webContents!==c||c.isCrashed()!==x)||remote.BrowserWindow.getFocusedWindow()!==focus)throw Error('Outer window/focus changed');
  };
@@ -94,7 +105,8 @@ export function runOuter(r){
  if(sha(r.emissionPath)!==r.emissionSha||J(JSON.parse(fs.readFileSync(r.emissionPath,'utf8')))!==J(r.invocations))throw Error('Frozen actual emissions differ');
  if(r.windowsBefore&&J(windows.map(w=>({id:w.id,wc:w.webContents.id,crashed:w.webContents.isCrashed()})))!==J(r.windowsBefore))throw Error('NO_START stale global windows');
  if('focusBefore' in r&&(focus?.id??null)!==r.focusBefore)throw Error('NO_START stale foreground');
- if(r.targets.length!==3||new Set(r.targets.map(t=>t.root)).size!==3)throw Error('Exactly three unique Sandbox targets');
+ if(r.targetScope==='remaining-two'){if(r.targets.length!==2||J(r.targets.map(t=>t.vault).sort())!==J(['Sandbox 2','Sandbox 3'])||new Set(r.targets.map(t=>t.root)).size!==2)throw Error('Remaining scope forbids original target');}
+ else if(r.targets.length!==3||new Set(r.targets.map(t=>t.root)).size!==3)throw Error('Exactly three unique Sandbox targets');
  const invocations=r.targets.map(t=>{const matches=windows.filter(w=>w.id===t.native.window&&w.webContents.id===t.native.wc&&!w.webContents.isCrashed());if(matches.length!==1)throw Error('Target window not unique/healthy');const emission=r.invocations?.find(e=>e.root===t.root);if(!emission||hash(emission.source)!==emission.sha)throw Error('Exact precompiled invocation pin missing');return{target:t,window:matches[0],source:emission.source};});
  const jobs=window.__commanderRestoreJobs??=new Map();if(jobs.has(r.token))throw Error('Begin duplicate forbidden');
  const q={job:r.job,token:r.token,status:'RUNNING',pending:true,phase:'preflight',taskSettled:false,results:[]};jobs.set(r.token,q);
@@ -103,11 +115,12 @@ export function runOuter(r){
   try{
    // All configs and present own3 are durable before the first target lifecycle.
    gate();ownFiles();fs.mkdirSync(r.backupPath);let n=0;
-   for(const p of new Set([...Object.keys(r.protectedFiles),...Object.keys(expected)])){gate();ownFiles();if(fs.existsSync(p))durable(r.backupPath+'/preimage-'+(++n)+'.bak',fs.readFileSync(p));}
+   for(const p of new Set([...Object.keys(r.protectedFiles),...Object.keys(expected),...r.targets.map(t=>t.workspacePath).filter(Boolean)])){gate();ownFiles();if(fs.existsSync(p))durable(r.backupPath+'/preimage-'+(++n)+'.bak',fs.readFileSync(p));}
    durable(r.backupPath+'/index.json',J({protectedFiles:r.protectedFiles,ownFiles:expected},null,2));
    const parent=fs.openSync(path.dirname(r.backupPath),'r');try{fs.fsyncSync(parent);}finally{fs.closeSync(parent);}
    for(const item of invocations){
     gate();ownFiles();q.phase='restore-'+item.target.vault;
+    if(item.target.workspacePath)startedWorkspaces.add(item.target.workspacePath);
     const out=await item.window.webContents.executeJavaScript(item.source);
     gate();
     // Known postimages are accepted only from this exact settled target result.

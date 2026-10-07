@@ -1,0 +1,32 @@
+{
+  "status": "PREPARED_READONLY",
+  "temp": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/cmdr3-ready-d9ie4W",
+  "loadedSHA": "9af2971a18a028a77b924d46aaecbd279af8b4de65ee9a27608b72fb0ddb48c5",
+  "helperSha": "416d4bf309c244f1af05eced190eb8e6b886bde3462405797b37a0a6430a9ad4",
+  "dispatchSha": "f1e6901cd4e2c3a9c463656294ec4d0c99390e56fbc317f039ea374ad5dfcef8",
+  "baselineSha": "ed528c2b7124e3acbdcb833bbda8f3c53a673fc4a3459a739fd449e64b9e1d88",
+  "compileProofSha": "c6bf2de1c3b8ed64e152d5608e869a8584dc903287ea2447d4fc68772a2647f1",
+  "protectedCount": 94,
+  "artifacts": {
+    "main.js": {
+      "source": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/cmdr3-ready-d9ie4W/candidate/main.js",
+      "sha": "d33ccd350ae2b642c65fed2a562808640bbef060b1705e7b110ea1b43ba942d2"
+    },
+    "manifest.json": {
+      "source": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/cmdr3-ready-d9ie4W/candidate/manifest.json",
+      "sha": "36c2b6e17b2dd3f06930d0b11700581393c60a855b7ee031e0989f46ab2b26ec"
+    },
+    "styles.css": {
+      "source": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/cmdr3-ready-d9ie4W/candidate/styles.css",
+      "sha": "fa41476fda982d376ee358c54978d9b072fd462d2cecc82305912126f7a260a9"
+    }
+  },
+  "proof": {
+    "innerCompiled": true,
+    "outerCompiled": true,
+    "innerSha": "5e7e7e3b6095ca1cdd5ecd4dae6c453cf0f79c495c4eb11c48bb587e2fe233ac",
+    "outerSha": "c5502c6569e46e3e075fe58c0d03e28d9a3c4ab01c85d862acdbd0a96f179d55",
+    "nativeIO": false,
+    "at": "2026-10-07T12:59:05.725Z"
+  }
+}

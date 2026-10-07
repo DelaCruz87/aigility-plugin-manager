@@ -1,0 +1,45 @@
+{
+  "at": "2026-10-07T12:57:19.261153+00:00",
+  "author": "Codex",
+  "session_id": "01a0f717-06e5-7e42-8044-999b8dff35b2",
+  "status": "PASS_FOCAL_STATIC_AND_CPU",
+  "historical_snapshot": true,
+  "scope": "Commander remaining-two delta: target exclusion, three ribbon additions, workspace preservation and exact enriched invocation compilation.",
+  "pins": {
+    "evidence/commander-restore-20261007/runner/commander-restore-native.mjs": "416d4bf309c244f1af05eced190eb8e6b886bde3462405797b37a0a6430a9ad4",
+    "evidence/commander-restore-20261007/runner/commander-restore-dispatch.mjs": "f1e6901cd4e2c3a9c463656294ec4d0c99390e56fbc317f039ea374ad5dfcef8",
+    "checks/commander-restore-cpu-20261007.mjs": "743611716579f92a32d8c4839d81187dc3ce7ff1f217662642b5f485320fa6a1",
+    "checks/prepare-commander-restore-20261007.mjs": "4895f1c3c389e3d3bb8772d22ae93f0310a6d7f96cc6821b76a644c8801f4efe"
+  },
+  "loaded_sha256": "1c6149c09a896b059999f76d0f205a993b727fc1770a8882bab60ae536df63fb",
+  "package": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/cmdr3-ready-KxCFgu",
+  "private_cpu": {
+    "passed": 18,
+    "exit_code": 0,
+    "scratch": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/commander-remaining-peer-eewx2ahm",
+    "semantics": "15 causal inner scenarios, 2 malformed actual-dispatch ACK cases, 1 renderer outer without vm; emitted bodies and dispatcher compile."
+  },
+  "review_evidence": {
+    "scope": "Native line 10 rejects original target before writes. Outer lines 108-110 require exactly Sandbox 2 and Sandbox 3. Prepared package matches both roots.",
+    "anchor": "Dispatch lines 51/57 use c.native.vault and exact native identity for CLI/poll. Frozen package anchor Sandbox 2 window12/wc14; original is not an execution target.",
+    "ribbon": "Native lines 9-12, 48-50 and 90-99 strip only the exact three own keys if false from comparison copies. Both frozen workspace baselines lack all three keys, so permitted differences are additions for this package. Other keys, active leaf, buffers and remaining layout still guarded.",
+    "workspace": "Raw preimage SHA required before lifecycle. Workspace preimages backed up before lifecycle, then only approved semantic additions allowed. Other94 protected config files remain raw hash pinned.",
+    "compilation": "Dispatch lines34-45 enrich actual targets before composing and compiling every exact inner and final outer invocation in Node, persist emission/proof before durable ACK. Controller pins actual durable emission and compilation proof; renderer verifies emission and invocation hashes."
+  },
+  "control_absent_at_readback": true,
+  "source_hashes_unchanged_after_checks": true,
+  "original_package_untouched": true,
+  "new_findings": [],
+  "native_execution": false,
+  "new_models_or_providers": false,
+  "product_suite_repeated": false,
+  "native_acceptance": "PENDING_OWNER_GRANT_AND_NATIVE_EXECUTION",
+  "limitations": "Focused static and CPU validation only. Frozen package runtime facts are timestamped snapshots, not current native acceptance. Prior original-only failure63ab is closed by ROOT per owner report; no retry or rollback from this review.",
+  "checklist": {
+    "frozen_pins": true,
+    "scope_and_allowlist": true,
+    "private_cpu18": true,
+    "owner_supervisor_notification": "DONE",
+    "native_acceptance": "Outside this peer; owner/root retains grant and execution."
+  }
+}
