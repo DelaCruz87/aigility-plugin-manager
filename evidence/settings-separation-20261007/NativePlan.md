@@ -11,7 +11,7 @@ Los módulos checks/settings-separation-native-20261007.mjs y checks/settings-se
 ## Authorized Actions
 
 1. Obtener un grant nuevo de ROOT con executor, token, identidad física Sandbox, appId/window/webContents/document, baseline actual y preimages. ACK antes de preflight, primer acto antes de 15 segundos, acciones antes de 120 y cleanup antes de 180, siempre limitados por el deadline absoluto de ROOT. No se reutilizan tokens ni identidades históricos.
-2. Comprobar Manager cargado y pausado por late load, Settings cerrado, buffers/layout/plugins ajenos estables y ausencia de la fixture reservada tanto en disco como en catálogo, State, loaded y configuración nativa.
+2. Comprobar Manager cargado y con automatización pausada, sin operación pendiente ni diagnóstico, Settings cerrado, buffers/layout/plugins ajenos estables y ausencia de la fixture reservada tanto en disco como en catálogo, State, loaded y configuración nativa. La lectura autorizada del 2026-10-07T10:35:14.057Z observó la pausa por conflicto de deferred con la protección de omnisearch; se conserva literalmente y no se reanuda.
 3. Guardar backups privados fuera del vault. Congelar buffers aprobados de Manager y fixture antes de cualquier await. Descargar sólo Manager, copiar sus tres artifacts contra preimages y cargar 0.1.6 conservando State/Local y profiles.
 4. Crear únicamente aigility-manager-toggle-fixture, activarla con la API nativa y realizar OFF/ON/OFF mediante los checkboxes de la ventana propia. Leer loaded/nativeAutostart/desired después de cada acción; no reanudar automatización ni aplicar perfiles.
 5. Abrir y cerrar lista y opciones propias, comprobando estructura y geometría. El helper no usa Electron capturePage: pixelsVerified permanece false. La aceptación visual requiere una sesión CUA posterior, con Raise y screenshot real, bajo el grant correspondiente.
@@ -27,7 +27,7 @@ Los módulos checks/settings-separation-native-20261007.mjs y checks/settings-se
 - [x] Fixture referenciada en State rechazada antes de backup y de cualquier acción.
 - [x] Cinco casos CPU sobre el helper emitido: normal, fuente cambia después del preflight, record preexistente, effective concurrente y community concurrente.
 - [x] Controller real compilado y probado: ACK/first-action, una closure, forwarding de identidad/fixture, Begin único, deadlines y pins.
-- [ ] Peer re-review de los tres findings - solicitado al owner de modelos; no habilita START hasta PASS.
+- [x] Peer re-review de los tres findings - PASS_PREPARED_SOURCE del owner de modelos, helper 91e0420ee4bc61756b38c78f78d116663fcef30d93082f7c51fc02c16f2dc465 y controller 972c1d6f1e42cf6731f3d52a539b0ea487cf320568ee96eb9597b9afa12f0b63. Compilación y pruebas CPU ejecutadas también por el reviewer; cero I/O nativo. No acredita delivery ni pixels.
 - [ ] Grant y ejecución Sandbox - pendiente de review cerrado e identidad actual proporcionada por ROOT.
 - [ ] Pixels reales y aceptación visual - pendiente de CUA bajo su ventana coordinada.
 - [ ] Entrega ENSO - después de Sandbox; nueva baseline y grant. La última observación ROOT encontró Manager ausente del runtime: se preserva ese perfil y no se infiere activación a partir de Sandbox.
