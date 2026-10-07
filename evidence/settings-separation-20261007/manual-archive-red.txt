@@ -1,0 +1,18 @@
+PASS: manual ON/OFF works during ordinary pause without resuming automation or touching another plugin
+PASS: manual deferred ON/OFF preserves policy and excludes native autostart
+FAIL: installed/archive overlap cannot bypass restore through a manual deferred toggle: Missing expected rejection.
+PASS: manual relaxation preserves pending guard
+PASS: manual relaxation preserves debug guard
+PASS: manual relaxation preserves diagnostic-pause guard
+PASS: manual relaxation preserves restricted guard
+PASS: manual relaxation preserves protected guard
+PASS: manual relaxation preserves incompatible guard
+PASS: manual relaxation preserves transaction guard
+file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/checks/manual-toggles-20261007.mjs:83
+if (failures.length) throw new Error(failures.length + ' behavior checks failed: ' + failures.join(', '));
+                           ^
+
+Error: 1 behavior checks failed: installed/archive overlap cannot bypass restore through a manual deferred toggle
+    at file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/checks/manual-toggles-20261007.mjs:83:28
+
+Node.js v26.10.0

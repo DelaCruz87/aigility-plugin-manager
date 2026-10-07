@@ -336,7 +336,9 @@ export class ManagerRuntime {
     }
 
     setEnabled(ref: PluginRef, enabled: boolean): Promise<void> {
-        return this.enqueue(`set-enabled:${key(ref)}`, (tx) => tx.setEnabled(ref, enabled));
+        // Public toggles are explicit user actions. Transactions retain the
+        // automation/diagnosis gates and cannot opt into this manual route.
+        return this.enqueue(`set-enabled:${key(ref)}`, () => this.setEnabledInternal(ref, enabled, undefined, true));
     }
 
     getMutationGeneration(ref: PluginRef): number {
@@ -396,20 +398,29 @@ export class ManagerRuntime {
         this.bumpGeneration(ref);
     }
 
-    private async setEnabledInternal(ref: PluginRef, enabled: boolean, options?: { loadNow?: boolean; origin?: string }): Promise<void> {
+    private async setEnabledInternal(ref: PluginRef, enabled: boolean, options?: { loadNow?: boolean; origin?: string }, manual = false): Promise<void> {
         const diagnostic = isDiagnosticOrigin(options?.origin) && this.hasDiagnosticContext();
         // Obsidian's loading gate outranks every transaction: a live diagnosis may
         // mutate enabled/disabled while automation stays paused, but nothing may
         // reach the host while Obsidian itself refuses to load plugins, and an
         // unrelated origin keeps respecting the recovery gate.
         if (this.disposed || this.host.isRestricted()) throw new Error('Operation cannot mutate the host while plugin loading is paused or the manager is unloading.');
-        if (this.isAutomationPaused() && !diagnostic) throw new Error('Plugin automation is paused; resume or use the debugging transaction mode.');
+        if (manual && (this.local.operationPending || isDebugging(this.state) || isDiagnosticPause(this.local.recoveryReason))) {
+            throw new Error('Manual toggles are unavailable during a pending operation or active diagnosis. Finish or recover that operation first.');
+        }
+        if (this.isAutomationPaused() && !diagnostic && !manual) throw new Error('Plugin automation is paused; resume or use the debugging transaction mode.');
         if (!this.host.observe().some((item) => key(item.ref) === key(ref) && item.installed)) throw new Error(`Plugin ${key(ref)} is not installed.`);
         if (enabled && !this.isCompatible(ref)) throw new Error(`Incompatible plugin ${key(ref)} cannot be enabled.`);
+        // An interrupted restore can leave the manifest installed while the
+        // archive index still owns it. Manual deferred loads must not bypass
+        // the explicit restore requirement enforced by applyHostChange.
+        if (manual && enabled && ref.kind === 'community' && this.archive?.list().some((item) => item.id === ref.id)) {
+            throw new Error(`Archived plugin ${key(ref)} must be restored explicitly before manual activation.`);
+        }
         if (!enabled && key(ref) === MANAGER_PROTECTED_KEY) throw new Error('The manager plugin is always protected and cannot be disabled.');
         if (!enabled && this.isProtected(ref)) throw new Error(`Protected plugin ${key(ref)} cannot be disabled.`);
         const policy = ref.kind === 'community' ? this.state.deferred.find((item) => item.id === ref.id && item.enabled) : undefined;
-        if (enabled && policy && !diagnostic) throw new Error(`Plugin ${ref.id} is deferred. Disable its policy or wait for its scheduled load.`);
+        if (enabled && policy && !diagnostic && !manual) throw new Error(`Plugin ${ref.id} is deferred. Disable its policy or wait for its scheduled load.`);
         this.scheduler.cancel(ref.id);
         const before = this.host.isEnabled(ref);
         if (diagnostic) {
@@ -436,7 +447,15 @@ export class ManagerRuntime {
         await this.withPending(`plugin:${key(ref)}`, async () => {
             await this.store.assertFresh();
             this.assertNoConcurrentPause();
-            if (before !== enabled) await this.applyHostChange(ref, enabled, true);
+            if (manual && policy) {
+                // A manual load does not enroll a deferred plugin in native
+                // startup. Reconcile only this target, retaining its policy and
+                // the ordinary automation pause, then verify the real instance.
+                await this.host.excludeDeferred(ref, { unload: false, origin: 'manual' });
+                this.assertNoConcurrentPause();
+                if (this.host.isEnabled(ref) !== enabled) await this.host.setEnabled(ref, enabled, { loadNow: true, origin: 'manual' });
+                if (this.host.isEnabled(ref) !== enabled) throw new Error(`Host readback failed for manual deferred mutation ${key(ref)}.`);
+            } else if (before !== enabled) await this.applyHostChange(ref, enabled, true);
             this.setDesired(ref, enabled);
             this.bumpGeneration(ref);
             await this.store.save(this.state);

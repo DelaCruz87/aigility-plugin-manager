@@ -1,0 +1,12 @@
+PASS: manual ON/OFF works during ordinary pause without resuming automation or touching another plugin
+PASS: manual deferred ON/OFF preserves policy and excludes native autostart
+PASS: installed/archive overlap cannot bypass restore through a manual deferred toggle
+PASS: manual relaxation preserves pending guard
+PASS: manual relaxation preserves debug guard
+PASS: manual relaxation preserves diagnostic-pause guard
+PASS: manual relaxation preserves restricted guard
+PASS: manual relaxation preserves protected guard
+PASS: manual relaxation preserves incompatible guard
+PASS: manual relaxation preserves transaction guard
+(node:49781) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)

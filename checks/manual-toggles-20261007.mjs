@@ -53,6 +53,19 @@ await verify('manual deferred ON/OFF preserves policy and excludes native autost
   h.runtime.dispose();
 });
 
+await verify('installed/archive overlap cannot bypass restore through a manual deferred toggle', async () => {
+  const community = communityHost(ref.id);
+  const policy = { id: ref.id, enabled: true, delayMs: 5000 };
+  const h = makeHarness({ community, state: makeState({ deferred: [policy] }) });
+  h.runtime.archive = { list: () => [{ id: ref.id, name: ref.id, version: '1.0.0' }] };
+  h.runtime.pause('Late load: automatic startup skipped.');
+  await assert.rejects(h.runtime.setEnabled(ref, true), /archived.*restore/i);
+  assert.deepEqual(community.apiCalls, []);
+  assert.equal(community.instance._loaded, false);
+  assert.deepEqual(h.runtime.state.deferred, [policy]);
+  h.runtime.dispose();
+});
+
 for (const gate of ['pending', 'debug', 'diagnostic-pause', 'restricted', 'protected', 'incompatible', 'transaction']) {
   await verify('manual relaxation preserves ' + gate + ' guard', async () => {
     const community = communityHost(ref.id, gate === 'protected');

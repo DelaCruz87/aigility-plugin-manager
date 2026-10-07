@@ -1,0 +1,45 @@
+(node:49786) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ collectObserved distinguishes installed, desired, native autostart, compatibility, and loaded state (3.008625ms)
+✔ complete profile applies tag membership and retains protected, incompatible, and manager plugins (4.280208ms)
+✔ complete profile clears desired=true for an outsider whose native flag is already false (2.292042ms)
+✔ fixture changes only declared members (1.672ms)
+✔ fixture skips protected, absent and incompatible members visibly while the ordinary member still applies (0.460542ms)
+✔ an invalid fixture key rejects before any declared member is touched (1.232917ms)
+✔ fixture undo leaves a manually reasserted state untouched by its mutation generation (2.98225ms)
+✔ core toggles use wrapper methods and read the wrapper back without invoking bulk enable (1.671709ms)
+✔ a failed host readback rejects and preserves a recovery latch (1.223792ms)
+✔ the shared queue serializes mutations and each write verifies a fresh disk preimage (11.398125ms)
+✔ profile undo skips plugins changed manually after the profile operation (1.809541ms)
+✔ local profile binding is isolated by app id and vault path (0.46275ms)
+✔ deferred plugins are excluded from autostart and enabled once after their delay (4.087584ms)
+✔ profile intent schedules a deferred member instead of loading it immediately, then undo restores it (2.789458ms)
+✔ a canceled deferred callback cannot outrun its replacement timer (3.162875ms)
+✔ parked deferred plugins stay off, and pause cancels scheduled timers (1.463ms)
+✔ manual plugin-off, debug pause, recovery pause, and unload cancel delayed generations (6.857916ms)
+✔ workspace selection occurs only after normal layout-ready startup (0.581958ms)
+✔ normal startup clones desktop workspace d into only missing t and m variants (0.378208ms)
+✔ global plugin disable synchronously pauses and persists before unload, then dispose restores the method (0.493542ms)
+✔ a deferred plugin that leaks into loaded state is removed from native autostart (0.157125ms)
+✔ late load, restricted mode, and interrupted operations persistently pause startup automation (0.757667ms)
+✔ resume refreshes disk state before clearing an interrupted-operation latch (0.848333ms)
+✔ explicit late resume schedules the bound profile after layout readiness (0.514916ms)
+✔ an equal manual enable advances the mutation generation and protects profile undo (0.531209ms)
+✔ queued transaction can save and debug-load without reentering or persisting native enablement (0.591375ms)
+✔ a deferred policy edit on a loaded native plugin drops native autostart, keeps desired, and cancels timers (1.056375ms)
+✔ deferred reconciliation never loads a plugin and ignores membership, and an off policy keeps native off (0.101084ms)
+✔ a deferred policy for the protected manager keeps its native startup, surfaces the conflict, and rejects the edit (0.492583ms)
+✔ an enabled deferred policy for any other protected plugin is refused before the host is touched (0.476ms)
+✔ a core deferred policy is rejected before its persistent native flag is mutated (3.016416ms)
+✔ unrelated interrupted operations still reject diagnostic host mutations (0.315584ms)
+✔ an interrupted-operation pause is a latch, not a diagnosis, so a diagnostic origin still rejects (0.236875ms)
+✔ unload restores the restricted-mode wrapper and pauses before host unload (0.129541ms)
+✔ effective state is written inside the plugin folder without secrets (0.228125ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 367.499667

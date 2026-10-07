@@ -1,0 +1,5 @@
+{
+  "src/integrated/runtime.ts": "5e8d48daeb7d739afa2a428dbb64f2b0fd706864bbf6ea1c7d2fe7edc49569dd",
+  "checks/manual-toggles-20261007.mjs": "2e3c151c72bead4cbb920f588d3dd0dac4f121639dc460019a394e5554f1cc8f",
+  "tests/runtime.test.mjs": "ae36318b2ded34fbf56f0bccab8bca5c02f2cd44305c9e0c527c7704a1e5c204"
+}
