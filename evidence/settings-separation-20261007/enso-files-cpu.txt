@@ -1,0 +1,4 @@
+success PASS
+expired PASS
+config-race-after-first-copy PASS
+Only temporary filesystem targets; no Obsidian calls or live writes.

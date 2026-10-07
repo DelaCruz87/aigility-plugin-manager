@@ -30,5 +30,10 @@ Se elige entrega de archivos con perfil OFF porque no necesita abrir ni recupera
 
 - [x] Candidato construido y aceptación Sandbox independiente publicada.
 - [x] Procedimiento acotado a tres archivos y conservación de perfil/datos.
-- [ ] Ventana ROOT y baseline actual: pendientes del reparto de Sandbox/Tasks.
+- [x] Baseline filesystem actual y paquete privado READY: Manager 0.1.5 OFF, 387 archivos protegidos.
+- [ ] Ventana ROOT: HOLD explícito mientras termina Open Brain, Tasks y TTL; sin START.
 - [ ] Ejecución, readback y cierre independiente: no ejecutados.
+
+## Ready Snapshot
+
+2026-10-07, Codex. Paquete privado manager016-enso-files-ezw0l8g6, loadedSHA 6b50bcbc570bbe509eda8b25473861e8219d1aec5e74f8b96594f7dc86a6369e, runnerSHA 4408de66406b2f6d1c2a1bff2f9db91e5351944f0220046c7918ad36e65b672e. Script checks/manager016-enso-files.py: copia filesystem sin llamadas Obsidian, ACK durable, primer write antes de ACK+15s, acciones hasta ACK+60s con hard deadline, exact lease/control guard, backup privado durable, reemplazo atómico y readback. Conserva todos los root JSON, data.json de plugins y archivos propios fuera de los tres runtime targets. Tres casos causales en filesystem temporal PASS: entrega completa más Begin duplicado rechazado, grant caducado sin control ni writes, y carrera de configuración después del primer copy con FAILED_PRESERVED sin rollback. No se ejecutó build ni suite de producto. ROOT confirmó HOLD explícito; nada se ha instalado todavía. Si cambia la baseline durante las otras operaciones, necesita refresh y nuevo grant; nunca restaura configuraciones previas.
