@@ -1,0 +1,17 @@
+FAIL: manual ON/OFF works during ordinary pause without resuming automation or touching another plugin: Plugin automation is paused; resume or use the debugging transaction mode.
+FAIL: manual deferred ON/OFF preserves policy and excludes native autostart: Plugin automation is paused; resume or use the debugging transaction mode.
+PASS: manual relaxation preserves pending guard
+PASS: manual relaxation preserves debug guard
+PASS: manual relaxation preserves diagnostic-pause guard
+PASS: manual relaxation preserves restricted guard
+PASS: manual relaxation preserves protected guard
+PASS: manual relaxation preserves incompatible guard
+PASS: manual relaxation preserves transaction guard
+file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/checks/manual-toggles-20261007.mjs:70
+if (failures.length) throw new Error(failures.length + ' behavior checks failed: ' + failures.join(', '));
+                           ^
+
+Error: 2 behavior checks failed: manual ON/OFF works during ordinary pause without resuming automation or touching another plugin, manual deferred ON/OFF preserves policy and excludes native autostart
+    at file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/checks/manual-toggles-20261007.mjs:70:28
+
+Node.js v26.10.0

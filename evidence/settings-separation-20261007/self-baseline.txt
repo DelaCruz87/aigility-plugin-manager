@@ -1,0 +1,11 @@
+file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/tests/.bundle-import-kx5SFW/bundle.mjs:966
+    if (!enabled && key(ref) === MANAGER_PROTECTED_KEY) throw new Error("The manager plugin is always protected and cannot be disabled.");
+                                                              ^
+
+Error: The manager plugin is always protected and cannot be disabled.
+    at ManagerRuntime.setEnabledInternal (file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/tests/.bundle-import-kx5SFW/bundle.mjs:966:63)
+    at Object.setEnabled (file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/tests/.bundle-import-kx5SFW/bundle.mjs:760:21)
+    at file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/tests/.bundle-import-kx5SFW/bundle.mjs:908:63
+    at execute (file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/tests/.bundle-import-kx5SFW/bundle.mjs:781:14)
+
+Node.js v26.10.0

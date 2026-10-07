@@ -1,0 +1,58 @@
+import { readFile, writeFile, unlink } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
+const source = await readFile(new URL('../tests/ui.test.mjs', import.meta.url), 'utf8');
+const fixture = source.slice(0, source.indexOf("describe('AIgility Plugin Manager - UI & Filter Test Suite'"));
+const assertions = `
+const app = new MockApp();
+const native = new MockElement('div');
+native.createDiv({ cls: 'setting-item' }).textContent = 'Native plugin list';
+const tab = { id: 'community-plugins', containerEl: native, display() {}, renderTab() {}, update() {} };
+app.setting.settingTabs = [tab];
+const pluginNav = new MockElement('div');
+app.setting.pluginTabs = [{ id: 'foreign', navEl: pluginNav }];
+const nativeSnapshot = { open: app.setting.open, display: tab.display, renderTab: tab.renderTab, update: tab.update, child: native.firstChild, text: native.textContent, nav: pluginNav.className };
+const runtime = createQueuedRuntime(baseManagerState());
+runtime.list = () => [];
+runtime.local = {};
+runtime.getConflict = () => undefined;
+const ui = new ManagerUI({ app }, runtime, {}, {});
+ui.install();
+assert.equal(app.setting.open, nativeSnapshot.open, 'install must preserve native Settings.open');
+assert.equal(tab.display, nativeSnapshot.display, 'install must preserve Community display');
+assert.equal(tab.renderTab, nativeSnapshot.renderTab, 'install must preserve Community renderTab');
+assert.equal(tab.update, nativeSnapshot.update, 'install must preserve Community update');
+assert.equal(native.firstChild, nativeSnapshot.child, 'install must preserve native list nodes');
+assert.equal(native.textContent, nativeSnapshot.text, 'install must preserve native content');
+let nativeCalls = 0;
+app.setting.open = () => { nativeCalls++; };
+app.setting.openTabById = () => { nativeCalls++; };
+assert.equal(typeof ui.openManagerModal, 'function', 'own separate manager dialog entrypoint');
+ui.openManagerModal();
+assert.equal(nativeCalls, 0, 'opening Manager must not open or select native Settings');
+assert.equal(typeof ui.displaySettings, 'function', 'dedicated plugin settings renderer');
+const settings = new MockElement('div');
+ui.displaySettings(settings);
+assert.ok(settings.querySelector('.aigility-manager-settings'), 'scoped Companion settings root');
+assert.ok(settings.querySelector('.aigility-settings-tabs'), 'compact Companion tabs');
+assert.equal(settings.querySelector('.aigility-plugin-row'), null, 'own Settings must show configuration rather than plugin list');
+assert.ok(settings.querySelector('.aigility-settings-header-card'), 'Companion header card');
+const tabs = settings.querySelectorAll('.aigility-settings-tab');
+assert.ok(tabs.length >= 4, 'preserve the four primary Companion pages and additional current capabilities');
+for (const label of ['Deferred', 'Profiles', 'Devices', 'Settings']) assert.ok(tabs.some(t => t.textContent.includes(label)), 'Missing Companion page: ' + label);
+ui.refreshManagerView();
+assert.equal(native.firstChild, nativeSnapshot.child);
+assert.equal(pluginNav.className, nativeSnapshot.nav);
+ui.dispose();
+assert.equal(tab.display, nativeSnapshot.display);
+assert.equal(tab.renderTab, nativeSnapshot.renderTab);
+assert.equal(tab.update, nativeSnapshot.update);
+assert.equal(native.firstChild, nativeSnapshot.child);
+console.log('PASS: separate dialog, Companion settings, native methods/list/sidebar preserved through lifecycle');
+`;
+const temp = new URL('../tests/.settings-separation-check-20261007.mjs', import.meta.url);
+try {
+  await writeFile(temp, fixture + assertions);
+  execFileSync(process.execPath, [fileURLToPath(temp)], { stdio: 'inherit' });
+} finally { await unlink(temp).catch(() => {}); }

@@ -1,0 +1,40 @@
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: install must preserve native Settings.open
++ actual - expected
+
++ [Function (anonymous)]
+- [Function: open]
+           ^
+
+    at file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/tests/.settings-separation-check-20261007.mjs:830:8 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [Function (anonymous)],
+  expected: [Function: open],
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.10.0
+node:internal/errors:999
+  const err = new Error(message);
+              ^
+
+Error: Command failed: /opt/homebrew/Cellar/node/26.10.0_1/bin/node /Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/tests/.settings-separation-check-20261007.mjs
+    at genericNodeError (node:internal/errors:999:15)
+    at wrappedFn (node:internal/errors:544:14)
+    at checkExecSyncError (node:child_process:943:11)
+    at execFileSync (node:child_process:979:15)
+    at file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/checks/settings-separation-20261007.mjs:57:3 {
+  status: 1,
+  signal: null,
+  output: [ null, null, null ],
+  pid: 39834,
+  stdout: null,
+  stderr: null
+}
+
+Node.js v26.10.0

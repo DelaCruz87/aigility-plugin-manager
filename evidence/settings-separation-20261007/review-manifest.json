@@ -1,0 +1,27 @@
+{
+  "run_name": "manager-plugin-settings",
+  "workdir": "/Users/eme/.ringer/work/manager-plugin-settings-oct7-review",
+  "worktrees": false,
+  "max_parallel": 1,
+  "tasks": [
+    {
+      "key": "manual-runtime-review",
+      "engine": "codex",
+      "model": "gpt-6.1-sol",
+      "engine_args": [
+        "-c",
+        "model_reasoning_effort=\"medium\""
+      ],
+      "fallback_engines": [],
+      "max_attempts": 1,
+      "timeout_s": 120,
+      "task_type": "code-review",
+      "spec": "You are a READONLY reviewer for the Oct7 explicit human request for AIgility Plugin Manager. You are not alone in the codebase. Repo /Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin is readonly; never edit source, Git, configs, bootstrap files, other plugins or native apps. Own only ./report.md in your scratch directory. Review ONLY manual toggles and self-disable in src/integrated/runtime.ts and direct adapter/lifecycle dependencies. Read SPEC.md Settings separation iteration Oct7 and CONTRACT.md explicit manual operations revision. Already diagnosed: public setEnabled enters automation pause guard; self disable rejects permanently; native settings takeover impedes native access. Verify actual control flow with file:line. Provide at most 3 concrete findings and minimal safe implementation recommendation: public manual action may pass ordinary recovery pause while retaining debug/pending/restricted/freshness/foreign protection; deferred manual loading preserves native exclusion; explicit self-disable must have no writes after synchronous onunload/dispose while bulk protection remains. Avoid UI design work and general review. Output # Review Report with ## Summary (max3 lines), ## Findings (each ### Finding with Evidence:,Impact:,Fix:,Priority:P0-P3,Confidence:high/medium/low), ## Clean, ## Assumptions. Under1200words. Explain lifecycle hazard precisely. No tests/install/native action. Markdown prose Spanish, English headings, ASCII hyphen, no pipe aliases in wikilinks. Source SHA frozen by checker; do not change source to make check pass.",
+      "expect_files": [
+        "report.md"
+      ],
+      "check": "python3 \"/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/checks/manual-review-20261007.py\" --report report.md",
+      "verified": "Structured bounded findings cite current source lines and frozen source is unchanged."
+    }
+  ]
+}
