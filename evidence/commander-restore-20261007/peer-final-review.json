@@ -1,0 +1,94 @@
+{
+  "review": "Commander restore final delta",
+  "at": "2026-10-07T12:39:52.645581+00:00",
+  "author": "Codex",
+  "session_id": "01a0f717-06e5-7e42-8044-999b8dff35b2",
+  "status": "PASS_FOCAL_STATIC_AND_CPU",
+  "historical_snapshot": true,
+  "scope": "Final fixes for buffer integrity, ACK validation, exact invocation compilation and registered manifest dir normalization. No expanded product audit.",
+  "pins": {
+    "native_sha256": "5f3dceefa711893e2f695d481de78b1a824005dc6edf47bfc6078a6132c3fa87",
+    "dispatch_sha256": "fdcc5ac61e7966885b4708aaf7b39975ef0944812bd3dc5912d83a0e6daaf281",
+    "checker_sha256": "3831aaf3a3d25499104591a47ae6cb7b15abf82b4fa91b1e9b8140bab3868f5a",
+    "loaded_sha256": "9893f9a8bf94e14282f4948749bd617a4ff80823bc048d4d02922b06f6ebef34",
+    "baseline_sha256": "808a4a0f69525026ce89b0382baed3599564c739497c4e44d2384c941372045e",
+    "body_compile_proof_sha256": "515a54f7463be88ff0384cd90583a0e213f4142f40a6aa495f2462ce8a57c2a1"
+  },
+  "checks": {
+    "private_cpu_cases_passed": 12,
+    "private_cpu_exit_code": 0,
+    "command": "node --experimental-vm-modules <private-scratch>/commander-restore-cpu-20261007.mjs <private-scratch>",
+    "scratch_path": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/commander-peer-final-w6hwis97",
+    "cases": [
+      "normal",
+      "wrong-identity",
+      "config-preimage",
+      "already-crashed",
+      "data-race",
+      "source-race",
+      "deadline",
+      "foreign-crash",
+      "buffer-race",
+      "invalid ACK case 1",
+      "invalid ACK case 2",
+      "actual renderer outer without vm"
+    ],
+    "emitted_inner_outer_dispatch_compiled": true,
+    "native_io": false,
+    "original_sources_unchanged_after_checks": true,
+    "original_package_and_compile_proof_untouched": true
+  },
+  "resolved_findings": [
+    {
+      "id": "F1",
+      "result": "PASS",
+      "evidence": "Native lines 23-24 hash the captured candidate buffers before backup/START; buffer-race CPU case throws before install/load."
+    },
+    {
+      "id": "F2",
+      "result": "PASS",
+      "evidence": "Dispatch lines 23-25 require finite future ackBy and matching grant identity before durable control or CLI; two actual invalid-ACK cases pass."
+    },
+    {
+      "id": "F3",
+      "result": "PASS",
+      "evidence": "Dispatch lines 34-45 enrich targets, compile all exact inner invocations and final outer invocation in Node, persist emissions and actual compilation proof before durable ACK control. Native renderer code does not require vm. Controller guards both emission and actual compilation hashes; renderer guards durable emissions and frozen invocation hashes."
+    }
+  ],
+  "manifest_dir_normalization": {
+    "result": "PASS_FOCAL_STATIC",
+    "evidence": "Native lines 26-27 and preparer lines 20-23 normalize only a cloned manifest, accept dir only as .obsidian/plugins/cmdr or the exact target plugin directory, and compare all remaining semantics. Registered cache object is not mutated. The same normalization applies to the loaded manifest readback."
+  },
+  "prepared_package": {
+    "path": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/cmdr3-ready-LlFtZG",
+    "preparation_at": "2026-10-07T12:34:20.752Z",
+    "snapshot_only": true,
+    "targets": [
+      "Sandbox",
+      "Sandbox 2",
+      "Sandbox 3"
+    ],
+    "target_snapshot_expected_loaded": false,
+    "target_snapshot_expected_native": true,
+    "runtime_before_present_all_targets": true,
+    "protected_files_count": 145,
+    "control_file_absent_at_review": true
+  },
+  "new_findings": [],
+  "parent_native_acceptance": "PENDING_OWNER_GRANT_AND_NATIVE_EXECUTION",
+  "limitations": "CPU mocks and static review validate the scoped delta, not live Obsidian acceptance. Prepared runtime facts are timestamped snapshots; the owner must apply fresh grant and execution gates.",
+  "actions": {
+    "native_execution": false,
+    "provider_or_model_calls": false,
+    "source_edits": false,
+    "product_suite_repeated": false
+  },
+  "checklist": {
+    "final_source_pins_revalidated": true,
+    "three_previous_findings_reviewed": true,
+    "manifest_normalization_reviewed": true,
+    "private_cpu_checks_passed": true,
+    "owner_and_supervisor_notification": "DONE",
+    "native_acceptance": "Owner retains execution and acceptance; outside this read-only peer review."
+  }
+}

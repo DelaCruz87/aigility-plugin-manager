@@ -41,7 +41,8 @@ El preparador devuelve un path privado fuera del vault. Allí guarda native.json
 - [x] Ruta API triada, sin gasto ni llamada modelo; excepción del writer autorizada por ROOT.
 - [x] Implementación, fixes focales y 12 comprobaciones CPU.
 - [x] Lectura nativa de preparación y compilación completa del paquete.
-- [ ] Peer delta final: solicitado con los pins exactos, pendiente de informe.
-- [ ] Grant, Begin único, loaded/native readback y ROOT closure: no ejecutados.
+- [x] Peer delta final: PASS_FOCAL_STATIC_AND_CPU, 12 checks privados y cero findings nuevos; reporte preservado en peer-final-review.json.
+- [x] Primer grant y Begin únicos: token63abeb26, ACK12:42:28.620Z. Original own3 copiados y Commander loaded/native true; guard workspace-buffers falla12:42:34.364Z, sin acciones en 2/3. Receipt FAILED_PRESERVED conservado. ROOT cierre independiente12:45:54.783Z/RELEASE posterior, taskSettled true, 143/145 configs raw iguales. Cambios posteriores community/workspace y nuevo Open Brain se conservan, causa del FAIL no atribuida. Buffers hash igual; activeLeaf/layout distintos al diagnóstico posterior.
+- [ ] Aceptación completa: no alcanzada por ese grant. ROOT autoriza una unidad nueva explícitamente limitada a 2/3, después del cierre, con allowlist de tres keys Commander del ribbon y todo el resto del layout/leaf/buffers estricto. No se reejecuta ni se restaura el original.
 
 Los PASS anteriores acreditan preparación y checks simulados; no acreditan instalación ni funcionamiento real de Commander.

@@ -1,0 +1,99 @@
+{
+  "at": "2026-10-07T12:44:53.964Z",
+  "token": "63abeb26-248d-4e05-b02d-a025b44a5387",
+  "job": {
+    "status": "FAILED_PRESERVED",
+    "pending": true,
+    "phase": "restore-Sandbox",
+    "taskSettled": true,
+    "flag": true
+  },
+  "cmdr": {
+    "loaded": true,
+    "native": true,
+    "manifest": {
+      "id": "cmdr",
+      "name": "Commander",
+      "version": "0.5.13",
+      "minAppVersion": "1.4.4",
+      "description": "Customize your workspace by adding commands everywhere, create Macros and supercharge your mobile toolbar.",
+      "author": "jsmorabito & phibr0",
+      "authorUrl": "https://github.com/phibr0",
+      "fundingUrl": "https://ko-fi.com/phibr0",
+      "isDesktopOnly": false,
+      "dir": ".obsidian/plugins/cmdr"
+    }
+  },
+  "settings": {
+    "open": false,
+    "last": "about",
+    "doc": "app://obsidian.md/index.html",
+    "modalDoc": "about:blank"
+  },
+  "changes": [
+    "native",
+    "foreign",
+    "activeLeaf",
+    "layoutHash"
+  ],
+  "workspace": {
+    "activeLeaf": {
+      "before": "45f0859ed1d9c012",
+      "after": "28df7853319efba7"
+    },
+    "layoutHash": {
+      "before": "172ce6d08d42f0b9824337fc092ec549282499bd32a6a305a43b8c3462973354",
+      "after": "3ee0e192c89053dff1e1d10554d516c5ea26acbd58d6f928f575b30f98bf3912"
+    },
+    "buffersHash": {
+      "before": "06fad56fbd987c0e46394dcc77915715a839ff8126d33be7ff96320c741f3f23",
+      "after": "06fad56fbd987c0e46394dcc77915715a839ff8126d33be7ff96320c741f3f23"
+    }
+  },
+  "protectedFSDrifts": [
+    {
+      "path": "/Users/eme/Obsidian/Sandbox/.obsidian/community-plugins.json",
+      "before": "963b33221c6bb381acbd6558a7ab65211e01e551c65bc261c383b107bce3132e",
+      "after": "f48d103584828f4b5efc37b89e0d3afb979b69c1ff6cee71e9ec858d450293d2"
+    },
+    {
+      "path": "/Users/eme/Obsidian/Sandbox/.obsidian/workspace.json",
+      "before": "1911f6ae81be6cc79a48d15f6fe3afc468c61cacffdd071f76ff4615a82d38e6",
+      "after": "605d42878381601e59bd526689eff202129c9c2345537cd69261a857773c4cf9"
+    }
+  ],
+  "artifacts": [
+    {
+      "vault": "Sandbox",
+      "files": {
+        "main.js": "d33ccd350ae2b642c65fed2a562808640bbef060b1705e7b110ea1b43ba942d2",
+        "manifest.json": "36c2b6e17b2dd3f06930d0b11700581393c60a855b7ee031e0989f46ab2b26ec",
+        "styles.css": "fa41476fda982d376ee358c54978d9b072fd462d2cecc82305912126f7a260a9"
+      }
+    },
+    {
+      "vault": "Sandbox 2",
+      "files": {
+        "main.js": null,
+        "manifest.json": "074a074c89df8904d27d83a699834a2756077ab44c873d0eb1f95371ef41d78d",
+        "styles.css": "fa41476fda982d376ee358c54978d9b072fd462d2cecc82305912126f7a260a9"
+      }
+    },
+    {
+      "vault": "Sandbox 3",
+      "files": {
+        "main.js": null,
+        "manifest.json": "074a074c89df8904d27d83a699834a2756077ab44c873d0eb1f95371ef41d78d",
+        "styles.css": "fa41476fda982d376ee358c54978d9b072fd462d2cecc82305912126f7a260a9"
+      }
+    }
+  ],
+  "cause": "unattributed",
+  "nativeDiskDelta": {
+    "added": [
+      "aigility-open-brain"
+    ],
+    "removed": [],
+    "orderEqual": false
+  }
+}

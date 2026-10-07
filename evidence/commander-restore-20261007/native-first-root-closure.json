@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-07T12:45:54.783Z",
+  "job": "commander-restore-three-sandbox-20261007",
+  "token": "63abeb26-248d-4e05-b02d-a025b44a5387",
+  "status": "FAILED_PRESERVED",
+  "pending": true,
+  "taskSettled": true,
+  "phase": "restore-Sandbox",
+  "error": "Error: Target FAILED_PRESERVED {\"job\":\"commander-restore-three-sandbox-20261007\",\"token\":\"63abeb26-248d-4e05-b02d-a025b44a5387\",\"status\":\"FAILED_PRESERVED\",\"pending\":true,\"phase\":\"load\",\"error\":\"Error: Preservation guard failed workspace-buffers\",\"firstGuardFailure\":{\"phase\":\"load\",\"failed\":[\"workspace-buffers\"],\"at\":\"2026-10-07T12:42:34.364Z\"},\"started\":true,\"at\":\"2026-10-07T12:42:34.364Z\"}",
+  "cmdr": {
+    "loaded": true,
+    "native": true,
+    "version": "0.5.13"
+  },
+  "activeLeaf": "28df7853319efba7",
+  "settingsOpen": false,
+  "protectedConfigDrift": [
+    "/Users/eme/Obsidian/Sandbox/.obsidian/community-plugins.json",
+    "/Users/eme/Obsidian/Sandbox/.obsidian/workspace.json"
+  ],
+  "artifacts": {
+    "/Users/eme/Obsidian/Sandbox": {
+      "main.js": "d33ccd350ae2b642c65fed2a562808640bbef060b1705e7b110ea1b43ba942d2",
+      "manifest.json": "36c2b6e17b2dd3f06930d0b11700581393c60a855b7ee031e0989f46ab2b26ec",
+      "styles.css": "fa41476fda982d376ee358c54978d9b072fd462d2cecc82305912126f7a260a9"
+    },
+    "/Users/eme/Obsidian/Sandbox 2": {
+      "main.js": null,
+      "manifest.json": "074a074c89df8904d27d83a699834a2756077ab44c873d0eb1f95371ef41d78d",
+      "styles.css": "fa41476fda982d376ee358c54978d9b072fd462d2cecc82305912126f7a260a9"
+    },
+    "/Users/eme/Obsidian/Sandbox 3": {
+      "main.js": null,
+      "manifest.json": "074a074c89df8904d27d83a699834a2756077ab44c873d0eb1f95371ef41d78d",
+      "styles.css": "fa41476fda982d376ee358c54978d9b072fd462d2cecc82305912126f7a260a9"
+    }
+  },
+  "pendingWriterPhysical": false,
+  "preservedFailure": true,
+  "noRetryNoRollback": true
+}
