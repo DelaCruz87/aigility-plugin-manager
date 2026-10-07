@@ -1,0 +1,88 @@
+(node:89612) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/src/integrated/ui.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ AIgility Plugin Manager - UI & Filter Test Suite
+  ▶ Pure Filter Function (filterPlugins)
+    ✔ Filters by kind: community (1.744208ms)
+    ✔ Filters by kind: core (0.155459ms)
+    ✔ Filters by kind: all (0.121ms)
+    ✔ Filters by tag membership (2.131375ms)
+    ✔ Filters by group assignment (0.614375ms)
+    ✔ Filters by search substring (name case-insensitive) (0.159625ms)
+    ✔ Filters by search substring (ID case-insensitive) (0.316ms)
+    ✔ Filters with combined criteria (kind + tag + group + search) (0.078792ms)
+    ✔ Large catalog memory and performance test (800+ plugins) (1.430542ms)
+  ✔ Pure Filter Function (filterPlugins) (104.943625ms)
+  ▶ ManagerUI Lifecycle and DOM Wrapping
+    ✔ install leaves native Settings and Community methods unchanged (1.19775ms)
+    ✔ native rendering retains this, return value and exception behavior (0.451834ms)
+    ✔ native list nodes and styles survive own list open, filter, refresh and dispose (1.701209ms)
+    ✔ separate manager opens without native Settings navigation (0.328958ms)
+    ✔ own dialog is reused while open and can reopen after close (0.496542ms)
+    ✔ closing own dialog releases only its mounted list (0.480208ms)
+    ✔ unknown native renderedItems are neither interpreted nor modified (0.4215ms)
+    ✔ dispose preserves later foreign replacements of native Settings methods (0.206ms)
+    ✔ own Settings renders Companion tabs and configuration instead of plugin rows (0.812458ms)
+    ✔ own Settings remembers its selected page on redisplay (0.74025ms)
+    ✔ dispose prevents subsequent rendering or reopening owned surfaces (0.258917ms)
+    ✔ gear opens native Settings before selecting the explicit plugin and closes own manager (0.245583ms)
+    ✔ dispose closes registered options modals and does not close a foreign modal (0.237583ms)
+    ✔ toggle disables repeat input until actual host readback completes (0.420292ms)
+    ✔ a real secondary tags menu route registers its dialog for disposal (0.493334ms)
+    ✔ failed toggle restores observed host state and exposes the failure (0.21ms)
+    ✔ self-disable continuation performs no checkbox mutation or refresh after dispose (0.153333ms)
+  ✔ ManagerUI Lifecycle and DOM Wrapping (10.388834ms)
+  ▶ Modals & Action Contracts
+    ✔ Tag editing updates tags via runtime.setTags and NEVER auto-applies profile (0.647375ms)
+    ✔ ProfileComparisonModal executes apply callback on confirm (0.326958ms)
+    ✔ Recovery banner renders when recoveryReason exists and reanudar calls runtime.resume() (0.356875ms)
+    ✔ Options modal sections render correctly without error (0.289791ms)
+    ✔ DeferredConfigModal saves the policy as ONE queued transaction: pause inside, tx save, no nested enqueue (0.8805ms)
+    ✔ Fixture partial apply enqueues ONE transaction and applies exact member states via tx.setEnabled (0.971167ms)
+    ✔ DebugManager testPair and candidate selection modal behavior (0.195916ms)
+  ✔ Modals & Action Contracts (3.868125ms)
+  ▶ UI Corrections - Sidebar Both Kinds and Debug Controls (Host 1.14.3)
+    ✔ own filters leave all native sidebar visibility unchanged (0.276333ms)
+    ▶ Debug session states and Advanced controls
+      ✔ completed session is not displayed as active merely for a truthy session object (13.855666ms)
+      ✔ interrupted session offers explicit recover and finish with no replay (0.46525ms)
+      ✔ interrupted session finish closes explicitly without replaying steps (0.683458ms)
+      ✔ active session with advanced enabled rehydrates and binds every advanced control (1.508584ms)
+      ✔ advanced controls stay disabled until an active session with advanced enabled exists (1.26925ms)
+      ✔ configureAdvanced compatibility errors surface as Notice and persistent status (0.543583ms)
+      ✔ AMD activation failure reports visibly through the persistent status (0.662333ms)
+      ✔ pair selectors use canonical kind:id values so shared ids never collide (1.105125ms)
+      ✔ candidate picker defaults to the SAFE ACTIVE set: 723 inactive installed plugins are never bulk-loaded (12.30275ms)
+      ✔ an inactive-but-installed plugin is one click away: it joins the selection explicitly (0.870625ms)
+      ✔ parsePluginRefKey round-trips canonical keys and rejects malformed ones (0.090167ms)
+    ✔ Debug session states and Advanced controls (33.89075ms)
+  ✔ UI Corrections - Sidebar Both Kinds and Debug Controls (Host 1.14.3) (34.221667ms)
+  ▶ Queued State Contract - Deferred Policies, GitHub Sources and Companion Backups
+    ✔ deferred policy edit does not touch state until its queued callback runs (1.554792ms)
+    ✔ external policy change while the modal is open conflicts instead of overwriting (0.241ms)
+    ✔ enabling a NEW policy on a native-true plugin excludes native via tx.reconcileDeferred before saving (0.461375ms)
+    ✔ without tx.reconcileDeferred the new policy fails visibly and nothing is written (0.22975ms)
+    ✔ new policy: the host exclusion happens with the fresh policy already enabled and native ends off (0.583167ms)
+    ✔ already enabled policy with native already off: the unload helper still runs (0.324416ms)
+    ✔ a failing exclusion reverts only the touched fields and saves nothing (0.423917ms)
+    ✔ a newly created entry is removed when the exclusion fails (0.555459ms)
+    ✔ enabling an already-invalid core policy is refused before any host call (0.500417ms)
+    ✔ disabling an existing invalid policy resolves the conflict without a host call (0.287084ms)
+    ✔ the manager itself is refused as a deferred target and stays protected (0.329458ms)
+    ✔ ReleasesModal resolves the tracked source by canonical key even when the repo name differs from the plugin id (0.590958ms)
+    ✔ installing from an uninstalled source calls github.install(repo, tag) and never guesses the state key (0.30275ms)
+    ✔ tracked source actions use canonical keys: raw-id rollback, queued toggle preserving concurrent fields (0.736791ms)
+    ✔ Companion backup renders its real format and restores as partial fixtures without applying anything (17.062375ms)
+    ✔ manager backup restore rebuilds definitions only: profiles replaced, fixtures and membership restored, enablement untouched (0.904041ms)
+    ✔ deleting the bound profile clears the local binding BEFORE the queued delete (0.395792ms)
+  ✔ Queued State Contract - Deferred Policies, GitHub Sources and Companion Backups (25.992125ms)
+✔ AIgility Plugin Manager - UI & Filter Test Suite (179.916708ms)
+ℹ tests 62
+ℹ suites 7
+ℹ pass 62
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2231.35

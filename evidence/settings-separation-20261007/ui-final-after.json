@@ -1,0 +1,8 @@
+{
+  "main.ts": "66b14e95f2a5c12b6b362fd0c646bcdbed6909c83c0b79084295ae7daca8f87f",
+  "src/integrated/ui.ts": "f3464648ae5701f7ba730ff78d358965ebcbfcfaeb232c656960aa03c8bac034",
+  "styles.css": "c5b8a3d5fd8250e3fd1156325164aaab83db70d0a68ff31cbc126be691cbf95a",
+  "tests/ui.test.mjs": "87bab040f0155f13ac88e2b8a2c980b6bdcfac75de98627507365fa8f412157d",
+  "tests/integration.test.mjs": "34ad1e96a1fd609659d920218997a3fb7f322ed77f8c525eccfe8bd950ff58ea",
+  "checks/settings-separation-20261007.mjs": "93b1bf595b904362b55504a5996ddcf1f658b1c851721923f0ee6ad1191e1479"
+}

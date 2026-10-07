@@ -1,6 +1,14 @@
 import { readFile, writeFile, unlink } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import assert from 'node:assert/strict';
+import { transform } from 'esbuild';
+
+const css = await readFile(new URL('../styles.css', import.meta.url), 'utf8');
+const parsedCss = await transform(css, { loader: 'css', minify: true });
+const widthRule = parsedCss.code.match(/([^{}]+)\{width:min\(900px,92vw\)/);
+assert.ok(widthRule, 'owned Manager dialog width rule exists');
+assert.equal(widthRule[1].trim(), '.aigility-manager-dialog', 'dialog width must not apply to settings rows');
 
 const source = await readFile(new URL('../tests/ui.test.mjs', import.meta.url), 'utf8');
 const fixture = source.slice(0, source.indexOf("describe('AIgility Plugin Manager - UI & Filter Test Suite'"));

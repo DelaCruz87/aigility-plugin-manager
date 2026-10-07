@@ -343,30 +343,12 @@ export class ManagerUI {
     public github: GithubManager;
     public debug: DebugManager;
 
-    private originalCommunityDisplay: ((...args: any[]) => any) | null = null;
-    private wrappedCommunityDisplay: ((...args: any[]) => any) | null = null;
-    private originalSettingOpen: ((...args: any[]) => any) | null = null;
-    private wrappedSettingOpen: ((...args: any[]) => any) | null = null;
-    private originalCommunityRenderTab: ((...args: any[]) => any) | null = null;
-    private wrappedCommunityRenderTab: ((...args: any[]) => any) | null = null;
-    private originalCommunityUpdate: ((...args: any[]) => any) | null = null;
-    private wrappedCommunityUpdate: ((...args: any[]) => any) | null = null;
-    private isRefreshingCommunityRender: boolean = false;
-    private communityTab: any = null;
-    private installedContainerEl: HTMLElement | null = null;
-    private installedDiagnosticEl: HTMLElement | null = null;
-    private sidebarControlsEl: HTMLElement | null = null;
-    private hiddenNativeElements: Array<{
-        el: HTMLElement;
-        display: string;
-        priority: string;
-    }> = [];
-    private sidebarTabSnapshots: Array<{
-        el: HTMLElement;
-        display: string;
-        priority: string;
-    }> = [];
-    private isInstalled: boolean = false;
+    private isInstalled = false;
+    private disposed = false;
+    private managerContainers = new Set<HTMLElement>();
+    private managerModal?: ManagerListModal;
+    private settingsRenderer?: ManagerOptionsModal;
+    private ownedModals = new Set<Modal>();
 
     // Daily compact list filter criteria
     public filterCriteria: FilterCriteria = {
@@ -395,428 +377,54 @@ export class ManagerUI {
         this.debug = debug;
     }
 
-    /**
-     * Installs UI hooks:
-     * - Hooks Obsidian Settings open
-     * - Wraps Community Plugins display to replace installed list area
-     * - Injects Opciones button and search/tag/group filter in sidebar
-     */
+    /** Own surfaces only: native Settings methods, list and sidebar stay untouched. */
     public install(): void {
-        if (this.isInstalled) return;
+        if (this.disposed) return;
         this.isInstalled = true;
-
-        try {
-            const setting = this.plugin?.app?.setting;
-            if (setting) {
-                // Hook app.setting.open if not already hooked
-                if (!this.originalSettingOpen && typeof setting.open === 'function') {
-                    const originalOpen = setting.open;
-                    this.originalSettingOpen = originalOpen;
-                    this.wrappedSettingOpen = (...args: any[]) => {
-                        const result = originalOpen.apply(setting, args);
-                        if (this.isInstalled) this.reconcileSettingsUI();
-                        return result;
-                    };
-                    setting.open = this.wrappedSettingOpen;
-                }
-
-                // Wrap Community Plugins tab display
-                this.wrapCommunityTab(setting);
-
-                // Reconcile sidebar if settings dialog is currently open
-                this.reconcileSettingsUI();
-            }
-        } catch (error) {
-            console.error('[AIgility UI] Error during install:', error);
-            this.showNotice('Error al inicializar la interfaz de AIgility: ' + (error as Error).message);
-        }
     }
 
-    /**
-     * Unloads UI hooks and restores original DOM and display methods.
-     */
+    public isDisposed(): boolean { return this.disposed; }
+
     public dispose(): void {
-        if (!this.isInstalled) return;
+        if (this.disposed) return;
+        this.disposed = true;
         this.isInstalled = false;
-
-        try {
-            // Restore Community tab display
-            if (
-                this.communityTab &&
-                this.originalCommunityDisplay &&
-                this.communityTab.display === this.wrappedCommunityDisplay
-            ) {
-                this.communityTab.display = this.originalCommunityDisplay;
-            }
-            this.originalCommunityDisplay = null;
-            this.wrappedCommunityDisplay = null;
-
-            // Restore native renderer hooks, but only the ones we still own
-            // (a later third-party replacement must survive unload)
-            if (
-                this.communityTab &&
-                this.originalCommunityRenderTab &&
-                this.communityTab.renderTab === this.wrappedCommunityRenderTab
-            ) {
-                this.communityTab.renderTab = this.originalCommunityRenderTab;
-            }
-            this.originalCommunityRenderTab = null;
-            this.wrappedCommunityRenderTab = null;
-
-            if (
-                this.communityTab &&
-                this.originalCommunityUpdate &&
-                this.communityTab.update === this.wrappedCommunityUpdate
-            ) {
-                this.communityTab.update = this.originalCommunityUpdate;
-            }
-            this.originalCommunityUpdate = null;
-            this.wrappedCommunityUpdate = null;
-
-            // Restore hidden native elements in community tab
-            this.restoreHiddenNativeElements();
-
-            // Remove custom installed list container
-            this.removeInstalledContainer();
-            this.removeInstalledDiagnostic();
-
-            // Remove sidebar controls
-            if (this.sidebarControlsEl && this.sidebarControlsEl.parentElement) {
-                this.sidebarControlsEl.parentElement.removeChild(this.sidebarControlsEl);
-                this.sidebarControlsEl = null;
-            }
-
-            // Restore app.setting.open
-            const setting = this.plugin?.app?.setting;
-            if (setting && this.originalSettingOpen && setting.open === this.wrappedSettingOpen) {
-                setting.open = this.originalSettingOpen;
-            }
-            this.originalSettingOpen = null;
-            this.wrappedSettingOpen = null;
-
-            // Restore visibility of any filtered plugin tabs in sidebar
-            this.restoreSidebarTabs(setting);
-        } catch (error) {
-            console.error('[AIgility UI] Error during dispose:', error);
-        }
+        this.managerModal?.close();
+        this.managerModal = undefined;
+        for (const modal of [...this.ownedModals]) modal.close();
+        this.ownedModals.clear();
+        this.managerContainers.clear();
+        this.settingsRenderer = undefined;
     }
 
-    /**
-     * Wraps the community-plugins tab display function.
-     */
-    private wrapCommunityTab(setting: any): void {
-        if (!setting || !Array.isArray(setting.settingTabs)) return;
-
-        const tab = setting.settingTabs.find((t: any) => t && t.id === 'community-plugins');
-        if (!tab) return;
-
-        this.communityTab = tab;
-        if (typeof tab.renderTab !== 'function' && !this.originalCommunityDisplay && typeof tab.display === 'function') {
-            const originalDisplay = tab.display;
-            this.originalCommunityDisplay = originalDisplay;
-            this.wrappedCommunityDisplay = (...args: any[]) => {
-                if (!this.isInstalled) return originalDisplay.apply(tab, args);
-                this.restoreHiddenNativeElements();
-                this.removeInstalledContainer();
-                // Call native display first to ensure restricted mode and browse buttons are rendered
-                originalDisplay.apply(tab, args);
-                // Replace installed list section only
-                this.patchCommunityInstalledArea(tab.containerEl, tab);
-            };
-            tab.display = this.wrappedCommunityDisplay;
-        }
-
-        // Native host (>= 1.14.x) renders via renderTab/update instead of
-        // display, so those paths must be hooked too or native tab changes
-        // bypass the integrated list.
-        this.wrapCommunityRenderHooks(tab);
+    public openManagerModal(): void {
+        if (this.disposed || this.managerModal) return;
+        this.managerModal = new ManagerListModal(this.plugin.app, this);
+        this.managerModal.open();
     }
 
-    /**
-     * Wraps the native renderTab/update renderer methods (if present) so the
-     * integrated list is refreshed after the native renderer completes.
-     * The legacy display fallback above stays authoritative when renderTab
-     * is absent (older hosts).
-     */
-    private wrapCommunityRenderHooks(tab: any): void {
-        if (!tab || typeof tab.renderTab !== 'function') return;
-
-        if (!this.originalCommunityRenderTab) {
-            const originalRenderTab = tab.renderTab;
-            this.originalCommunityRenderTab = originalRenderTab;
-            this.wrappedCommunityRenderTab = (...args: any[]) => {
-                const isOuterRender = !this.isRefreshingCommunityRender;
-                if (isOuterRender) this.isRefreshingCommunityRender = true;
-                try {
-                    const result = originalRenderTab.apply(tab, args);
-                    if (isOuterRender && this.isInstalled) {
-                        this.refreshCommunityInstalledArea(tab);
-                    }
-                    return result;
-                } finally {
-                    if (isOuterRender) this.isRefreshingCommunityRender = false;
-                }
-            };
-            tab.renderTab = this.wrappedCommunityRenderTab;
-        }
-
-        if (!this.originalCommunityUpdate && typeof tab.update === 'function') {
-            const originalUpdate = tab.update;
-            this.originalCommunityUpdate = originalUpdate;
-            this.wrappedCommunityUpdate = (...args: any[]) => {
-                const isOuterRender = !this.isRefreshingCommunityRender;
-                if (isOuterRender) this.isRefreshingCommunityRender = true;
-                try {
-                    const result = originalUpdate.apply(tab, args);
-                    if (isOuterRender && this.isInstalled) {
-                        this.refreshCommunityInstalledArea(tab);
-                    }
-                    return result;
-                } finally {
-                    if (isOuterRender) this.isRefreshingCommunityRender = false;
-                }
-            };
-            tab.update = this.wrappedCommunityUpdate;
-        }
+    public releaseManagerModal(container: HTMLElement): void {
+        this.managerContainers.delete(container);
+        this.managerModal = undefined;
     }
 
-    /**
-     * Re-applies native hidden styles and mounts exactly one manager list
-     * after a native renderer pass.
-     */
-    private refreshCommunityInstalledArea(tab: any): void {
-        this.restoreHiddenNativeElements();
-        this.removeInstalledContainer();
-        this.patchCommunityInstalledArea(tab.containerEl, tab);
-        this.patchSidebar((this.plugin.app as any).setting);
+    public displaySettings(container: HTMLElement): void {
+        if (this.disposed) return;
+        this.settingsRenderer ??= new ManagerOptionsModal(this.plugin.app, this);
+        this.settingsRenderer.display(container);
     }
 
-    /**
-     * Reconciles Settings UI whenever settings opens or tab changes.
-     */
-    public reconcileSettingsUI(): void {
-        const setting = this.plugin?.app?.setting;
-        if (!setting) return;
-
-        this.wrapCommunityTab(setting);
-
-        // If community-plugins tab is currently active, patch installed area
-        if (setting.activeTab && setting.activeTab.id === 'community-plugins' && setting.activeTab.containerEl) {
-            this.patchCommunityInstalledArea(setting.activeTab.containerEl, setting.activeTab);
-        }
-
-        // Patch sidebar headers and filter controls
-        this.patchSidebar(setting);
-    }
-
-    /**
-     * Patches the Community Plugins tab container:
-     * Keeps Restricted mode and Browse button intact; hides native installed list and mounts ManagerUI.
-     */
-    private patchCommunityInstalledArea(containerEl: HTMLElement, tab: any): void {
-        if (!containerEl) return;
-
-        this.restoreHiddenNativeElements();
-        this.removeInstalledContainer();
-        this.removeInstalledDiagnostic();
-
-        const installedGroup = Array.isArray(tab?.renderedItems)
-            ? tab.renderedItems.find((item: any) =>
-                item?.type === 'list' &&
-                ['Installed plugins', 'Plugins instalados'].includes(item?.def?.heading)
-            )
-            : null;
-        const groupEl = installedGroup?.groupEl;
-
-        if (!groupEl || typeof groupEl !== 'object' || !groupEl.style) {
-            this.showInstalledAreaDiagnostic(containerEl);
-            return;
-        }
-
-        const style = groupEl.style as CSSStyleDeclaration;
-        this.hiddenNativeElements.push({
-            el: groupEl,
-            display: typeof style.getPropertyValue === 'function'
-                ? style.getPropertyValue('display')
-                : (style.display || ''),
-            priority: typeof style.getPropertyPriority === 'function'
-                ? style.getPropertyPriority('display')
-                : ''
-        });
-        style.display = 'none';
-
-        // Create our mounted container
-        this.installedContainerEl = document.createElement('div');
-        this.installedContainerEl.className = 'aigility-manager-installed-container';
-        containerEl.appendChild(this.installedContainerEl);
-
-        // Render ManagerUI in this container
-        this.display(this.installedContainerEl);
-    }
-
-    private removeInstalledContainer(): void {
-        if (this.installedContainerEl?.parentElement) {
-            this.installedContainerEl.parentElement.removeChild(this.installedContainerEl);
-        }
-        this.installedContainerEl = null;
-    }
-
-    private restoreHiddenNativeElements(): void {
-        for (const snapshot of this.hiddenNativeElements) {
-            const style = snapshot.el?.style as CSSStyleDeclaration | undefined;
-            if (
-                !style ||
-                style.display !== 'none' ||
-                (typeof style.getPropertyPriority === 'function' && style.getPropertyPriority('display') !== '')
-            ) continue;
-            if (typeof style.setProperty === 'function') {
-                if (snapshot.display) style.setProperty('display', snapshot.display, snapshot.priority);
-                else style.removeProperty('display');
-            } else {
-                style.display = snapshot.display;
-            }
-        }
-        this.hiddenNativeElements = [];
-    }
-
-    private showInstalledAreaDiagnostic(containerEl: HTMLElement): void {
-        const diagnostic = document.createElement('div');
-        diagnostic.className = 'aigility-ui-diagnostic';
-        diagnostic.setAttribute('role', 'status');
-        diagnostic.textContent = 'AIgility no pudo identificar el grupo nativo de plugins instalados. Se conserva la lista de Obsidian.';
-        containerEl.appendChild(diagnostic);
-        this.installedDiagnosticEl = diagnostic;
-    }
-
-    private removeInstalledDiagnostic(): void {
-        if (this.installedDiagnosticEl?.parentElement) {
-            this.installedDiagnosticEl.parentElement.removeChild(this.installedDiagnosticEl);
-        }
-        this.installedDiagnosticEl = null;
-    }
-
-    /**
-     * Injects Opciones button and search/tag/group filter fields into the sidebar
-     * communityPluginTabContainer header.
-     */
-    private patchSidebar(setting: any): void {
-        if (!setting) return;
-
-        // Locate sidebar container for community plugin tabs
-        // Obsidian setting has communityPluginTabContainer or tabHeadersEl
-        const container =
-            setting.communityPluginTabContainer ||
-            setting.tabHeadersEl?.querySelector('.vertical-tab-header-group:last-child') ||
-            setting.tabHeadersEl;
-
-        if (!container) return;
-
-        // Ensure we don't inject multiple times
-        if (this.sidebarControlsEl && this.sidebarControlsEl.parentElement === container) {
-            return;
-        }
-
-        if (this.sidebarControlsEl && this.sidebarControlsEl.parentElement) {
-            this.sidebarControlsEl.parentElement.removeChild(this.sidebarControlsEl);
-        }
-
-        this.sidebarControlsEl = document.createElement('div');
-        this.sidebarControlsEl.className = 'aigility-sidebar-header-controls';
-
-        // Opciones button
-        const topRow = document.createElement('div');
-        topRow.className = 'aigility-sidebar-top-row';
-
-        const optionsBtn = document.createElement('button');
-        optionsBtn.className = 'mod-cta aigility-options-btn';
-        optionsBtn.textContent = '⚙️ Opciones Gestor';
-        optionsBtn.title = 'Abrir configuración de perfiles, diferidos, fixtures y GitHub';
-        optionsBtn.onclick = (e) => {
-            e.preventDefault();
-            this.openOptionsModal();
+    public openOwnedModal(modal: Modal): void {
+        if (this.disposed) return;
+        const onClose = modal.onClose;
+        modal.onClose = () => {
+            try { onClose?.call(modal); }
+            finally { this.ownedModals.delete(modal); }
         };
-        topRow.appendChild(optionsBtn);
-        this.sidebarControlsEl.appendChild(topRow);
-
-        // Sidebar filters row
-        const filterRow = document.createElement('div');
-        filterRow.className = 'aigility-sidebar-filters';
-
-        // Search input
-        const searchInput = document.createElement('input');
-        searchInput.type = 'search';
-        searchInput.className = 'aigility-sidebar-search';
-        searchInput.placeholder = 'Filtrar plugins...';
-        searchInput.value = this.sidebarFilterCriteria.search || '';
-        searchInput.oninput = () => {
-            this.sidebarFilterCriteria.search = searchInput.value;
-            this.applySidebarFilter(setting);
-        };
-        filterRow.appendChild(searchInput);
-
-        // Tag dropdown
-        const tagSelect = document.createElement('select');
-        tagSelect.className = 'dropdown aigility-sidebar-tag-select';
-        const defaultTagOpt = document.createElement('option');
-        defaultTagOpt.value = 'all';
-        defaultTagOpt.textContent = 'Tag: Todas';
-        tagSelect.appendChild(defaultTagOpt);
-
-        const tags = this.runtime.state?.tags || [];
-        for (const tag of tags) {
-            const opt = document.createElement('option');
-            opt.value = tag.id;
-            opt.textContent = tag.name;
-            tagSelect.appendChild(opt);
-        }
-        tagSelect.value = this.sidebarFilterCriteria.tag || 'all';
-        tagSelect.onchange = () => {
-            this.sidebarFilterCriteria.tag = tagSelect.value;
-            this.applySidebarFilter(setting);
-        };
-        filterRow.appendChild(tagSelect);
-
-        // Group dropdown
-        const groupSelect = document.createElement('select');
-        groupSelect.className = 'dropdown aigility-sidebar-group-select';
-        const defaultGroupOpt = document.createElement('option');
-        defaultGroupOpt.value = 'all';
-        defaultGroupOpt.textContent = 'Grupo: Todos';
-        groupSelect.appendChild(defaultGroupOpt);
-
-        const groups = this.runtime.state?.groups || [];
-        for (const group of groups) {
-            const opt = document.createElement('option');
-            opt.value = group.id;
-            opt.textContent = group.name;
-            groupSelect.appendChild(opt);
-        }
-        groupSelect.value = this.sidebarFilterCriteria.group || 'all';
-        groupSelect.onchange = () => {
-            this.sidebarFilterCriteria.group = groupSelect.value;
-            this.applySidebarFilter(setting);
-        };
-        filterRow.appendChild(groupSelect);
-
-        this.sidebarControlsEl.appendChild(filterRow);
-
-        // Insert at beginning of container
-        if (container.firstChild) {
-            container.insertBefore(this.sidebarControlsEl, container.firstChild);
-        } else {
-            container.appendChild(this.sidebarControlsEl);
-        }
-
-        // Initial filter application
-        this.applySidebarFilter(setting);
+        this.ownedModals.add(modal);
+        modal.open();
     }
 
-    /**
-     * Resolves the canonical PluginRef kind of a settings tab found in
-     * setting.pluginTabs (host 1.14.3 includes CORE and community tabs there).
-     * Canonical records decide first; the app.internalPlugins.plugins registry
-     * identifies core tabs that have no local record yet.
-     */
     private resolveSidebarTabKind(tab: any): 'community' | 'core' {
         const pluginId = String(tab?.id || tab?.plugin?.manifest?.id || '');
         const records = this.runtime.state?.records;
@@ -833,123 +441,12 @@ export class ManagerUI {
         return 'community';
     }
 
-    private sidebarTabRecord(tab: any, kind: 'community' | 'core'): PluginRecord | undefined {
-        const pluginId = String(tab?.id || tab?.plugin?.manifest?.id || '');
-        return this.runtime.state?.records?.[`${kind}:${pluginId}`];
-    }
-
-    /**
-     * Filters plugin tabs of BOTH kinds by name/ID/tag/group. Only each tab's
-     * nav element visibility is touched; the nine general categories in
-     * setting.settingTabs stay accessible.
-     */
-    public applySidebarFilter(setting: any): void {
-        if (!setting || !Array.isArray(setting.pluginTabs)) return;
-
-        const { search, tag, group } = this.sidebarFilterCriteria;
-        const normalizedSearch = search ? search.trim().toLowerCase() : '';
-
-        for (const tab of setting.pluginTabs) {
-            const kind = this.resolveSidebarTabKind(tab);
-            const pluginId = String(tab?.id || tab?.plugin?.manifest?.id || '');
-            const record = this.sidebarTabRecord(tab, kind);
-            const pluginName = String(tab?.name || tab?.plugin?.manifest?.name || record?.name || pluginId).toLowerCase();
-
-            let matches = true;
-
-            // Search filter (name or ID)
-            if (normalizedSearch) {
-                if (!pluginName.includes(normalizedSearch) && !pluginId.toLowerCase().includes(normalizedSearch)) {
-                    matches = false;
-                }
-            }
-
-            // Tag filter (both kinds)
-            if (matches && tag && tag !== 'all') {
-                if (!record || !Array.isArray(record.tags) || !record.tags.includes(tag)) {
-                    matches = false;
-                }
-            }
-
-            // Group filter (both kinds)
-            if (matches && group && group !== 'all') {
-                if (!record || record.group !== group) {
-                    matches = false;
-                }
-            }
-
-            this.applySidebarTabVisibility(tab, matches);
-        }
-    }
-
-    /**
-     * Applies one tab's visibility through an owned snapshot. Hiding records
-     * the previous inline display and stores our postimage; showing or
-     * restoring only reverts the element while it still carries our postimage
-     * (`display: none`), so later manual DOM changes always win.
-     */
-    private applySidebarTabVisibility(tab: any, matches: boolean): void {
-        const navEl = tab?.navEl;
-        if (!navEl || !navEl.style) return;
-
-        const style = navEl.style as CSSStyleDeclaration;
-        const snapshotIndex = this.sidebarTabSnapshots.findIndex((s) => s.el === navEl);
-
-        if (matches) {
-            if (snapshotIndex !== -1) {
-                const snapshot = this.sidebarTabSnapshots[snapshotIndex];
-                if (style.display === 'none') {
-                    if (typeof style.setProperty === 'function') {
-                        if (snapshot.display) style.setProperty('display', snapshot.display, snapshot.priority);
-                        else style.removeProperty('display');
-                    } else {
-                        style.display = snapshot.display;
-                    }
-                }
-                this.sidebarTabSnapshots.splice(snapshotIndex, 1);
-            } else if (style.display !== 'none') {
-                style.display = '';
-            }
-            return;
-        }
-
-        if (snapshotIndex !== -1) return; // already hidden by us
-        if (style.display === 'none') return; // hidden by someone else; we do not own it
-        this.sidebarTabSnapshots.push({
-            el: navEl,
-            display: typeof style.getPropertyValue === 'function'
-                ? style.getPropertyValue('display')
-                : (style.display || ''),
-            priority: typeof style.getPropertyPriority === 'function'
-                ? style.getPropertyPriority('display')
-                : ''
-        });
-        style.display = 'none';
-    }
-
-    /**
-     * Restores visibility of only the tabs this UI hid, and only while they
-     * still carry our owned postimage.
-     */
-    private restoreSidebarTabs(setting: any): void {
-        for (const snapshot of this.sidebarTabSnapshots) {
-            const style = snapshot.el?.style as CSSStyleDeclaration | undefined;
-            if (!style || style.display !== 'none') continue;
-            if (typeof style.setProperty === 'function') {
-                if (snapshot.display) style.setProperty('display', snapshot.display, snapshot.priority);
-                else style.removeProperty('display');
-            } else {
-                style.display = snapshot.display;
-            }
-        }
-        this.sidebarTabSnapshots = [];
-    }
-
     /**
      * Displays the primary compact list view in containerEl.
      */
     public display(containerEl: HTMLElement): void {
-        if (!containerEl) return;
+        if (!containerEl || this.disposed) return;
+        this.managerContainers.add(containerEl);
         containerEl.empty?.();
         while (containerEl.firstChild) {
             containerEl.removeChild(containerEl.firstChild);
@@ -1001,7 +498,7 @@ export class ManagerUI {
             try {
                 await this.runtime.resume();
                 this.showNotice('Automatizaciones reanudadas');
-                this.display(this.installedContainerEl || containerEl);
+                this.refreshManagerView();
             } catch (err) {
                 this.showNotice('Error al reanudar: ' + (err as Error).message);
             }
@@ -1127,11 +624,10 @@ export class ManagerUI {
      * Refreshes the list container while preserving search focus.
      */
     private refreshList(): void {
-        const root = this.installedContainerEl?.querySelector('.aigility-manager-root');
-        if (!root) return;
-        const listContainer = root.querySelector('.aigility-plugin-list') as HTMLElement;
-        if (listContainer) {
-            this.renderPluginRows(listContainer);
+        if (this.disposed) return;
+        for (const container of this.managerContainers) {
+            const list = container.querySelector('.aigility-plugin-list') as HTMLElement;
+            if (list) this.renderPluginRows(list);
         }
     }
 
@@ -1288,17 +784,35 @@ export class ManagerUI {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = Boolean(plugin.loaded);
+        checkbox.setAttribute('aria-label', `Activar ${plugin.name || plugin.ref.id}`);
         switchLabel.classList.toggle('is-enabled', checkbox.checked);
+        let busy = false;
         checkbox.onchange = async () => {
+            if (busy || this.disposed) return;
             const newWanted = checkbox.checked;
+            busy = true;
+            checkbox.disabled = true;
+            switchLabel.classList.add('is-busy');
             switchLabel.classList.toggle('is-enabled', newWanted);
             try {
                 await this.runtime.setEnabled(plugin.ref, newWanted);
+                if (this.disposed) return;
+                const observed = this.runtime.list().find((item) => pluginRefKey(item.ref) === pluginRefKey(plugin.ref));
+                if (observed) checkbox.checked = Boolean(observed.loaded);
+                switchLabel.classList.toggle('is-enabled', checkbox.checked);
                 this.refreshList();
             } catch (err) {
-                checkbox.checked = !newWanted;
+                if (this.disposed) return;
+                const observed = this.runtime.list().find((item) => pluginRefKey(item.ref) === pluginRefKey(plugin.ref));
+                checkbox.checked = observed ? Boolean(observed.loaded) : !newWanted;
                 switchLabel.classList.toggle('is-enabled', checkbox.checked);
                 this.showNotice('Error al cambiar estado: ' + (err as Error).message);
+            } finally {
+                busy = false;
+                if (!this.disposed) {
+                    checkbox.disabled = false;
+                    switchLabel.classList.remove('is-busy');
+                }
             }
         };
         switchLabel.appendChild(checkbox);
@@ -1318,6 +832,9 @@ export class ManagerUI {
                 gearBtn.title = 'Abrir ajustes del plugin';
                 gearBtn.onclick = (e) => {
                     e.stopPropagation();
+                    if (this.disposed) return;
+                    this.managerModal?.close();
+                    this.plugin.app.setting.open();
                     this.plugin.app.setting.openTabById(settingTab.id || plugin.ref.id);
                 };
                 actionsEl.appendChild(gearBtn);
@@ -1354,7 +871,7 @@ export class ManagerUI {
         menu.addItem((item) => {
             item.setTitle('🏷️ Editar etiquetas...')
                 .onClick(() => {
-                    new TagMembershipModal(this.plugin.app, this, plugin).open();
+                    this.openOwnedModal(new TagMembershipModal(this.plugin.app, this, plugin));
                 });
         });
 
@@ -1370,7 +887,7 @@ export class ManagerUI {
         menu.addItem((item) => {
             item.setTitle('⏳ Configurar carga diferida...')
                 .onClick(() => {
-                    new DeferredConfigModal(this.plugin.app, this, plugin).open();
+                    this.openOwnedModal(new DeferredConfigModal(this.plugin.app, this, plugin));
                 });
         });
 
@@ -1379,7 +896,7 @@ export class ManagerUI {
             menu.addItem((item) => {
                 item.setTitle('🐙 Ver releases de GitHub...')
                     .onClick(() => {
-                        new GitHubReleasesModal(this.plugin.app, this, plugin).open();
+                        this.openOwnedModal(new GitHubReleasesModal(this.plugin.app, this, plugin));
                     });
             });
 
@@ -1448,7 +965,7 @@ export class ManagerUI {
                 btn.setButtonText('Cancelar').onClick(() => modal.close());
             });
 
-        modal.open();
+        this.openOwnedModal(modal);
     }
 
     private promptPinVersion(plugin: EffectivePlugin): void {
@@ -1486,20 +1003,22 @@ export class ManagerUI {
                 btn.setButtonText('Cancelar').onClick(() => modal.close());
             });
 
-        modal.open();
+        this.openOwnedModal(modal);
     }
 
     public openOptionsModal(): void {
-        new ManagerOptionsModal(this.plugin.app, this).open();
+        this.openOwnedModal(new ManagerOptionsModal(this.plugin.app, this));
     }
 
     public showNotice(msg: string): void {
+        if (this.disposed) return;
         new Notice(msg, 5000);
     }
 
     /** Re-renders the mounted installed list; safe when the settings tab is closed. */
     public refreshManagerView(): void {
-        if (this.installedContainerEl) this.display(this.installedContainerEl);
+        if (this.disposed) return;
+        for (const container of this.managerContainers) this.display(container);
     }
 
     /**
@@ -2073,9 +1592,23 @@ export class GitHubReleasesModal extends Modal {
  * 5. Debugging session candidates, binary search, pairs, observe, reports, AMD toggle
  * 6. Advanced effective state summary / conflicts & recovery banner
  */
+export class ManagerListModal extends Modal {
+    private ui: ManagerUI;
+    constructor(app: App, ui: ManagerUI) { super(app); this.ui = ui; }
+    onOpen(): void {
+        this.titleEl.setText('AIgility Plugin Manager');
+        this.modalEl?.classList.add('aigility-manager-dialog');
+        this.ui.display(this.contentEl);
+    }
+    onClose(): void {
+        this.ui.releaseManagerModal(this.contentEl);
+        this.contentEl.empty?.();
+    }
+}
+
 export class ManagerOptionsModal extends Modal {
     private ui: ManagerUI;
-    private activeSection: string = 'profiles';
+    private activeSection: string = 'deferred';
 
     constructor(app: App, ui: ManagerUI) {
         super(app);
@@ -2083,52 +1616,68 @@ export class ManagerOptionsModal extends Modal {
     }
 
     onOpen(): void {
-        const { contentEl, titleEl } = this;
-        titleEl.setText('Opciones del Gestor de Plugins');
-        contentEl.empty?.();
-        while (contentEl.firstChild) {
-            contentEl.removeChild(contentEl.firstChild);
-        }
+        this.titleEl.setText('Ajustes de AIgility Plugin Manager');
+        this.modalEl?.classList.add('aigility-manager-dialog');
+        this.display(this.contentEl);
+    }
 
-        const modalRoot = contentEl.createDiv({ cls: 'aigility-options-modal' });
-
-        // Nav tabs
-        const nav = modalRoot.createDiv({ cls: 'aigility-options-nav' });
+    public display(container: HTMLElement): void {
+        if (this.ui.isDisposed()) return;
+        container.empty?.();
+        while (container.firstChild) container.removeChild(container.firstChild);
+        const root = container.createDiv({ cls: 'aigility-manager-settings' });
+        const nav = root.createDiv({ cls: 'aigility-settings-tabs' });
+        nav.setAttribute?.('role', 'tablist');
         const sections = [
-            { id: 'profiles', label: 'Perfiles' },
-            { id: 'fixtures', label: 'Fixtures y Protecciones' },
-            { id: 'deferred', label: 'Carga Diferida' },
-            { id: 'github', label: 'GitHub y Betas' },
-            ...(this.ui.runtime.list().some((item) => item.ref.kind === 'community' && item.installed) || this.ui.plugin.archive?.list().length ? [{ id: 'downloaded', label: 'Descargados' }] : []),
-            { id: 'debug', label: 'Depuración' },
-            { id: 'advanced', label: 'Avanzado y Recuperación' }
+            { id: 'deferred', label: 'Deferred', description: 'Carga diferida y arranque escalonado.' },
+            { id: 'profiles', label: 'Profiles', description: 'Perfiles, tags, grupos y backups.' },
+            { id: 'devices', label: 'Devices', description: 'Perfil local y aplicación manual en este dispositivo.' },
+            { id: 'advanced', label: 'Settings', description: 'Estado efectivo, conflictos y recuperación.' },
+            { id: 'fixtures', label: 'Fixtures', description: 'Estados exactos y protecciones.' },
+            { id: 'github', label: 'GitHub', description: 'Versiones, betas y fuentes.' },
+            ...(this.ui.runtime.list().some((item) => item.ref.kind === 'community' && item.installed) || this.ui.plugin.archive?.list().length ? [{ id: 'downloaded', label: 'Downloaded', description: 'Plugins descargados y archivados.' }] : []),
+            { id: 'debug', label: 'Debug', description: 'Diagnóstico de conflictos.' }
         ];
-
-        const sectionBody = modalRoot.createDiv({ cls: 'aigility-options-section' });
-
-        for (const sec of sections) {
-            const tabBtn = nav.createEl('button', {
-                cls: `aigility-nav-tab ${this.activeSection === sec.id ? 'is-active' : ''}`,
-                text: sec.label
-            });
-            tabBtn.onclick = () => {
-                this.activeSection = sec.id;
-                nav.querySelectorAll('.aigility-nav-tab').forEach((el) => el.classList.remove('is-active'));
-                tabBtn.classList.add('is-active');
-                this.renderActiveSection(sectionBody);
-            };
+        const page = root.createDiv({ cls: 'aigility-settings-page' });
+        const header = page.createDiv({ cls: 'aigility-settings-header-card' });
+        const copy = header.createDiv({ cls: 'aigility-settings-header-copy' });
+        copy.createEl('h2', { text: 'AIgility Plugin Manager' });
+        copy.createEl('div', { cls: 'setting-item-description', text: 'Perfiles, arranque y diagnóstico de plugins.' });
+        const open = header.createEl('button', { text: 'Abrir gestor' });
+        open.onclick = () => this.ui.openManagerModal();
+        const section = page.createDiv({ cls: 'aigility-settings-section' });
+        const buttons = new Map<string, HTMLElement>();
+        const render = () => {
+            for (const [id, tab] of buttons) {
+                const selected = id === this.activeSection;
+                tab.classList.toggle('is-active', selected);
+                tab.setAttribute?.('aria-selected', String(selected));
+            }
+            this.renderActiveSection(section);
+        };
+        for (const item of sections) {
+            const button = nav.createEl('button', { cls: 'aigility-settings-tab aigility-nav-tab', text: item.label });
+            button.setAttribute?.('role', 'tab');
+            button.setAttribute?.('data-section', item.id);
+            button.classList.toggle('is-active', this.activeSection === item.id);
+            button.setAttribute?.('aria-selected', String(this.activeSection === item.id));
+            buttons.set(item.id, button);
+            button.onclick = () => { this.activeSection = item.id; render(); };
         }
-
-        this.renderActiveSection(sectionBody);
+        render();
     }
 
     private renderActiveSection(container: HTMLElement): void {
+        if (this.ui.isDisposed()) return;
         container.empty?.();
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
 
         switch (this.activeSection) {
+            case 'devices':
+                this.renderDevicesSection(container);
+                break;
             case 'profiles':
                 this.renderProfilesSection(container);
                 break;
@@ -2156,12 +1705,10 @@ export class ManagerOptionsModal extends Modal {
     /**
      * Section 1: Profile CRUD / tag membership / backups / workspace / dropdown binding local Apply at start
      */
-    private renderProfilesSection(container: HTMLElement): void {
-        container.createEl('h3', { text: 'Gestión de Perfiles de Dispositivo' });
-
+    private renderDevicesSection(container: HTMLElement): void {
+        container.createEl('h3', { text: 'Dispositivo actual' });
         const state = this.ui.runtime.state;
         const local = this.ui.runtime.local;
-
         // Local Device Profile Binding
         new Setting(container)
             .setName('Perfil asociado a este dispositivo')
@@ -2208,9 +1755,9 @@ export class ManagerOptionsModal extends Modal {
                         }
                         try {
                             const changes = await this.ui.runtime.previewProfile(targetId);
-                            new ProfileComparisonModal(this.app, changes, async () => {
+                            this.ui.openOwnedModal(new ProfileComparisonModal(this.app, changes, async () => {
                                 await this.ui.runtime.applyProfile(targetId, changes);
-                            }).open();
+                            }));
                         } catch (err) {
                             this.ui.showNotice('Error al generar vista previa: ' + (err as Error).message);
                         }
@@ -2227,6 +1774,11 @@ export class ManagerOptionsModal extends Modal {
                 });
             });
 
+    }
+
+    private renderProfilesSection(container: HTMLElement): void {
+        container.createEl('h3', { text: 'Perfiles' });
+        const state = this.ui.runtime.state;
         // Profiles list
         container.createEl('h4', { text: 'Perfiles configurados' });
         for (const profile of state.deviceProfiles || []) {
@@ -2459,7 +2011,7 @@ export class ManagerOptionsModal extends Modal {
                 btn.setButtonText('Cancelar').onClick(() => modal.close());
             });
 
-        modal.open();
+        this.ui.openOwnedModal(modal);
     }
 
     private openCreateProfileModal(parentContainer: HTMLElement): void {
@@ -2514,7 +2066,7 @@ export class ManagerOptionsModal extends Modal {
             })
             .addButton((btn) => btn.setButtonText('Cancelar').onClick(() => modal.close()));
 
-        modal.open();
+        this.ui.openOwnedModal(modal);
     }
 
     /**
@@ -2628,7 +2180,7 @@ export class ManagerOptionsModal extends Modal {
                 })
                 .addButton((btn) => {
                     btn.setButtonText('Editar miembros').onClick(() => {
-                        new FixtureEditModal(this.app, this.ui, fixture).open();
+                        this.ui.openOwnedModal(new FixtureEditModal(this.app, this.ui, fixture));
                     });
                 })
                 .addButton((btn) => {
@@ -2700,7 +2252,7 @@ export class ManagerOptionsModal extends Modal {
             })
             .addButton((btn) => btn.setButtonText('Cancelar').onClick(() => modal.close()));
 
-        modal.open();
+        this.ui.openOwnedModal(modal);
     }
 
     /**
@@ -2881,7 +2433,7 @@ export class ManagerOptionsModal extends Modal {
                 btn.setButtonText('Releases').onClick(() => {
                     const pluginItem = this.ui.runtime.list().find((p) => pluginRefKey(p.ref) === sourceKey)
                         ?? this.uninstalledSourceItem(sourceKey, source.repo);
-                    new GitHubReleasesModal(this.app, this.ui, pluginItem).open();
+                    this.ui.openOwnedModal(new GitHubReleasesModal(this.app, this.ui, pluginItem));
                 });
             });
             row.addButton((btn) => {
@@ -2940,7 +2492,7 @@ export class ManagerOptionsModal extends Modal {
                         this.ui.showNotice('Formato inválido. Usa owner/repo o una URL de GitHub');
                         return;
                     }
-                    new GitHubReleasesModal(this.app, this.ui, this.uninstalledSourceItem('', normalized), { repo: normalized }).open();
+                    this.ui.openOwnedModal(new GitHubReleasesModal(this.app, this.ui, this.uninstalledSourceItem('', normalized), { repo: normalized }));
                 });
             });
     }
@@ -2981,7 +2533,7 @@ export class ManagerOptionsModal extends Modal {
                     .setDesc(`Actual: ${res.current} | Propuesta: ${res.proposed || 'N/A'} ${res.error ? `| Error: ${res.error}` : ''}`);
             }
         }
-        modal.open();
+        this.ui.openOwnedModal(modal);
     }
 
     /**
@@ -3473,7 +3025,7 @@ export class ManagerOptionsModal extends Modal {
         const jsonArea = content.createEl('textarea', { cls: 'aigility-report-textarea' });
         jsonArea.value = reports.json;
 
-        modal.open();
+        this.ui.openOwnedModal(modal);
     }
 
     /**
@@ -3557,7 +3109,7 @@ export class ManagerOptionsModal extends Modal {
             })
             .addButton((btn) => btn.setButtonText('Cancelar').onClick(() => modal.close()));
 
-        modal.open();
+        this.ui.openOwnedModal(modal);
         return modal;
     }
 

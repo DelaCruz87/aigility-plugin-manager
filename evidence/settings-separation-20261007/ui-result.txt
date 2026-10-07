@@ -1,0 +1,5 @@
+PASS: separate dialog, Companion settings, native methods/list/sidebar preserved through lifecycle
+(node:89776) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/src/integrated/ui.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

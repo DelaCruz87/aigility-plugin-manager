@@ -228,7 +228,16 @@ test('the actual serialized host abort with preexisting unapproved Settings perf
 
 import {selectSettingsWindow} from '../checks/sandbox-ui-v013.check.mjs';
 test('Settings window selection binds primary-document modal to the exact primary window',()=>{const doc={},main={id:1},aux={id:8,getTitle:()=> 'Settings - Sandbox - Obsidian'};assert.equal(selectSettingsWindow(doc,doc,main,[aux],1),main);assert.throws(()=>selectSettingsWindow(doc,doc,main,[aux],8),/replaced/);});
-test('detached Settings document refuses missing, ambiguous or replaced exact-title windows',()=>{const primary={},settings={},main={id:1},aux={id:8,getTitle:()=> 'Settings - Sandbox - Obsidian'};assert.equal(selectSettingsWindow(settings,primary,main,[aux],8),aux);assert.throws(()=>selectSettingsWindow(settings,primary,main,[],null),/missing/);assert.throws(()=>selectSettingsWindow(settings,primary,main,[aux,{...aux,id:9}],null),/ambiguous/);assert.throws(()=>selectSettingsWindow(settings,primary,main,[aux],9),/replaced/);});
+test('detached Settings document refuses missing, ambiguous or replaced bound native windows',()=>{
+ const primary={},settings={},main={id:1},aux={id:8,webContents:{id:8},getTitle:()=> 'Localized Settings title'};
+ settings.defaultView={electronWindow:aux,document:settings};
+ assert.equal(selectSettingsWindow(settings,primary,main,[aux],8),aux);
+ assert.throws(()=>selectSettingsWindow({},primary,main,[aux],8),/no native window binding/);
+ assert.throws(()=>selectSettingsWindow(settings,primary,main,[],null),/missing/);
+ assert.throws(()=>selectSettingsWindow(settings,primary,main,[aux,{...aux}],null),/ambiguous/);
+ assert.throws(()=>selectSettingsWindow(settings,primary,main,[aux],9),/replaced/);
+ assert.throws(()=>selectSettingsWindow(settings,primary,main,[{...aux}],8,aux,aux.webContents),/replaced/);
+});
 
 import {settingsBaselineGate} from '../checks/sandbox-ui-v013.check.mjs';
 test('Settings baseline before first mutation rejects changed doc/modal/tab/connected after preflight await',async()=>{const doc={},modal={isConnected:true},settings={doc,modalEl:modal,lastTabId:'voiceink-companion'},b={doc,modal,tab:'voiceink-companion',connected:true};settingsBaselineGate(settings,b);await Promise.resolve();modal.isConnected=false;assert.throws(()=>settingsBaselineGate(settings,b),/connected state changed/);modal.isConnected=true;settings.modalEl={isConnected:true};assert.throws(()=>settingsBaselineGate(settings,b),/ownership changed/);});

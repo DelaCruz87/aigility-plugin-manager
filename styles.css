@@ -421,3 +421,150 @@
 .aigility-options-modal button {
     min-width: 48px;
 }
+
+/* Companion 0.5.0 layout, scoped to Manager own configuration surface. */
+.aigility-manager-settings {
+  --aigility-settings-border: var(--background-modifier-border);
+  --aigility-settings-card: var(--background-secondary);
+  max-width: 900px;
+}
+
+.aigility-manager-settings .aigility-settings-tabs {
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 14px;
+  padding: 4px;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: var(--background-secondary);
+}
+
+.aigility-manager-settings .aigility-settings-tab {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.aigility-manager-settings .aigility-settings-tab:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.aigility-manager-settings .aigility-settings-tab.is-active {
+  border-color: var(--interactive-accent);
+  background: var(--background-primary);
+  color: var(--text-normal);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--interactive-accent) 28%, transparent);
+}
+
+.aigility-manager-settings .aigility-settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.aigility-manager-settings .aigility-settings-header-card,
+.aigility-manager-settings .aigility-settings-section {
+  overflow: hidden;
+  border: 1px solid var(--aigility-settings-border);
+  border-radius: 10px;
+  background: var(--background-primary);
+}
+
+.aigility-manager-settings .aigility-settings-header-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--background-secondary), var(--background-primary));
+}
+
+.aigility-manager-settings .aigility-settings-header-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.aigility-manager-settings .aigility-settings-header-copy h2 {
+  margin: 0 0 3px;
+  font-size: var(--font-ui-large);
+}
+
+.aigility-manager-settings .aigility-settings-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.aigility-manager-settings .aigility-settings-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 7px;
+  border: 1px solid var(--aigility-settings-border);
+  border-radius: 6px;
+  background: var(--background-primary);
+  font-size: var(--font-ui-smaller);
+}
+
+.aigility-manager-settings .aigility-settings-stat-label {
+  color: var(--text-muted);
+}
+
+.aigility-manager-settings .aigility-settings-stat-value {
+  color: var(--text-normal);
+  font-weight: 700;
+}
+
+.aigility-manager-settings .aigility-settings-section-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--aigility-settings-border);
+  background: var(--aigility-settings-card);
+}
+
+.aigility-manager-settings .aigility-settings-section-title {
+  margin-bottom: 2px;
+  font-weight: 650;
+  color: var(--text-normal);
+}
+
+.aigility-manager-settings .aigility-settings-section > .setting-item,
+.aigility-manager-settings .aigility-settings-profile-body > .setting-item,
+.aigility-manager-settings .aigility-settings-profile-item,
+.aigility-manager-settings .aigility-settings-profile-card,
+.aigility-manager-settings .aigility-settings-row,
+.aigility-manager-settings .aigility-settings-actions {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.aigility-manager-dialog { width: min(900px, 92vw); }
+.aigility-manager-dialog .modal-content { overflow-y: auto; }
+.aigility-manager-settings .aigility-settings-section { padding: 0 0 10px; }
+.aigility-manager-settings .aigility-settings-section > h3 {
+    margin: 0 0 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    background: var(--background-secondary);
+    font-size: var(--font-ui-medium);
+    font-weight: 650;
+}
+.aigility-manager-settings .aigility-settings-section > :is(h4, p, table) { margin-left: 14px; margin-right: 14px; }
+.aigility-manager-settings .aigility-profile-card { margin: 8px 12px; padding: 8px 10px; border-radius: 8px; }
+.aigility-manager-settings .aigility-settings-tab { min-height: 0; min-width: 0; }
+.aigility-manager-dialog .aigility-manager-toolbar :is(input, select, button) { min-height: 32px; }
+.aigility-manager-dialog .aigility-plugin-row { padding: 8px 10px; min-height: 0; }
+.aigility-manager-dialog :is(.aigility-gear-btn, .aigility-more-btn) { min-width: 32px; min-height: 32px; }
+.aigility-manager-dialog .aigility-switch { min-width: 0; min-height: 0; }
+@media (pointer: coarse) {
+    .aigility-manager-dialog .aigility-manager-root :is(button, input, select),
+    .aigility-manager-settings :is(button, input, select) { min-height: 48px; }
+    .aigility-manager-dialog :is(.aigility-switch, .aigility-gear-btn, .aigility-more-btn) { min-width: 48px; min-height: 48px; }
+}

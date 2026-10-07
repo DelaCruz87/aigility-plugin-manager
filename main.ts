@@ -211,17 +211,10 @@ export default class AIgilityPluginManager extends Plugin {
     private registerCommands(): void {
         this.addCommand({ id: 'manager-options', name: 'Manager options', callback: () => this.openOptions() });
         this.addCommand({
-            id: 'manager-view', name: 'Open community plugins settings',
-            callback: () => {
-                const setting = (this.app as any).setting;
-                if (typeof setting?.open !== 'function' || typeof setting?.openTabById !== 'function') {
-                    new Notice('AIgility Plugin Manager: no se puede abrir la pestaña Community plugins en esta versión de Obsidian.');
-                    return;
-                }
-                setting.open();
-                setting.openTabById('community-plugins');
-            },
+            id: 'manager-view', name: 'Open plugin manager',
+            callback: () => this.managerUI?.openManagerModal(),
         });
+        this.addRibbonIcon('puzzle', 'AIgility Plugin Manager', () => this.managerUI?.openManagerModal());
         this.addCommand({
             id: 'manager-apply-profile', name: 'Apply bound manager profile',
             callback: () => {
@@ -369,5 +362,5 @@ export default class AIgilityPluginManager extends Plugin {
 
 class ManagerSettingsTab extends PluginSettingTab {
     constructor(app: any, private plugin: AIgilityPluginManager) { super(app, plugin); }
-    display(): void { this.containerEl.empty(); this.plugin.managerUI?.display(this.containerEl); }
+    display(): void { this.containerEl.empty(); this.plugin.managerUI?.displaySettings(this.containerEl); }
 }

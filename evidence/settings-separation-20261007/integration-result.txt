@@ -1,0 +1,52 @@
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Startup baseline skipped: an interrupted operation is pending recovery. {
+  operationPending: 'profile-apply:interrupted',
+  migrated: false,
+  canonicalState: 'on-disk'
+}
+Plugin automation paused: Interrupted operation: profile-apply:interrupted undefined
+Plugin automation paused: Manager loaded after layout readiness; startup automation was skipped. undefined
+✔ interrupted operation does not prevent the manager from loading its manual recovery UI (135.653542ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ schemaVersion 1 loads without legacy migration and registers stable manager/profile commands (103.489083ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ bound and device profile commands preview first and apply only after modal confirmation (108.425666ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ legacy migration stores exact local backups before schemaVersion 1 write and redacts persisted State (115.212916ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Plugin automation paused: Manager loaded after layout readiness; startup automation was skipped. undefined
+✔ credential redaction preserves plugin identities through load save refresh and list (117.184542ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Runtime guard linkResolverSchedule: host signatures differ; native behavior retained undefined
+Runtime guard relatedLinkBatch: metadata cache is absent; native behavior retained undefined
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Plugin automation paused: Manager loaded after layout readiness; startup automation was skipped. undefined
+Runtime guard linkResolverSchedule: host signatures differ; native behavior retained undefined
+Runtime guard relatedLinkBatch: metadata cache is absent; native behavior retained undefined
+✔ early load starts unrestricted and runs layout-ready automation; late load skips it (213.994541ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Plugin automation paused: Obsidian plugin loading is disabled. undefined
+✔ global plugin loading gate drives the restricted pause, independent of the native autostart set (287.386792ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ manager-options command opens the owned options modal instead of searching general setting tabs (123.475833ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ manager-view and ribbon open the owned dialog while restore alias undoes the last profile (115.800167ms)
+✔ guard diagnostics reach plugin.runtime and remain visible for incompatible host signatures (104.425917ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ unload synchronously disposes UI, debug, guards, then runtime without legacy lifecycle calls (308.00025ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ dynamic device profile commands follow queued create, rename, and delete operations (91.886625ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+✔ dynamic command cleanup preserves foreign replacements and later enqueue wrappers (88.278667ms)
+Runtime guard startupCache: cache is absent or already initialized; native behavior retained undefined
+Manager command failed. Error: Installed community plugin "community-one" is no longer available.
+    at AIgilityPluginManager.toggleInstalledPlugin (file:///private/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/aigility-integration-KodS6n/bundle.mjs:17516:22)
+✔ installed community and core aliases use fresh runtime state and exclude protected and manager plugins (98.812875ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2260.305916

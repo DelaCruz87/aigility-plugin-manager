@@ -1,7 +1,7 @@
 {
   "id": "aigility-plugin-manager",
   "name": "AIgility Plugin Manager",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "minAppVersion": "1.13.7",
   "description": "Integrated plugin manager for Obsidian.",
   "author": "AIgility",

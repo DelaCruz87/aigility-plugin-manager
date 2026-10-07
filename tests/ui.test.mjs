@@ -459,7 +459,7 @@ registerHooks({
                         this.items.push(item);
                         return this;
                     }
-                    showAtMouseEvent(e) {}
+                    showAtMouseEvent(e) { globalThis.__aigilityLastMenu = this; }
                 }
                 export class Notice {
                     constructor(msg, duration) {
@@ -1126,245 +1126,160 @@ describe('AIgility Plugin Manager - UI & Filter Test Suite', () => {
             ui = new ManagerUI(mockPlugin, mockRuntime, mockGithub, mockDebug);
         });
 
-        test('ui.install() wraps community tab display and patches setting.open', () => {
-            const originalSettingOpen = mockApp.setting.open;
+        test('install leaves native Settings and Community methods unchanged', () => {
+            const open = mockApp.setting.open;
+            const display = communityTab.display;
+            ui.install(); ui.install();
+            assert.equal(mockApp.setting.open, open);
+            assert.equal(communityTab.display, display);
+            assert.equal(communityTab.containerEl.querySelector('.aigility-manager-root'), null);
+        });
+        test('native rendering retains this, return value and exception behavior', () => {
+            const expected = new Error('native render failure');
+            communityTab.renderTab = function () { assert.equal(this, communityTab); return 42; };
+            communityTab.update = function () { throw expected; };
+            const render = communityTab.renderTab, update = communityTab.update;
             ui.install();
-
-            // Check that setting.open was wrapped
-            assert.notEqual(mockApp.setting.open, originalSettingOpen);
-
-            // Execute wrapped tab display
-            communityTab.display();
-
-            // Native installed section should be hidden, but restricted and browse remain
-            const items = communityTab.containerEl.querySelectorAll('.setting-item');
-            assert.equal(items[0].style.display, undefined); // Restricted mode preserved
-            assert.equal(items[1].style.display, undefined); // Browse preserved
-            assert.equal(items.length, 3); // Installed heading is not a setting-item
-            assert.equal(communityTab.renderedItems[0].groupEl.style.display, 'none');
-            assert.equal(items[2].style.display, undefined); // Hidden with its containing native group
-            assert.ok(items[2].querySelector('.setting-item-name').textContent.includes('Sample Plugin Native Item'));
-
-            // Manager container should be mounted
-            const installedContainer = communityTab.containerEl.querySelector(
-                '.aigility-manager-installed-container'
-            );
-            assert.ok(installedContainer !== null);
-            assert.ok(installedContainer.querySelector('.aigility-manager-root') !== null);
+            assert.equal(communityTab.renderTab(), 42);
+            assert.throws(() => communityTab.update(), error => error === expected);
+            assert.equal(communityTab.renderTab, render); assert.equal(communityTab.update, update);
         });
-
-        test('native renderTab and update render the integrated list without calling legacy display', () => {
-            let nativeCalls=0,updateCalls=0;
-            communityTab.settingItems=[{}];
-            communityTab.display=()=>{throw new Error('Native renderer must not call legacy display');};
-            communityTab.renderTab=function(){nativeCalls++;};
-            communityTab.update=function(){updateCalls++;this.renderedItems[0].groupEl.style.display='grid';};
-            ui.install();communityTab.renderTab();
-            assert.equal(nativeCalls,1);
-            assert.equal(communityTab.renderedItems[0].groupEl.style.display,'none');
-            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,1);
-            communityTab.update();assert.equal(updateCalls,1);
-            assert.equal(communityTab.renderedItems[0].groupEl.style.display,'none');
-            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,1);
+        test('native list nodes and styles survive own list open, filter, refresh and dispose', () => {
+            const group = communityTab.renderedItems[0].groupEl;
+            const children = [...group.children];
+            ui.install(); ui.openManagerModal();
+            ui.filterCriteria.search = 'dataview'; ui.refreshManagerView(); ui.dispose();
+            assert.equal(group.style.display, 'grid');
+            assert.deepEqual(group.children, children);
         });
-
-        test('native sidebar controls remount after Obsidian clears the live header', () => {
-            const header = mockApp.setting.communityPluginTabContainer;
-            const before = JSON.stringify(mockRuntime.state);
-            communityTab.renderTab = function () {
-                for (const child of [...header.children]) header.removeChild(child);
-                return 23;
+        test('separate manager opens without native Settings navigation', () => {
+            let calls = 0;
+            mockApp.setting.open = () => { calls++; };
+            mockApp.setting.openTabById = () => { calls++; };
+            ui.install(); ui.openManagerModal();
+            assert.equal(calls, 0);
+            assert.ok(ui.managerModal.contentEl.querySelector('.aigility-plugin-list'));
+            ui.dispose();
+        });
+        test('own dialog is reused while open and can reopen after close', () => {
+            ui.install(); ui.openManagerModal();
+            const first = ui.managerModal;
+            ui.openManagerModal(); assert.equal(ui.managerModal, first);
+            first.close(); assert.equal(ui.managerModal, undefined);
+            ui.openManagerModal(); assert.notEqual(ui.managerModal, first);
+            ui.dispose();
+        });
+        test('closing own dialog releases only its mounted list', () => {
+            ui.install(); ui.openManagerModal();
+            const modal = ui.managerModal;
+            modal.close(); ui.refreshManagerView();
+            assert.equal(modal.contentEl.children.length, 0);
+            assert.equal(ui.managerContainers.size, 0);
+            assert.equal(communityTab.containerEl.querySelector('.aigility-manager-root'), null);
+        });
+        test('unknown native renderedItems are neither interpreted nor modified', () => {
+            communityTab.renderedItems = [{ unknownShape: true }];
+            const original = communityTab.containerEl.firstChild;
+            ui.install(); ui.openManagerModal(); ui.dispose();
+            assert.equal(communityTab.containerEl.firstChild, original);
+        });
+        test('dispose preserves later foreign replacements of native Settings methods', () => {
+            ui.install();
+            const external = () => 'foreign';
+            mockApp.setting.open = external; communityTab.display = external;
+            ui.dispose(); ui.dispose();
+            assert.equal(mockApp.setting.open, external);
+            assert.equal(communityTab.display, external);
+        });
+        test('own Settings renders Companion tabs and configuration instead of plugin rows', () => {
+            const container = new MockElement('div');
+            ui.displaySettings(container);
+            const tabs = container.querySelectorAll('.aigility-settings-tab');
+            assert.deepEqual(tabs.slice(0, 4).map(el => el.textContent), ['Deferred', 'Profiles', 'Devices', 'Settings']);
+            assert.ok(container.querySelector('.aigility-settings-header-card'));
+            assert.equal(container.querySelector('.aigility-plugin-row'), null);
+        });
+        test('own Settings remembers its selected page on redisplay', () => {
+            const container = new MockElement('div');
+            ui.displaySettings(container);
+            const profiles = container.querySelectorAll('.aigility-settings-tab').find(el => el.textContent === 'Profiles');
+            profiles.onclick(); ui.displaySettings(container);
+            assert.equal(container.querySelectorAll('.aigility-settings-tab').find(el => el.classList.contains('is-active')).textContent, 'Profiles');
+        });
+        test('dispose prevents subsequent rendering or reopening owned surfaces', () => {
+            ui.install(); ui.openManagerModal(); ui.dispose();
+            const container = new MockElement('div');
+            ui.display(container); ui.displaySettings(container); ui.openManagerModal();
+            assert.equal(container.children.length, 0); assert.equal(ui.managerModal, undefined);
+        });
+        test('gear opens native Settings before selecting the explicit plugin and closes own manager', () => {
+            const calls = [];
+            mockApp.setting.open = () => calls.push('open');
+            mockApp.setting.openTabById = id => calls.push(id);
+            ui.install(); ui.openManagerModal();
+            const gear = ui.managerModal.contentEl.querySelector('.aigility-gear-btn');
+            gear.onclick({ stopPropagation() {} });
+            assert.deepEqual(calls, ['open', 'dataview']);
+            assert.equal(ui.managerModal, undefined);
+        });
+        test('dispose closes registered options modals and does not close a foreign modal', () => {
+            ui.install(); ui.openOptionsModal();
+            const modal = [...ui.ownedModals][0];
+            let ownClose = 0, foreignClose = 0;
+            const close = modal.close.bind(modal);
+            modal.close = () => { ownClose++; close(); };
+            const foreign = { close() { foreignClose++; } };
+            ui.dispose();
+            assert.equal(ownClose, 1); assert.equal(foreignClose, 0);
+            assert.equal(ui.ownedModals.size, 0);
+            void foreign;
+        });
+        test('toggle disables repeat input until actual host readback completes', async () => {
+            const item = createSamplePlugins()[1];
+            let complete, calls = 0;
+            mockRuntime.list = () => [item];
+            mockRuntime.setEnabled = async () => { calls++; await new Promise(resolve => { complete = resolve; }); item.loaded = true; };
+            const row = ui.createPluginRow(item), checkbox = row.querySelector('input');
+            checkbox.checked = true;
+            const pending = checkbox.onchange();
+            assert.equal(checkbox.disabled, true);
+            await checkbox.onchange(); assert.equal(calls, 1);
+            complete(); await pending;
+            assert.equal(checkbox.checked, true); assert.equal(checkbox.disabled, false);
+        });
+        test('a real secondary tags menu route registers its dialog for disposal', () => {
+            ui.install();
+            ui.openPluginMenu({}, createSamplePlugins()[0]);
+            const tags = globalThis.__aigilityLastMenu.items.find(item => item.title.includes('Editar etiquetas'));
+            tags.onClickCb();
+            const modal = [...ui.ownedModals][0];
+            assert.equal(modal.constructor.name, 'TagMembershipModal');
+            let closed = false;
+            const close = modal.close.bind(modal); modal.close = () => { closed = true; close(); };
+            ui.dispose(); assert.equal(closed, true); assert.equal(ui.ownedModals.size, 0);
+        });
+        test('failed toggle restores observed host state and exposes the failure', async () => {
+            const item = createSamplePlugins()[1];
+            mockRuntime.list = () => [item];
+            mockRuntime.setEnabled = async () => { throw new Error('readback failed'); };
+            const row = ui.createPluginRow(item), checkbox = row.querySelector('input');
+            checkbox.checked = true; globalThis.__aigilityNotices = [];
+            await checkbox.onchange();
+            assert.equal(checkbox.checked, false); assert.equal(checkbox.disabled, false);
+            assert.ok(globalThis.__aigilityNotices.some(text => text.includes('readback failed')));
+        });
+        test('self-disable continuation performs no checkbox mutation or refresh after dispose', async () => {
+            const item = { ...createSamplePlugins()[0], ref: { kind: 'community', id: 'aigility-plugin-manager' }, loaded: true };
+            const row = ui.createPluginRow(item), checkbox = row.querySelector('input');
+            let refresh = 0, afterDispose = false;
+            ui.refreshList = () => { if (afterDispose) refresh++; };
+            mockRuntime.setEnabled = async () => {
+                ui.dispose(); afterDispose = true;
+                Object.defineProperty(checkbox, 'checked', { get: () => false, set() { throw new Error('checkbox write after dispose'); } });
+                Object.defineProperty(checkbox, 'disabled', { get: () => true, set() { throw new Error('checkbox write after dispose'); } });
             };
-            ui.install();
-            const oldControls = header.querySelector('.aigility-sidebar-header-controls');
-            assert.ok(oldControls);
-            assert.equal(communityTab.renderTab(), 23);
-            assert.equal(oldControls.parentElement, null);
-            assert.equal(header.querySelectorAll('.aigility-sidebar-header-controls').length, 1);
-            assert.ok(header.querySelector('.aigility-options-btn'));
-            communityTab.renderTab();
-            assert.equal(header.querySelectorAll('.aigility-sidebar-header-controls').length, 1);
-            assert.equal(JSON.stringify(mockRuntime.state), before);
-        });
-
-        test('nested native render preserves this and return, mounts once, and leaves display untouched', () => {
-            let mounts=0;
-            const patch=ui.patchCommunityInstalledArea.bind(ui);
-            ui.patchCommunityInstalledArea=(...args)=>{mounts++;return patch(...args);};
-            const display=communityTab.display;
-            communityTab.update=function(){assert.equal(this,communityTab);return 17;};
-            communityTab.renderTab=function(){assert.equal(this,communityTab);return this.update()+1;};
-            ui.install();assert.equal(communityTab.display,display);
-            assert.equal(communityTab.renderTab(),18);assert.equal(mounts,1);
-            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,1);
-        });
-
-        test('throwing native render preserves exception and allows a later successful render', () => {
-            let fail=true;
-            communityTab.renderTab=function(){if(fail)throw new Error('native failure');return 'ok';};
-            ui.install();assert.throws(()=>communityTab.renderTab(),/native failure/);
-            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,0);
-            fail=false;assert.equal(communityTab.renderTab(),'ok');
-            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length,1);
-        });
-
-        test('native renderer method identities are restored only while the manager owns them', () => {
-            const render=function(){},update=function(){};
-            communityTab.renderTab=render;communityTab.update=update;
-            ui.install();assert.notEqual(communityTab.renderTab,render);assert.notEqual(communityTab.update,update);
-            ui.dispose();assert.equal(communityTab.renderTab,render);assert.equal(communityTab.update,update);
-            assert.equal(communityTab.renderedItems[0].groupEl.style.display,'grid');
-        });
-
-        test('native update wrapper preserves a foreign later replacement on unload', () => {
-            communityTab.renderTab=function(){};communityTab.update=function(){};
-            ui.install();const foreign=function(){};communityTab.update=foreign;
-            ui.dispose();assert.equal(communityTab.update,foreign);
-        });
-
-        test('unknown native renderedItems shape keeps the native list and reports visibly', () => {
-            communityTab.renderedItems = [{
-                type: 'section',
-                def: { heading: 'Installed plugins' },
-                groupEl: communityTab.renderedItems[0].groupEl
-            }];
-
-            ui.install();
-            communityTab.display();
-
-            assert.equal(communityTab.renderedItems[0].groupEl.style.display, 'grid');
-            assert.ok(communityTab.containerEl.querySelector('.setting-item-name').textContent.includes('Restricted mode'));
-            assert.equal(communityTab.containerEl.querySelector('.aigility-manager-installed-container'), null);
-            const diagnostic = communityTab.containerEl.querySelector('.aigility-ui-diagnostic');
-            assert.ok(diagnostic);
-            assert.ok(diagnostic.textContent.includes('Se conserva la lista de Obsidian'));
-        });
-
-        test('repeated display and dispose restore exact native styles and method identities', () => {
-            const originalDisplay = communityTab.display;
-            const originalOpen = mockApp.setting.open;
-
-            ui.install();
-            communityTab.display();
-            communityTab.display();
-
-            assert.equal(communityTab.containerEl.querySelectorAll('.aigility-manager-installed-container').length, 1);
-            assert.equal(communityTab.renderedItems[0].groupEl.style.display, 'none');
-
-            ui.dispose();
-
-            assert.equal(communityTab.display, originalDisplay);
-            assert.equal(mockApp.setting.open, originalOpen);
-            assert.equal(communityTab.renderedItems[0].groupEl.style.display, 'grid');
-            assert.equal(communityTab.containerEl.querySelector('.aigility-manager-installed-container'), null);
-            assert.equal(communityTab.containerEl.querySelector('.aigility-ui-diagnostic'), null);
-        });
-
-        test('dispose preserves a wrapper installed later by another plugin', () => {
-            ui.install();
-            const aigilityDisplay = communityTab.display;
-            const aigilityOpen = mockApp.setting.open;
-            const otherDisplay = function (...args) {
-                return aigilityDisplay.apply(communityTab, args);
-            };
-            const otherOpen = function (...args) {
-                return aigilityOpen.apply(mockApp.setting, args);
-            };
-            communityTab.display = otherDisplay;
-            mockApp.setting.open = otherOpen;
-
-            ui.dispose();
-
-            assert.equal(communityTab.display, otherDisplay);
-            assert.equal(mockApp.setting.open, otherOpen);
-            communityTab.display();
-            mockApp.setting.open();
-            assert.equal(communityTab.containerEl.querySelector('.aigility-manager-installed-container'), null);
-            assert.equal(communityTab.renderedItems[0].groupEl.style.display, 'grid');
-        });
-
-        test('dispose preserves a native display change made while the group is hidden', () => {
-            ui.install();
-            communityTab.display();
-            const groupEl = communityTab.renderedItems[0].groupEl;
-            groupEl.style.display = 'inline-grid';
-
-            ui.dispose();
-
-            assert.equal(groupEl.style.display, 'inline-grid');
-        });
-
-        test('ui.patchSidebar injects Opciones button and search/tag/group filters', () => {
-            ui.install();
-
-            const headerContainer = mockApp.setting.communityPluginTabContainer;
-            const controls = headerContainer.querySelector('.aigility-sidebar-header-controls');
-            assert.ok(controls !== null);
-
-            const optionsBtn = controls.querySelector('.aigility-options-btn');
-            assert.ok(optionsBtn !== null);
-            assert.ok(optionsBtn.textContent.includes('Opciones'));
-
-            const searchInput = controls.querySelector('.aigility-sidebar-search');
-            assert.ok(searchInput !== null);
-
-            const tagSelect = controls.querySelector('.aigility-sidebar-tag-select');
-            assert.ok(tagSelect !== null);
-
-            const groupSelect = controls.querySelector('.aigility-sidebar-group-select');
-            assert.ok(groupSelect !== null);
-        });
-
-        test('applySidebarFilter filters ONLY plugin tabs without touching core/general tabs', () => {
-            ui.install();
-
-            // Set sidebar search filter to 'dataview'
-            ui.sidebarFilterCriteria.search = 'dataview';
-            ui.applySidebarFilter(mockApp.setting);
-
-            const [dataviewTab, omnisearchTab] = mockApp.setting.pluginTabs;
-            assert.equal(dataviewTab.navEl.style.display, '');
-            assert.equal(omnisearchTab.navEl.style.display, 'none');
-
-            // General setting tabs (e.g. 'editor') have NO navEl hidden!
-            const editorTab = mockApp.setting.settingTabs.find((t) => t.id === 'editor');
-            assert.equal(editorTab.containerEl.style.display, undefined);
-        });
-
-        test('ui.dispose() cleanly unwraps display and restores DOM and sidebar tabs', () => {
-            ui.install();
-            communityTab.display();
-
-            // Hide omnisearch tab via filter
-            ui.sidebarFilterCriteria.search = 'dataview';
-            ui.applySidebarFilter(mockApp.setting);
-
-            // Now dispose
-            ui.dispose();
-
-            // Native installed group and its original display value are restored
-            const items = communityTab.containerEl.querySelectorAll('.setting-item');
-            assert.equal(items[2].style.display, undefined);
-            assert.equal(communityTab.renderedItems[0].groupEl.style.display, 'grid');
-
-            // Installed container removed
-            assert.equal(
-                communityTab.containerEl.querySelector('.aigility-manager-installed-container'),
-                null
-            );
-
-            // Sidebar tabs restored
-            const [dataviewTab, omnisearchTab] = mockApp.setting.pluginTabs;
-            assert.equal(dataviewTab.navEl.style.display, '');
-            assert.equal(omnisearchTab.navEl.style.display, '');
-
-            // Sidebar header controls removed
-            assert.equal(
-                mockApp.setting.communityPluginTabContainer.querySelector(
-                    '.aigility-sidebar-header-controls'
-                ),
-                null
-            );
+            checkbox.checked = false; await checkbox.onchange();
+            assert.equal(refresh, 0);
         });
     });
 
@@ -1472,17 +1387,9 @@ describe('AIgility Plugin Manager - UI & Filter Test Suite', () => {
             optionsModal.onOpen();
 
             const navTabs = optionsModal.contentEl.querySelectorAll('.aigility-nav-tab');
-            assert.equal(navTabs.length, 7);
+            assert.equal(navTabs.length, 8);
 
-            const expectedLabels = [
-                'Perfiles',
-                'Fixtures y Protecciones',
-                'Carga Diferida',
-                'GitHub y Betas',
-                'Descargados',
-                'Depuración',
-                'Avanzado y Recuperación'
-            ];
+            const expectedLabels = ['Deferred', 'Profiles', 'Devices', 'Settings', 'Fixtures', 'GitHub', 'Downloaded', 'Debug'];
             const renderedLabels = navTabs.map((t) => t.textContent);
             assert.deepEqual(renderedLabels, expectedLabels);
         });
@@ -1637,153 +1544,18 @@ describe('AIgility Plugin Manager - UI & Filter Test Suite', () => {
             return modal;
         }
 
-        describe('Sidebar filtering for core and community tabs', () => {
-            let mockApp;
-            let ui;
-            let dataviewTab;
-            let omnisearchTab;
-            let fileExplorerTab;
-            let graphTab;
-            let generalTabs;
-
-            beforeEach(() => {
-                globalThis.__aigilityNotices = [];
-                mockApp = new MockApp();
-
-                const mkTab = (id, name) => ({
-                    id,
-                    name,
-                    navEl: new MockElement('div'),
-                    containerEl: new MockElement('div')
-                });
-
-                dataviewTab = mkTab('dataview', 'Dataview');
-                omnisearchTab = mkTab('omnisearch', 'Omnisearch');
-                fileExplorerTab = mkTab('file-explorer', 'File Explorer');
-                graphTab = mkTab('graph', 'Graph');
-
-                // Host 1.14.3: pluginTabs includes CORE and community tabs.
-                mockApp.setting.pluginTabs = [dataviewTab, omnisearchTab, fileExplorerTab, graphTab];
-
-                // Nine general categories stay in setting.settingTabs.
-                generalTabs = [
-                    'editor', 'appearance', 'hotkeys', 'toolbar', 'note-composer',
-                    'templates', 'daily-notes', 'sync', 'about'
-                ].map((id) => mkTab(id, id));
-                mockApp.setting.settingTabs = [
-                    ...generalTabs,
-                    mkTab('community-plugins', 'Community plugins')
-                ];
-
-                // core:graph has no canonical record yet; only the registry knows it.
-                mockApp.internalPlugins.plugins = {
-                    graph: { id: 'graph', name: 'Graph', instance: {} }
-                };
-
-                const mockRuntime = {
-                    state: {
-                        records: {
-                            'community:dataview': {
-                                ref: { kind: 'community', id: 'dataview' },
-                                name: 'Dataview', version: '0.5.64',
-                                tags: ['pkm'], group: 'tools', desired: true, metadata: {}
-                            },
-                            'community:omnisearch': {
-                                ref: { kind: 'community', id: 'omnisearch' },
-                                name: 'Omnisearch', version: '1.24.1',
-                                tags: ['search'], group: 'search', desired: false, metadata: {}
-                            },
-                            'core:file-explorer': {
-                                ref: { kind: 'core', id: 'file-explorer' },
-                                name: 'File Explorer', version: '1.8.0',
-                                tags: ['navigation'], group: 'core-system', desired: true, metadata: {}
-                            }
-                        }
-                    },
-                    local: {}
-                };
-
-                ui = new ManagerUI({ app: mockApp }, mockRuntime, {}, {});
-            });
-
-            test('resolves core tabs via canonical records and the internalPlugins registry, filtering both kinds', () => {
-                ui.sidebarFilterCriteria.tag = 'navigation';
-                ui.applySidebarFilter(mockApp.setting);
-
-                assert.equal(fileExplorerTab.navEl.style.display, '');
-                assert.equal(dataviewTab.navEl.style.display, 'none');
-                assert.equal(omnisearchTab.navEl.style.display, 'none');
-                // Registry-resolved core tab filtered too (no record -> no tag match).
-                assert.equal(graphTab.navEl.style.display, 'none');
-            });
-
-            test('search matches core tab name and ID for both kinds', () => {
-                ui.sidebarFilterCriteria.search = 'file-explorer';
-                ui.applySidebarFilter(mockApp.setting);
-                assert.equal(fileExplorerTab.navEl.style.display, '');
-                assert.equal(dataviewTab.navEl.style.display, 'none');
-                assert.equal(graphTab.navEl.style.display, 'none');
-
-                ui.sidebarFilterCriteria.search = 'dataview';
-                ui.applySidebarFilter(mockApp.setting);
-                assert.equal(dataviewTab.navEl.style.display, '');
-                assert.equal(fileExplorerTab.navEl.style.display, 'none');
-            });
-
-            test('group filter resolves core records and registry-resolved tabs without records stay hidden', () => {
-                ui.sidebarFilterCriteria.group = 'core-system';
-                ui.applySidebarFilter(mockApp.setting);
-
-                assert.equal(fileExplorerTab.navEl.style.display, '');
-                assert.equal(graphTab.navEl.style.display, 'none');
-            });
-
-            test('nine general setting categories stay accessible and untouched', () => {
-                ui.sidebarFilterCriteria.search = 'dataview';
-                ui.applySidebarFilter(mockApp.setting);
-
-                for (const generalTab of generalTabs) {
-                    assert.equal(generalTab.navEl.style.display, undefined, `${generalTab.id} navEl was touched`);
-                    assert.equal(generalTab.containerEl.style.display, undefined, `${generalTab.id} containerEl was touched`);
-                }
-                assert.equal(mockApp.setting.settingTabs.length, 10);
-            });
-
-            test('snapshots restore only the owned postimage and preserve later manual DOM changes', () => {
-                ui.install();
-
-                // 1. Hide omnisearch through the filter (we own its postimage).
-                ui.sidebarFilterCriteria.tag = 'pkm';
-                ui.applySidebarFilter(mockApp.setting);
-                assert.equal(omnisearchTab.navEl.style.display, 'none');
-
-                // 2. A later manual DOM change replaces our postimage.
-                omnisearchTab.navEl.style.display = 'block';
-
-                // 3. Showing the tab again must NOT revert the manual change.
-                ui.sidebarFilterCriteria.tag = 'all';
-                ui.applySidebarFilter(mockApp.setting);
-                assert.equal(omnisearchTab.navEl.style.display, 'block');
-                assert.equal(dataviewTab.navEl.style.display, '');
-
-                // 4. dispose() preserves the manual change too (no snapshot anymore).
-                ui.dispose();
-                assert.equal(omnisearchTab.navEl.style.display, 'block');
-            });
-
-            test('dispose restores tabs still carrying our owned postimage', () => {
-                ui.install();
-                ui.sidebarFilterCriteria.tag = 'pkm';
-                ui.applySidebarFilter(mockApp.setting);
-                assert.equal(omnisearchTab.navEl.style.display, 'none');
-                assert.equal(graphTab.navEl.style.display, 'none');
-
-                ui.dispose();
-
-                assert.equal(omnisearchTab.navEl.style.display, '');
-                assert.equal(graphTab.navEl.style.display, '');
-                assert.equal(fileExplorerTab.navEl.style.display, '');
-            });
+        test('own filters leave all native sidebar visibility unchanged', () => {
+            const app = new MockApp();
+            const nativeTabs = ['dataview', 'graph', 'file-explorer'].map(id => ({ id, navEl: new MockElement('div') }));
+            nativeTabs[1].navEl.style.display = 'none';
+            nativeTabs[2].navEl.style.display = 'inline-flex';
+            app.setting.pluginTabs = nativeTabs;
+            const before = nativeTabs.map(tab => tab.navEl.style.display);
+            const runtime = createQueuedRuntime(baseManagerState(), { list: () => createSamplePlugins() });
+            const manager = new ManagerUI({ app }, runtime, {}, {});
+            manager.install(); manager.openManagerModal();
+            manager.filterCriteria.search = 'dataview'; manager.filterCriteria.kind = 'community'; manager.refreshManagerView(); manager.dispose();
+            assert.deepEqual(nativeTabs.map(tab => tab.navEl.style.display), before);
         });
 
         describe('Debug session states and Advanced controls', () => {

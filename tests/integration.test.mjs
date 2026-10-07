@@ -21,6 +21,7 @@ const STUB = `
       addCommand(command) { this.commands.push(command); const fullId = this.manifest.id + ':' + command.id; this.app.commands.commands[fullId] = command; return this.app.commands.commands[fullId]; }
       removeCommand(fullId) { delete this.app.commands.commands[fullId]; this.commands = this.commands.filter((command) => this.manifest.id + ':' + command.id !== fullId); }
       addSettingTab(tab) { this.settingTab = tab; }
+      addRibbonIcon(icon, title, callback) { this.ribbon = { icon, title, callback }; }
       register(fn) { this.cleanups.push(fn); }
       registerEvent() {}
       async loadData() { const p = this.manifest.dir + '/data.json'; return await this.app.vault.adapter.exists(p) ? JSON.parse(await this.app.vault.adapter.read(p)) : null; }
@@ -334,24 +335,29 @@ test('manager-options command opens the owned options modal instead of searching
   } finally { plugin.onunload(); await cleanup(); }
 });
 
-test('manager-view opens the native community plugins settings tab and restore alias undoes the last profile', async () => {
+test('manager-view and ribbon open the owned dialog while restore alias undoes the last profile', async () => {
   globalThis.__notices = [];
   const host = makeHost({ initial: makeState() });
   const calls = [];
   host.app.setting = { open() { calls.push('open'); }, openTabById(id) { calls.push(id); } };
   const { plugin, cleanup } = await start(host);
   try {
+    let managerOpen = 0;
+    plugin.managerUI.openManagerModal = () => { managerOpen++; };
     let undoCount = 0;
     plugin.runtime.undoProfile = async () => { undoCount++; };
     plugin.commands.find((command) => command.id === 'manager-view').callback();
-    assert.deepEqual(calls, ['open', 'community-plugins']);
+    plugin.ribbon.callback();
+    assert.equal(managerOpen, 2);
+    assert.deepEqual(calls, []);
     plugin.commands.find((command) => command.id === 'restore-previous-command-state').callback();
     await new Promise((resolve) => setTimeout(resolve, 0));
     assert.equal(undoCount, 1);
 
     host.app.setting = { open() { calls.push('open-without-tab-api'); } };
     plugin.commands.find((command) => command.id === 'manager-view').callback();
-    assert.ok(globalThis.__notices.some((message) => message.includes('no se puede abrir la pestaña Community plugins')));
+    assert.equal(managerOpen, 3);
+    assert.deepEqual(calls, []);
   } finally { plugin.onunload(); await cleanup(); }
 });
 

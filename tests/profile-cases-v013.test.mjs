@@ -43,7 +43,7 @@ test('component runs actual ManagerRuntime tags, preview, full profile, undo and
  const originalHost=rt.host.setEnabled;
  try{
   assert.equal(app.plugins.setEnabled,undefined);
-  await assert.rejects(()=>rt.setEnabled(ref(B),true),/automation is paused/);assert.equal(nativeCalls.length,0);
+  await assert.rejects(()=>rt.enqueue('automated-paused-toggle',tx=>tx.setEnabled(ref(B),true)),/automation is paused/);assert.equal(nativeCalls.length,0);
   const result=await runOwnedProfileCases(app,globals,globals['actual-runtime'],{deadline:Date.now()+5000,manualFixtureProfileId:'aigility-host-partial'});
   assert.deepEqual(result.counterDeltas,{a:3,b:3});assert.equal(globals['actual-runtime'].postimages.length,11);assert.equal(rt.host.setEnabled,originalHost);
   assert.equal(globals['actual-runtime'].manualTogglesViaFixture,3);assert.deepEqual(rt.state.fixtureProfiles[0].members,{['community:'+A]:true});

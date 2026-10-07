@@ -92,9 +92,9 @@ Live checklist:
 
 - [x] Inspeccionar source real y Companion 0.5.0; localizar hooks de Settings, bloqueo de pausa y auto-protección.
 - [x] Actualizar FR-1/FR-14/FR-15 y FIX-19/FIX-20 antes de modificar producto.
-- [ ] Review readonly inicial por Ringer - pendiente de route actual del owner de modelos; no se lanzan manifests retirados ni fallbacks ciegos.
-- [ ] Implementar la separación, reutilización UI y rutas manual/self-disable - pendiente del writer acotado y checker causal.
-- [ ] Regresiones funcionales de toggles/unload, native Settings intacto y revisión independiente - requieren nueva fuente final.
+- [x] Review readonly inicial intentado por Ringer - FAIL/TIMEOUT120s, sin informe ni entrega; fuente intacta. Diagnóstico causal publicado y nueva excepción scoped del writer adjudicada por el owner de modelos, sin retry/fallback/repair.
+- [x] Implementar la separación, reutilización UI y rutas manual/self-disable - unidades separadas del writer actual con checkers causales; no se presenta el job fallido como entrega.
+- [x] Regresiones funcionales y reviews independientes - manual10 checks/35 runtime, self2 lifecycle cases/35 runtime, UI62 e integración14; full suite395/395 y build0.1.6. Reviews cerrados tras corregir archive bypass y P2 de UI/lifecycle. Aceptación source; native sigue pendiente.
 - [ ] Build y aceptación Sandbox con pixels, toggles reales, desactivar/reactivar Manager y cleanup propio - requieren candidato final y grant nuevo.
 - [ ] Entrega ENSO y readback preservado - después de aceptar Sandbox, con grant propio y backups/CAS actuales.
 
