@@ -1,0 +1,11 @@
+PASS normal status=SETTLED
+PASS wrong-identity status=THREW
+PASS config-preimage status=THREW
+PASS already-crashed status=SETTLED
+PASS data-race status=FAILED_PRESERVED
+PASS source-race status=FAILED_PRESERVED
+PASS deadline status=FAILED_PRESERVED
+PASS foreign-crash status=FAILED_PRESERVED
+PASS emitted inner/outer/dispatch compiled; nativeIO=false
+(node:31828) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

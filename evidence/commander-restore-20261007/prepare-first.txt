@@ -1,0 +1,11 @@
+file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/checks/prepare-commander-restore-20261007.mjs:22
+ if(semantic(realm.cmdr.manifest)!==semantic(manifest))throw Error('Registered manifest semantic mismatch '+t.name+' keys '+Object.keys(realm.cmdr.manifest));
+                                                             ^
+
+Error: Registered manifest semantic mismatch Sandbox keys id,name,version,minAppVersion,description,author,authorUrl,fundingUrl,isDesktopOnly,dir
+    at file:///Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian%20Plugins/+AIgility%20Plugin%20Manager/plugin/checks/prepare-commander-restore-20261007.mjs:22:62
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:105:5)
+
+Node.js v26.10.0
