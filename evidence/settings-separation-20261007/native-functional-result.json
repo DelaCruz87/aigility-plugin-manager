@@ -1,0 +1,13 @@
+{
+  "job": "manager016-functional-current-20261007",
+  "token": "403034c0-6e5d-43e8-a488-1c378c76787a",
+  "status": "FAILED_PRESERVED",
+  "pending": true,
+  "phase": "fixture-native-enable",
+  "fixtureCreated": true,
+  "startedAt": "2026-10-07T11:10:38.107Z",
+  "completedAt": "2026-10-07T11:10:38.301Z",
+  "result": null,
+  "error": "Error: Own native write readback failed",
+  "firstGuardFailure": null
+}

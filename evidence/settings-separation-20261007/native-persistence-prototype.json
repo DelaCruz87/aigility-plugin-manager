@@ -1,0 +1,4 @@
+{
+  "enable": "function(e){return y(this,void 0,Promise,(function(){return b(this,(function(t){switch(t.label){case 0:return[4,this.enablePlugin(e,!0)];case 1:return t.sent()?(this.enabledPlugins.add(e),this.requestSaveConfig(),[2,!0]):[2,!1]}}))}))}",
+  "disable": "function(e){return y(this,void 0,Promise,(function(){return b(this,(function(t){switch(t.label){case 0:return this.enabledPlugins.delete(e),this.requestSaveConfig(),[4,this.disablePlugin(e,!0)];case 1:return t.sent(),[2]}}))}))}"
+}

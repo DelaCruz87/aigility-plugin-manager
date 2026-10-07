@@ -1,0 +1,11 @@
+{
+  "source": "function(){for(var e=[],c=0;c<arguments.length;c++)e[c]=arguments[c];r=this,o=e;var p=Date.now();return i?n?a=s=p+t:l!==_l()&&s<=p&&(l.clearTimeout(i),l=_l(),i=l.setTimeout(u,0)):(l=_l(),s=p+t,i=l.setTimeout(u,t)),h}",
+  "keys": [
+    "length",
+    "name",
+    "prototype",
+    "cancel",
+    "run"
+  ],
+  "run": "function(){if(i)return l.clearTimeout(i),i=null,c()}"
+}
