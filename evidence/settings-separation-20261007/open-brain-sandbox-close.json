@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-07T11:50:49.304058+00:00",
+  "unit": "manager016-sandbox-acceptance",
+  "wholeTaskComplete": false,
+  "ensodelivery": "pending-root-coordination",
+  "task-close": {
+    "exitCode": 0,
+    "result": {
+      "ok": true,
+      "captured": 1,
+      "runtime": "codex"
+    },
+    "stderrLength": 0
+  },
+  "flush": {
+    "exitCode": 0,
+    "result": {
+      "ok": true,
+      "pending": 0,
+      "delivery": "synchronous"
+    },
+    "stderrLength": 0
+  }
+}
