@@ -12,6 +12,8 @@ Controller y dispatch conservan una sola closure Begin/Poll, ACK durable antes d
 
 - [x] Helper, controller y dispatch emitidos/compilados completos sin I/O nativo.
 - [x] Findings de lectura del root capturado y replacement durante await corregidos en source.
-- [ ] Peer re-review de bytes finales y reproducciones - en curso; no habilita ejecución por sí solo.
-- [ ] Grant ROOT nuevo de cleanup - pendiente de review y snapshot exactos.
-- [ ] Fixture retirada y cierre ROOT - aún no ejecutado.
+- [x] Peer re-review de bytes finales y reproducciones - PASS_PREPARED_CLEANUP_SOURCE de helper 3dabd9e0, controller b1fcb7c5 y dispatcher 3f5170aa. Normal y dos fault cases comprobados independientemente.
+- [x] Grant ROOT de cleanup - token 2b073626, primer ACK 11:27:37.926Z después de repinar el snapshot actual sin Begin previo.
+- [x] Fixture retirada y cierre ROOT - receipt SETTLED 11:27:38.223Z, ROOT RELEASE 11:29:19.783Z. Fixture ausente en disco, manifest, native, loaded y counter. State/Local raw y community original iguales, resumen efectivo nuevo sin fixture. No equivale a aceptación funcional de los toggles.
+
+El cierre ROOT detectó un crash de la ventana ajena 9/wc11 frente al snapshot anterior. Sandbox 2/wc2 seguía sano. El helper conservó objetos y número de ventanas, pero no comparaba el flag de crash de ventanas ajenas. Su causa y momento no están atribuidos; foreignWindowIntegrityAccepted=false y el cierre global no se presenta como PASS. Se conservó esa ventana sin recovery ni acciones globales. El siguiente helper funcional compara los flags capturados de cada ventana, incluidos los ya crashed.

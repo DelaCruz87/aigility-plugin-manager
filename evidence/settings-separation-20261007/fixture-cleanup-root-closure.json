@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-07T11:29:19.783451+00:00",
+  "token": "2b073626-83f7-4f0a-b69b-c0fea72a0695",
+  "ownFixtureCleanupAccepted": true,
+  "nativeWritesClosed": true,
+  "pendingWriter": false,
+  "fixtureAbsent": true,
+  "StateLocalExact": true,
+  "rawCommunityRestored": true,
+  "effectiveSha": "ee28c98d4921547fd0d9a8a1e46c0ea4dcb20ea7da25414edc75d594c9916fd9",
+  "foreignFSDrift": [],
+  "expectedOwnFSChanges": [
+    {
+      "path": ".obsidian/community-plugins.json",
+      "before": "f0473d846e3ab7eb90c8f007fcb267435eb10107218fb6b6b9b6d356cfe3f6b2",
+      "after": "666f389c32f2df5f9f6fb2a94bbcb7c77bae26631f1ca02fd48e9940ed1794cf"
+    },
+    {
+      "path": ".obsidian/plugins/aigility-plugin-manager/effective-state.json",
+      "before": "4210362e5e130074e1672f9310cea1c4f940826ce550fb9fa61cdf2f44b6b765",
+      "after": "ee28c98d4921547fd0d9a8a1e46c0ea4dcb20ea7da25414edc75d594c9916fd9"
+    }
+  ],
+  "foreignWindowDrift": [
+    {
+      "id": 9,
+      "wc": 11,
+      "beforeCrashed": false,
+      "afterCrashed": true
+    }
+  ],
+  "foreignWindowIntegrityAccepted": false,
+  "foreignWindowCause": "unattributed; observed after native receipt, precise onset unknown",
+  "originalFunctionalAccepted": false,
+  "originalFailureRetained": true,
+  "noRecoveryOrRollback": true
+}

@@ -31,6 +31,9 @@ async function scenario(fault) {
   const document = { URL: 'app://obsidian.md/index.html', activeElement: { focus() {} }, querySelector: () => null };
   const nativeWindow = { id: 3, webContents: { id: 3, isCrashed: () => false, capturePage: async () => ({ toPNG: () => Buffer.from('89504e470d0a1a0a', 'hex') }) } };
   const pm = { plugins: { foreign }, manifests: { [ID]: { id: ID } }, enabledPlugins: new Set(['foreign', ID]), async saveConfig() { put(community, [...this.enabledPlugins]); } };
+  let pendingNativeSave = false, flushedNativeSave = false;
+  pm.requestSaveConfig = () => { pendingNativeSave = true; };
+  pm.requestSaveConfig.run = async () => { if (pendingNativeSave) { pendingNativeSave = false; flushedNativeSave = true; await pm.saveConfig(); } };
   const app = {
     appId: 'cpu-app', plugins: pm, internalPlugins: { plugins: {} },
     vault: { configDir: '.obsidian', getName: () => 'Sandbox', adapter: { getBasePath: () => root } },
@@ -78,7 +81,8 @@ async function scenario(fault) {
     pm.enabledPlugins.add(id);
     if (id === ID) await pm.enablePlugin(id);
     else { pm.plugins[id] = { _loaded: true }; window.__managerToggleFixtureLoads = (window.__managerToggleFixtureLoads ?? 0) + 1; }
-    await pm.saveConfig();
+    if (fault === 'delayed-native-save') pm.requestSaveConfig();
+    else await pm.saveConfig();
   };
   const stat = fs.statSync(root), token = 'cpu-owned-token';
   const r = {
@@ -98,7 +102,8 @@ async function scenario(fault) {
     if (file === fixture + '/styles.css' && fault === 'foreign-community') fs.writeFileSync(community, fs.readFileSync(community, 'utf8') + '\n');
   } };
   try {
-    const context = { app, document, window, localStorage: { getItem: key => values.get(key) }, requestAnimationFrame: fn => fn(), setTimeout, Buffer, console, require: name => name === 'fs' ? fakeFs : name === 'crypto' ? crypto : name === 'path' ? path : { remote: { getCurrentWindow: () => nativeWindow, BrowserWindow: { getAllWindows: () => [nativeWindow] } } } };
+    const foreignWindow = { id: 9, webContents: { id: 11, isCrashed: () => true } };
+    const context = { app, document, window, localStorage: { getItem: key => values.get(key) }, requestAnimationFrame: fn => fn(), setTimeout, Buffer, console, require: name => name === 'fs' ? fakeFs : name === 'crypto' ? crypto : name === 'path' ? path : { remote: { getCurrentWindow: () => nativeWindow, BrowserWindow: { getAllWindows: () => fault === 'foreign-already-crashed' ? [nativeWindow, foreignWindow] : [nativeWindow] } } } };
     if (fault === 'reserved-record') {
       assert.throws(() => vm.runInNewContext('(' + runNative.toString() + ')(' + JSON.stringify(r) + ')', context), /reserved fixture identity/);
       assert.equal(mutations, 0); assert.equal(fs.existsSync(r.backup), false); assert.equal(hash(fs.readFileSync(target + '/main.js')), r.preimages['main.js']);
@@ -112,8 +117,9 @@ async function scenario(fault) {
       else if (fault === 'leaf-during-load') { assert.equal(job.receipt.status, 'FAILED_PRESERVED'); assert.deepEqual(Array.from(job.receipt.firstGuardFailure.failed), ['active-leaf']); assert.equal(job.receipt.firstGuardFailure.phase, 'load-candidate'); assert.equal(job.receipt.firstGuardFailure.before.activeLeaf, 'leaf'); assert.equal(job.receipt.firstGuardFailure.current.activeLeaf, 'new-leaf'); assert.equal(fs.existsSync(fixture), false); }
       else { assert.equal(job.receipt.status, 'SETTLED', job.receipt.error); assert.equal(hash(fs.readFileSync(target + '/main.js')), r.artifacts['main.js']); assert.equal(fs.readFileSync(community, 'utf8'), beforeCommunity); assert.equal(fs.existsSync(fixture), false); assert.equal(fs.readFileSync(effective, 'utf8').includes(F), false); }
       if (fault === 'functional-current') assert.equal(managerLoads, 1, 'only explicit self re-enable loads the current candidate');
+      if (fault === 'delayed-native-save') { assert.equal(flushedNativeSave, true); assert.equal(pendingNativeSave, false); }
     }
     console.log('PASS: emitted helper ownership scenario ' + fault);
   } finally { fs.rmSync(root, { recursive: true, force: true }); }
 }
-for (const fault of ['normal', 'source-after-preflight', 'reserved-record', 'foreign-effective', 'foreign-community', 'leaf-during-load', 'functional-current']) await scenario(fault);
+for (const fault of ['normal', 'source-after-preflight', 'reserved-record', 'foreign-effective', 'foreign-community', 'leaf-during-load', 'functional-current', 'delayed-native-save', 'foreign-already-crashed']) await scenario(fault);

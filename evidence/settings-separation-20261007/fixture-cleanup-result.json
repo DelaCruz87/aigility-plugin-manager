@@ -1,0 +1,16 @@
+{
+  "token": "2b073626-83f7-4f0a-b69b-c0fea72a0695",
+  "status": "SETTLED",
+  "pending": false,
+  "phase": "refresh-own-effective",
+  "result": {
+    "fixtureRemoved": true,
+    "stateLocalPreserved": true,
+    "foreignPreserved": true,
+    "surfacesPreserved": true,
+    "communityRestored": true,
+    "effectiveSha": "ee28c98d4921547fd0d9a8a1e46c0ea4dcb20ea7da25414edc75d594c9916fd9"
+  },
+  "error": null,
+  "completedAt": "2026-10-07T11:27:38.223Z"
+}

@@ -6,11 +6,15 @@ export function runNative(r) {
     const sha = path => fs.existsSync(path) ? hash(fs.readFileSync(path)) : null;
     const J = JSON.stringify, ID = 'aigility-plugin-manager', F = 'aigility-manager-toggle-fixture';
     const host = app, doc = document, pm = app.plugins, win = remote.getCurrentWindow();
+    const requestSave = pm.requestSaveConfig, requestRun = requestSave?.run;
+    if (typeof requestSave !== 'function' || typeof requestRun !== 'function') throw Error('Native persistence flush capability required');
+    const requestSaveHash = hash(requestSave.toString()), requestRunHash = hash(requestRun.toString());
     const target = r.root + '/.obsidian/plugins/' + ID, fixture = r.root + '/.obsidian/plugins/' + F;
     let manager = pm.plugins[ID], transition = false, cleanup = false, q;
     const gate = () => {
         const st = fs.statSync(app.vault.adapter.getBasePath());
-        if (app !== host || document !== doc || pm !== app.plugins || app.appId !== r.native.appId || app.vault.getName() !== r.native.vault || win.id !== r.native.window || win.webContents.id !== r.native.wc || win.webContents.isCrashed() || document.URL !== r.native.document || fs.realpathSync(app.vault.adapter.getBasePath()) !== r.native.physicalRoot || st.dev !== r.native.dev || st.ino !== r.native.ino) throw Error('Native identity changed');
+        if (app !== host || document !== doc || pm !== app.plugins || app.appId !== r.native.appId || app.vault.getName() !== r.native.vault || app.vault.adapter.getBasePath() !== r.root || win.id !== r.native.window || win.webContents.id !== r.native.wc || win.webContents.isCrashed() || document.URL !== r.native.document || fs.realpathSync(app.vault.adapter.getBasePath()) !== r.native.physicalRoot || st.dev !== r.native.dev || st.ino !== r.native.ino) throw Error('Native identity changed');
+        if (pm.requestSaveConfig !== requestSave || requestSave.run !== requestRun || hash(requestSave.toString()) !== requestSaveHash || hash(requestRun.toString()) !== requestRunHash) throw Error('Native persistence hook changed');
         if (Date.now() >= Date.parse(cleanup ? r.totalBy : r.actionBy) || Date.now() >= Date.parse(r.rootHardBy)) throw Error('Native deadline');
         for (const [path, expected] of [[r.controlPath, r.controlSha], [r.leasePath, r.leaseSha], [r.helperPath, r.helperSha], [r.baselinePath, r.baselineSha]]) if (sha(path) !== expected) throw Error('Pinned file changed: ' + path);
         if (!fs.readFileSync(r.leasePath, 'utf8').includes(r.token)) throw Error('Lease token changed');
@@ -30,6 +34,7 @@ export function runNative(r) {
     const settings = app.setting, lastTab = settings.lastTabId, settingsDoc = settings.doc, settingsModal = settings.modalEl, leaf = app.workspace.activeLeaf, layout = J(app.workspace.getLayout()), focus = document.activeElement;
     const buffers = () => { const values = []; app.workspace.iterateAllLeaves(l => values.push([l.id, l.view?.getViewType?.(), l.view?.editor?.getValue ? hash(l.view.editor.getValue()) : null])); return J(values); };
     const bufferBefore = buffers(), windows = remote.BrowserWindow.getAllWindows();
+    const crashBefore = windows.map(w => w.webContents.isCrashed());
     const cores = Object.entries(app.internalPlugins.plugins).map(([id, item]) => [id, item.enabled, item.instance]);
     const surfaceSnapshot = () => ({ at: new Date().toISOString(), settingsOpen: settings.isOpen, lastTab: settings.lastTabId, settingsDoc: settings.doc?.URL ?? null, modalDoc: settings.modalEl?.ownerDocument?.URL ?? null, activeLeaf: app.workspace.activeLeaf?.id ?? null, layoutHash: hash(J(app.workspace.getLayout())), buffersHash: hash(buffers()), windows: remote.BrowserWindow.getAllWindows().map(w => ({ id: w.id, wc: w.webContents.id, crashed: w.webContents.isCrashed() })) });
     const surfaceBefore = surfaceSnapshot();
@@ -45,7 +50,7 @@ export function runNative(r) {
         if (app.workspace.activeLeaf !== leaf) failed.push('active-leaf');
         if (J(app.workspace.getLayout()) !== layout) failed.push('layout');
         if (buffers() !== bufferBefore) failed.push('buffers');
-        if (remote.BrowserWindow.getAllWindows().length !== windows.length || windows.some(w => !remote.BrowserWindow.getAllWindows().includes(w) || w.webContents.isCrashed())) failed.push('windows');
+        if (remote.BrowserWindow.getAllWindows().length !== windows.length || windows.some((w,i) => !remote.BrowserWindow.getAllWindows().includes(w) || w.webContents.isCrashed() !== crashBefore[i])) failed.push('windows');
         if (failed.length) {
             if (q) q.firstGuardFailure ??= { phase: q.phase, failed, before: surfaceBefore, current: surfaceSnapshot() };
             throw Error('Native surface changed: ' + failed.join(', '));
@@ -64,6 +69,10 @@ export function runNative(r) {
         const nativeWrite = phase === 'fixture-native-enable' || phase.startsWith('actual-ui-toggle-') || phase === 'actual-ui-self-disable' || phase === 'native-reenable-manager' || phase === 'restore-own-native-order';
         const effectiveWrite = phase === 'load-candidate' || phase.startsWith('actual-ui-toggle-') || phase === 'native-reenable-manager' || phase === 'cleanup-own-record' || phase === 'refresh-effective-summary';
         if (nativeWrite) {
+            // Obsidian's *AndSave schedules requestSaveConfig without awaiting
+            // persistence. Complete that exact pending save before readback.
+            await requestRun.call(requestSave); unchanged(); stableFiles(true);
+            await pm.saveConfig(); unchanged(); stableFiles(true);
             if (J(JSON.parse(fs.readFileSync(communityPath))) !== J([...pm.enabledPlugins])) throw Error('Own native write readback failed');
             expectedCommunityPost = sha(communityPath);
         } else if (sha(communityPath) !== expectedCommunityPost) throw Error('Unexpected native output write during ' + phase);

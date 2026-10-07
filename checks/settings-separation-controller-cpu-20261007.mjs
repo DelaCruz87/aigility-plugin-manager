@@ -57,7 +57,8 @@ try {
   assert.throws(() => controller.poll(), /pin drift/);
   assert.equal(calls, 3);
   const source = '(' + runNative.toString() + ')({root:' + JSON.stringify(temp) + ',native:{appId:"wrong"}})';
-  const app = { appId: 'cpu-app', plugins: { plugins: {} }, vault: { adapter: { getBasePath: () => temp } } };
+  const requestSaveConfig = () => {}; requestSaveConfig.run = () => {};
+  const app = { appId: 'cpu-app', plugins: { plugins: {}, requestSaveConfig }, vault: { adapter: { getBasePath: () => temp } } };
   let nativeWrites = 0;
   const fakeFs = { ...fs, writeFileSync() { nativeWrites++; }, mkdirSync() { nativeWrites++; } };
   assert.throws(() => vm.runInNewContext(source, { app, document: {}, require: name => name === 'fs' ? fakeFs : name === 'crypto' ? crypto : { remote: { getCurrentWindow: () => ({}) } } }), /Native identity/);
