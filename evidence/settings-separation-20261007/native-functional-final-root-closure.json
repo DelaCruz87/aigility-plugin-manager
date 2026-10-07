@@ -1,0 +1,422 @@
+{
+  "at": "2026-10-07T11:45:49.788Z",
+  "token": "4aac136e-5413-48ec-8c00-b6b888975fca",
+  "status": "SETTLED",
+  "pending": false,
+  "nativeObservation": {
+    "at": "2026-10-07T11:45:49.728Z",
+    "appId": "d137282e82167d84",
+    "window": 2,
+    "wc": 2,
+    "job": {
+      "status": "SETTLED",
+      "pending": false,
+      "taskSettled": null,
+      "phase": "refresh-effective-summary"
+    },
+    "manager": {
+      "loaded": true,
+      "version": "0.1.6",
+      "stateHash": "31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4",
+      "localHash": "967db62c4213832e1bb5968b8af3c92ec11a2cff9279d4da6860a83f5089835b"
+    },
+    "fixtureAbsent": true,
+    "native": [
+      "agility-links",
+      "aigility-blocks",
+      "datacore",
+      "aigility-tables",
+      "enso-filetree-lab",
+      "advanced-exclude",
+      "enso-secret-placeholders",
+      "better-plugins-manager",
+      "cmdr",
+      "darlal-switcher-plus",
+      "editing-toolbar",
+      "enhanced-symbols-prettifier",
+      "folder-notes",
+      "gridexplorer",
+      "insta-toc",
+      "keyshots",
+      "obsidian-custom-frames",
+      "obsidian-excalidraw-plugin",
+      "obsidian-sort-and-permute-lines",
+      "obsidian-trash-explorer",
+      "ribbon-organizer",
+      "templater-obsidian",
+      "note-toolbar",
+      "tag-wrangler",
+      "callout-manager",
+      "obsidian-local-rest-api",
+      "fileclass",
+      "notebook-navigator",
+      "better-plugins-manager-companion",
+      "aigility-plugin-manager",
+      "aigility-ui",
+      "obsidian-style-settings",
+      "voiceink-companion",
+      "aigility-obs",
+      "symphony-viewer"
+    ],
+    "foreign": [
+      {
+        "id": "agility-links",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "aigility-blocks",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "datacore",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "aigility-tables",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "enso-filetree-lab",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "advanced-exclude",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "enso-secret-placeholders",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "better-plugins-manager",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "darlal-switcher-plus",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "editing-toolbar",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "enhanced-symbols-prettifier",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "folder-notes",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "gridexplorer",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "insta-toc",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "keyshots",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "obsidian-custom-frames",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "obsidian-excalidraw-plugin",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "obsidian-sort-and-permute-lines",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "obsidian-trash-explorer",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "ribbon-organizer",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "templater-obsidian",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "note-toolbar",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "tag-wrangler",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "callout-manager",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "obsidian-local-rest-api",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "fileclass",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "notebook-navigator",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "better-plugins-manager-companion",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "aigility-ui",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "obsidian-style-settings",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "voiceink-companion",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "symphony-viewer",
+        "loaded": true,
+        "native": true
+      },
+      {
+        "id": "omnisearch",
+        "loaded": true,
+        "native": false
+      },
+      {
+        "id": "aigility-obs",
+        "loaded": true,
+        "native": true
+      }
+    ],
+    "core": [
+      {
+        "id": "file-explorer",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "global-search",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "switcher",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "graph",
+        "enabled": false,
+        "hasInstance": true
+      },
+      {
+        "id": "backlink",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "canvas",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "outgoing-link",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "tag-pane",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "footnotes",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "properties",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "page-preview",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "daily-notes",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "templates",
+        "enabled": false,
+        "hasInstance": true
+      },
+      {
+        "id": "note-composer",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "command-palette",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "slash-command",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "editor-status",
+        "enabled": false,
+        "hasInstance": true
+      },
+      {
+        "id": "bookmarks",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "zk-prefixer",
+        "enabled": false,
+        "hasInstance": true
+      },
+      {
+        "id": "random-note",
+        "enabled": false,
+        "hasInstance": true
+      },
+      {
+        "id": "outline",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "word-count",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "slides",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "audio-recorder",
+        "enabled": false,
+        "hasInstance": true
+      },
+      {
+        "id": "workspaces",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "file-recovery",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "publish",
+        "enabled": false,
+        "hasInstance": true
+      },
+      {
+        "id": "sync",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "bases",
+        "enabled": true,
+        "hasInstance": true
+      },
+      {
+        "id": "webviewer",
+        "enabled": true,
+        "hasInstance": true
+      }
+    ],
+    "settings": {
+      "open": false,
+      "last": "about",
+      "doc": "app://obsidian.md/index.html",
+      "modalDoc": "about:blank"
+    },
+    "activeLeaf": "45f0859ed1d9c012",
+    "layoutHash": "29428403d9280d482d7224d9a1ca38db8b61796fb39eaa73f30082bd7972f89d",
+    "buffersHash": "06fad56fbd987c0e46394dcc77915715a839ff8126d33be7ff96320c741f3f23",
+    "windows": [
+      {
+        "id": 2,
+        "wc": 2,
+        "crashed": false,
+        "url": "app://obsidian.md/index.html"
+      }
+    ]
+  },
+  "fsDrifts": [
+    {
+      "path": ".obsidian/plugins/aigility-plugin-manager/effective-state.json",
+      "before": "ee28c98d4921547fd0d9a8a1e46c0ea4dcb20ea7da25414edc75d594c9916fd9",
+      "after": "d6793e41bc85c0e398bb50712d6a27a203e107dff380f795ef0033adae72d608"
+    }
+  ],
+  "foreignFSDrifts": [],
+  "sameState": true,
+  "sameLocal": true,
+  "sameLayout": true,
+  "sameBuffers": true,
+  "sameActiveLeaf": true,
+  "sameSettings": true,
+  "sameWindows": true,
+  "sameForeign": true,
+  "sameCore": true,
+  "nativeDiskMatches": true,
+  "functionalAccepted": true
+}

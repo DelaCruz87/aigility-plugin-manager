@@ -1,0 +1,10 @@
+{
+  "token": "4aac136e-5413-48ec-8c00-b6b888975fca",
+  "job": "manager016-functional-save-20261007",
+  "receiptStatus": "SETTLED",
+  "pending": false,
+  "error": null,
+  "at": "2026-10-07T11:39:51.800Z",
+  "receiptPath": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager016-functional-final-irasq0au/result.json",
+  "requiresRootClosure": true
+}

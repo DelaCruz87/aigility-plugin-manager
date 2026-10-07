@@ -1,0 +1,73 @@
+{
+  "job": "manager016-functional-save-20261007",
+  "token": "4aac136e-5413-48ec-8c00-b6b888975fca",
+  "status": "SETTLED",
+  "pending": false,
+  "phase": "refresh-effective-summary",
+  "fixtureCreated": false,
+  "startedAt": "2026-10-07T11:39:50.214Z",
+  "completedAt": "2026-10-07T11:39:51.666Z",
+  "result": {
+    "version": "0.1.6",
+    "build": "aigility-plugin-manager/0.1.6",
+    "loaded": true,
+    "native": true,
+    "results": [
+      {
+        "action": "toggle",
+        "loaded": false,
+        "native": false,
+        "desired": false
+      },
+      {
+        "action": "toggle",
+        "loaded": true,
+        "native": true,
+        "desired": true
+      },
+      {
+        "action": "toggle",
+        "loaded": false,
+        "native": false,
+        "desired": false
+      },
+      {
+        "action": "self-disable",
+        "loaded": false,
+        "native": false,
+        "writesAfterUnload": false
+      }
+    ],
+    "nativeSettingsPreserved": true,
+    "foreignPluginsPreserved": true,
+    "stateLocalPreserved": true,
+    "buffersPreserved": true,
+    "fixtureRemoved": true,
+    "generatedEffectiveSha": "d6793e41bc85c0e398bb50712d6a27a203e107dff380f795ef0033adae72d608",
+    "surfaces": [
+      {
+        "surface": "manager",
+        "rect": {
+          "x": 450,
+          "y": 82,
+          "width": 900,
+          "height": 930
+        },
+        "pixelsVerified": false
+      },
+      {
+        "surface": "settings",
+        "rect": {
+          "x": 450,
+          "y": 150,
+          "width": 900,
+          "height": 793
+        },
+        "pixelsVerified": false
+      }
+    ],
+    "pixelsVerified": false
+  },
+  "error": null,
+  "firstGuardFailure": null
+}

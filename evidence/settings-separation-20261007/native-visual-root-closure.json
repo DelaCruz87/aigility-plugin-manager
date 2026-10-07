@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-07T11:07:00.067222+00:00",
+  "token": "5bf56826-49bd-4fd0-a1af-330ec110cbc7",
+  "status": "SETTLED",
+  "pendingWriter": false,
+  "nativeWritesClosed": true,
+  "visualAccepted": true,
+  "surfaces": [
+    "actual own Manager list with version0.1.6, filters, rows and visible pause reason",
+    "actual own options Deferred page and Settings page,8 visible tabs, cards and readable controls"
+  ],
+  "visualLimits": "Only these captured pages accepted visually; no toggles/Resume/save/write-effective/profile clicked, other tabs untested. Screenshots displayed in CUA tool history, no saved PNG claimed. CUA stopped input after human switched to ENSO; exact native API closed only root-owned Sandbox list within total deadline.",
+  "preservation": {
+    "settings": true,
+    "manager": true,
+    "foreign": true,
+    "core": true,
+    "layoutHash": true,
+    "buffersHash": true,
+    "activeLeaf": true,
+    "windows": true
+  },
+  "FSDrift": [],
+  "cleanup": {
+    "closedOwnList": true,
+    "ownManagerModal": false,
+    "ownedOptions": 0,
+    "focusedWindow": null
+  },
+  "fixtureAbsent": true
+}
