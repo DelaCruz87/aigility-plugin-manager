@@ -1,0 +1,12 @@
+{
+  "job": "manager016-sandbox-20261007-r1",
+  "token": "ac53cbb8-ed59-4f60-babb-1f2a52867ca1",
+  "status": "FAILED_PRESERVED",
+  "pending": true,
+  "phase": "load-candidate",
+  "fixtureCreated": false,
+  "startedAt": "2026-10-07T10:57:34.340Z",
+  "completedAt": "2026-10-07T10:57:34.904Z",
+  "result": null,
+  "error": "Error: Settings/window/layout/buffer changed"
+}

@@ -1,0 +1,7 @@
+PASS: emitted helper ownership scenario normal
+PASS: emitted helper ownership scenario source-after-preflight
+PASS: emitted helper ownership scenario reserved-record
+PASS: emitted helper ownership scenario foreign-effective
+PASS: emitted helper ownership scenario foreign-community
+PASS: emitted helper ownership scenario leaf-during-load
+PASS: emitted helper ownership scenario functional-current

@@ -31,12 +31,12 @@ export async function dispatch(temp) {
   const controller = createController({ ...loaded, temp, loadedPath, loadedSha: sha(loadedPath), emittedSource }, { fs, crypto, vm, execFileSync });
   let receipt = null, error = null;
   try {
-    const begin = controller.begin({ token: lease.token, leaseSha, rootHardBy: lease.absoluteHardDeadline });
+    const begin = controller.begin({ token: lease.token, leaseSha, rootHardBy: lease.absoluteHardDeadline, mode: loaded.mode });
     save(path.join(temp, 'begin-return.json'), begin.returned);
     for (;;) {
       const current = controller.poll();
       if (current.status === 'UNKNOWN') throw Error('UNKNOWN preserved; no new job or automatic retry');
-      if (!current.pending) { receipt = current; break; }
+      if (!current.pending || current.status === 'FAILED_PRESERVED') { receipt = current; break; }
       await new Promise(resolve => setTimeout(resolve, 150));
     }
   } catch (caught) {
@@ -47,7 +47,7 @@ export async function dispatch(temp) {
   save(path.join(temp, 'dispatch-return.json'), report);
   return report;
 }
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && fs.existsSync(process.argv[1]) && import.meta.url === pathToFileURL(fs.realpathSync(process.argv[1])).href) {
   if (!process.argv[2]) throw Error('Frozen outside-vault package directory required');
   console.log(JSON.stringify(await dispatch(process.argv[2])));
 }

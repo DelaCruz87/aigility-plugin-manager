@@ -31,10 +31,25 @@ export function runNative(r) {
     const buffers = () => { const values = []; app.workspace.iterateAllLeaves(l => values.push([l.id, l.view?.getViewType?.(), l.view?.editor?.getValue ? hash(l.view.editor.getValue()) : null])); return J(values); };
     const bufferBefore = buffers(), windows = remote.BrowserWindow.getAllWindows();
     const cores = Object.entries(app.internalPlugins.plugins).map(([id, item]) => [id, item.enabled, item.instance]);
+    const surfaceSnapshot = () => ({ at: new Date().toISOString(), settingsOpen: settings.isOpen, lastTab: settings.lastTabId, settingsDoc: settings.doc?.URL ?? null, modalDoc: settings.modalEl?.ownerDocument?.URL ?? null, activeLeaf: app.workspace.activeLeaf?.id ?? null, layoutHash: hash(J(app.workspace.getLayout())), buffersHash: hash(buffers()), windows: remote.BrowserWindow.getAllWindows().map(w => ({ id: w.id, wc: w.webContents.id, crashed: w.webContents.isCrashed() })) });
+    const surfaceBefore = surfaceSnapshot();
     const unchanged = () => {
         gate();
         if (foreignNative() !== nativeBefore || foreign.some(([id, plugin]) => pm.plugins[id] !== plugin) || Object.keys(pm.plugins).filter(id => id !== ID && id !== F).length !== foreign.length || cores.some(([id, on, instance]) => app.internalPlugins.plugins[id].enabled !== on || app.internalPlugins.plugins[id].instance !== instance)) throw Error('Foreign plugin/core changed');
-        if (app.setting !== settings || settings.isOpen || settings.lastTabId !== lastTab || settings.doc !== settingsDoc || settings.modalEl !== settingsModal || app.workspace.activeLeaf !== leaf || J(app.workspace.getLayout()) !== layout || buffers() !== bufferBefore || remote.BrowserWindow.getAllWindows().length !== windows.length || windows.some(w => !remote.BrowserWindow.getAllWindows().includes(w) || w.webContents.isCrashed())) throw Error('Settings/window/layout/buffer changed');
+        const failed = [];
+        if (app.setting !== settings) failed.push('settings-instance');
+        if (settings.isOpen) failed.push('settings-open');
+        if (settings.lastTabId !== lastTab) failed.push('settings-last-tab');
+        if (settings.doc !== settingsDoc) failed.push('settings-document');
+        if (settings.modalEl !== settingsModal) failed.push('settings-modal');
+        if (app.workspace.activeLeaf !== leaf) failed.push('active-leaf');
+        if (J(app.workspace.getLayout()) !== layout) failed.push('layout');
+        if (buffers() !== bufferBefore) failed.push('buffers');
+        if (remote.BrowserWindow.getAllWindows().length !== windows.length || windows.some(w => !remote.BrowserWindow.getAllWindows().includes(w) || w.webContents.isCrashed())) failed.push('windows');
+        if (failed.length) {
+            if (q) q.firstGuardFailure ??= { phase: q.phase, failed, before: surfaceBefore, current: surfaceSnapshot() };
+            throw Error('Native surface changed: ' + failed.join(', '));
+        }
     };
     const stateWithoutFixture = () => { const state = JSON.parse(J(manager.runtime.state)); delete state.records['community:' + F]; return J(state); };
     let stepNumber = 0;
@@ -76,17 +91,20 @@ export function runNative(r) {
             durable(r.backup + '/community-plugins.json', communityBeforeBytes);
             durable(r.backup + '/local.json', J({ localKey, localRaw: localBefore, state: stateBefore, filter: manager.managerUI.filterCriteria })); syncDir(r.backup); syncDir(require('path').dirname(r.backup));
             await step('drain', () => manager.runtime.enqueue('native016-drain', async () => {}));
-            await step('unload-old', async () => { transition = true; await pm.disablePlugin(ID); manager = null; transition = false; });
+            if (r.mode !== 'functional-current') await step('unload-old', async () => { transition = true; await pm.disablePlugin(ID); manager = null; transition = false; });
             nativeFns = [settings.open, ...settings.settingTabs.filter(t => t.id === 'community-plugins').flatMap(t => [t.display, t.renderTab, t.update])];
             nativeNode = settings.settingTabs.find(t => t.id === 'community-plugins')?.containerEl?.firstChild;
             for (const [name, expected] of Object.entries(r.artifacts)) {
                 unchanged(); if (sha(target + '/' + name) !== r.preimages[name]) throw Error('Copy CAS changed');
                 if (hash(candidateBuffers[name]) !== expected) throw Error('Pinned candidate buffer changed before copy');
+                if (r.mode === 'functional-current') { if (sha(target + '/' + name) !== expected) throw Error('Current functional candidate differs'); continue; }
                 const fd = fs.openSync(target + '/' + name, 'w'); try { fs.writeFileSync(fd, candidateBuffers[name]); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
                 if (sha(target + '/' + name) !== expected) throw Error('Copied candidate differs');
             }
-            await step('manifest', () => pm.loadManifest(app.vault.configDir + '/plugins/' + ID));
-            await step('load-candidate', async () => { transition = true; await pm.enablePlugin(ID); manager = pm.plugins[ID]; transition = false; });
+            if (r.mode !== 'functional-current') {
+                await step('manifest', () => pm.loadManifest(app.vault.configDir + '/plugins/' + ID));
+                await step('load-candidate', async () => { transition = true; await pm.enablePlugin(ID); manager = pm.plugins[ID]; transition = false; });
+            }
             if (!manager?._loaded || manager.manifest.version !== '0.1.6' || manager.managerBuild !== 'aigility-plugin-manager/0.1.6' || J(manager.runtime.state) !== stateBefore || localStorage.getItem(localKey) !== localBefore) throw Error('Loaded candidate or State/Local mismatch');
             fs.mkdirSync(fixture); fixtureCreated = true;
             for (const [name, expected] of Object.entries(r.fixtureArtifacts)) { if (hash(fixtureBuffers[name]) !== expected) throw Error('Pinned fixture buffer changed'); durable(fixture + '/' + name, fixtureBuffers[name]); } syncDir(fixture); syncDir(require('path').dirname(fixture));
@@ -162,7 +180,7 @@ export function runNative(r) {
             q.result = { version: manager.manifest.version, build: manager.managerBuild, loaded: manager._loaded, native: pm.enabledPlugins.has(ID), results, nativeSettingsPreserved: true, foreignPluginsPreserved: true, stateLocalPreserved: true, buffersPreserved: true, fixtureRemoved: true, generatedEffectiveSha: expectedEffectivePost, surfaces: [q.managerSurface, q.settingsSurface], pixelsVerified: false };
         } catch (error) { q.error = String(error); }
         finally {
-            const receipt = { job: r.job, token: r.token, status: q.error ? 'FAILED_PRESERVED' : 'SETTLED', pending: Boolean(q.error), phase: q.phase, fixtureCreated, startedAt: q.startedAt, completedAt: new Date().toISOString(), result: q.result ?? null, error: q.error ?? null };
+            const receipt = { job: r.job, token: r.token, status: q.error ? 'FAILED_PRESERVED' : 'SETTLED', pending: Boolean(q.error), phase: q.phase, fixtureCreated, startedAt: q.startedAt, completedAt: new Date().toISOString(), result: q.result ?? null, error: q.error ?? null, firstGuardFailure: q.firstGuardFailure ?? null };
             try { durable(r.resultPath, J(receipt, null, 2)); syncDir(require('path').dirname(r.resultPath)); q.receipt = receipt; } catch (error) { q.receipt = { ...receipt, pending: true, receiptError: String(error) }; }
             q.status = q.receipt.status; q.pending = q.receipt.pending;
         }

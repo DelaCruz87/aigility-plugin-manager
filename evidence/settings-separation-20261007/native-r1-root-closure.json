@@ -1,0 +1,81 @@
+{
+  "at": "2026-10-07T11:00:45.003740+00:00",
+  "token": "ac53cbb8-ed59-4f60-babb-1f2a52867ca1",
+  "functionalAccepted": false,
+  "originalStatus": "FAILED_PRESERVED",
+  "originalReceiptPending": true,
+  "nativeTaskSettled": true,
+  "pendingWriter": false,
+  "nativeWritesClosed": true,
+  "ownCandidateLoaded016": true,
+  "stateSame": true,
+  "localRawSame": true,
+  "fixtureAbsent": true,
+  "foreignFSDrift": [
+    {
+      "path": ".obsidian/workspace.json",
+      "before": "69afafd1f9fd3a9b71f4fa8d348314a7697a67d77f97f97ac6c8061f7352031d",
+      "current": "719e24293ac61d14f6537e4e63b01f635927bcafb10f56d2cbf3d34cc6730e92"
+    }
+  ],
+  "ownFSDrift": [
+    {
+      "path": ".obsidian/plugins/aigility-plugin-manager/main.js",
+      "before": "baed1c7026be103871c4f19beee51fcdbdf3889cac71e01a6f8daeb20f6fb2be",
+      "current": "bf1d245660349e4f1f4578a38a4563eee15bd5a5833c12639468d75aff201223"
+    },
+    {
+      "path": ".obsidian/plugins/aigility-plugin-manager/manifest.json",
+      "before": "ce9b56f77804f83b24b62c3fce07383751200402adc741108842b5043ed10aeb",
+      "current": "1d08012e04dfbd2edeaf5833813af8101afdb7438c9d220019ec39b97f7567c4"
+    },
+    {
+      "path": ".obsidian/plugins/aigility-plugin-manager/styles.css",
+      "before": "918ec84caa360cd4d6a7e79564685203ec0041384a14115c4137f8aa1b5a671b",
+      "current": "c5b8a3d5fd8250e3fd1156325164aaab83db70d0a68ff31cbc126be691cbf95a"
+    }
+  ],
+  "foreignRuntimeSame": true,
+  "coreRuntimeSame": true,
+  "buffersSame": true,
+  "layoutSame": false,
+  "activeLeafSame": false,
+  "beforeWindows": [
+    {
+      "id": 2,
+      "wc": 2,
+      "crashed": false,
+      "url": "app://obsidian.md/index.html"
+    },
+    {
+      "id": 1,
+      "wc": 1,
+      "crashed": false,
+      "url": "app://obsidian.md/index.html"
+    }
+  ],
+  "afterWindows": [
+    {
+      "id": 2,
+      "wc": 2,
+      "crashed": false,
+      "url": "app://obsidian.md/index.html"
+    },
+    {
+      "id": 6,
+      "wc": 7,
+      "crashed": false,
+      "url": "about:blank"
+    },
+    {
+      "id": 1,
+      "wc": 1,
+      "crashed": false,
+      "url": "app://obsidian.md/index.html"
+    }
+  ],
+  "scopeLimit": "Exact guard member at load-candidate was not captured. Subsequent layout/activeLeaf/window6 changes observed; cause and time attribution unresolved. Preserved all current user state, no rollback/cleanup foreign window/no retry. Original pending=true is error hold marker, q.task now verified settled. UI toggles and self-disable unrun.",
+  "nativeReceiptSha": "0d4b807fad9f6f3a25b6c632b177b0327ce58f2e3e76cba42b355ca9b5bba827",
+  "postNativeSha": "346406543eb60d9cea925ad93f6c87312b431d7daa69e8ea99a232387a33ea01",
+  "taskSettledSha": "5801de91b301e3751b3c883c837bfc292e1a721508631918b5080bde72ed3284"
+}

@@ -21,6 +21,7 @@ async function scenario(fault) {
     put(target + '/' + name, name === 'manifest.json' ? { id: ID, version: '0.1.5' } : 'old artifact');
     put(source + '/' + name, name === 'manifest.json' ? { id: ID, version: '0.1.6' } : 'approved artifact ' + name);
     put(fixtureSource + '/' + name, name === 'manifest.json' ? { id: F, version: '0.0.1' } : 'owned fixture ' + name);
+    if (fault === 'functional-current') fs.copyFileSync(source + '/' + name, target + '/' + name);
   }
   const community = root + '/.obsidian/community-plugins.json', effective = target + '/effective-state.json';
   put(community, ['foreign', ID]);
@@ -36,7 +37,7 @@ async function scenario(fault) {
     setting: { isOpen: false, lastTabId: '', doc: document, modalEl: null, open() {}, settingTabs: [{ id: 'community-plugins', display() {}, renderTab() {}, update() {}, containerEl: { firstChild: {} } }] },
     workspace: { activeLeaf: leaf, getLayout: () => ({ leaf: 'leaf' }), iterateAllLeaves: fn => fn(leaf) },
   };
-  let reports = 0, mutations = 0;
+  let reports = 0, mutations = 0, managerLoads = 0;
   const manager = version => {
     const p = { _loaded: true, manifest: { id: ID, version }, managerBuild: 'aigility-plugin-manager/' + version, debug: {} };
     const runtime = {
@@ -69,10 +70,10 @@ async function scenario(fault) {
     };
     p.managerUI = ui; return p;
   };
-  pm.plugins[ID] = manager('0.1.5');
-  pm.disablePlugin = async id => { delete pm.plugins[id]; };
+  pm.plugins[ID] = manager(fault === 'functional-current' ? '0.1.6' : '0.1.5');
+  pm.disablePlugin = async id => { assert.notEqual(fault, 'functional-current', 'current candidate is never initially unloaded'); delete pm.plugins[id]; };
   pm.loadManifest = async relative => { const data = JSON.parse(fs.readFileSync(root + '/' + relative + '/manifest.json')); pm.manifests[data.id] = data; };
-  pm.enablePlugin = async id => { const p = manager('0.1.6'); pm.plugins[id] = p; await p.runtime.writeEffectiveState(); };
+  pm.enablePlugin = async id => { managerLoads++; const p = manager('0.1.6'); pm.plugins[id] = p; await p.runtime.writeEffectiveState(); if (fault === 'leaf-during-load') app.workspace.activeLeaf = { id: 'new-leaf' }; };
   pm.enablePluginAndSave = async id => {
     pm.enabledPlugins.add(id);
     if (id === ID) await pm.enablePlugin(id);
@@ -82,6 +83,7 @@ async function scenario(fault) {
   const stat = fs.statSync(root), token = 'cpu-owned-token';
   const r = {
     root, source, fixtureSource, backup: root + '/private-backup', resultPath: root + '/result.json', job: 'cpu-helper', token,
+    mode: fault === 'functional-current' ? 'functional-current' : 'deploy',
     actionBy: new Date(Date.now() + 30000).toISOString(), totalBy: new Date(Date.now() + 45000).toISOString(), rootHardBy: new Date(Date.now() + 60000).toISOString(),
     native: { appId: app.appId, vault: 'Sandbox', window: 3, wc: 3, document: document.URL, physicalRoot: fs.realpathSync(root), dev: stat.dev, ino: stat.ino },
     artifacts: {}, preimages: {}, fixtureArtifacts: {},
@@ -107,9 +109,11 @@ async function scenario(fault) {
       const job = window.__managerSettings016Jobs.get(token); await job.task;
       if (fault === 'foreign-effective') { assert.equal(job.receipt.status, 'FAILED_PRESERVED'); assert.equal(fs.readFileSync(effective, 'utf8'), '{"foreign":"report"}'); }
       else if (fault === 'foreign-community') { assert.equal(job.receipt.status, 'FAILED_PRESERVED'); assert.ok(fs.readFileSync(community, 'utf8').endsWith('\n')); }
+      else if (fault === 'leaf-during-load') { assert.equal(job.receipt.status, 'FAILED_PRESERVED'); assert.deepEqual(Array.from(job.receipt.firstGuardFailure.failed), ['active-leaf']); assert.equal(job.receipt.firstGuardFailure.phase, 'load-candidate'); assert.equal(job.receipt.firstGuardFailure.before.activeLeaf, 'leaf'); assert.equal(job.receipt.firstGuardFailure.current.activeLeaf, 'new-leaf'); assert.equal(fs.existsSync(fixture), false); }
       else { assert.equal(job.receipt.status, 'SETTLED', job.receipt.error); assert.equal(hash(fs.readFileSync(target + '/main.js')), r.artifacts['main.js']); assert.equal(fs.readFileSync(community, 'utf8'), beforeCommunity); assert.equal(fs.existsSync(fixture), false); assert.equal(fs.readFileSync(effective, 'utf8').includes(F), false); }
+      if (fault === 'functional-current') assert.equal(managerLoads, 1, 'only explicit self re-enable loads the current candidate');
     }
     console.log('PASS: emitted helper ownership scenario ' + fault);
   } finally { fs.rmSync(root, { recursive: true, force: true }); }
 }
-for (const fault of ['normal', 'source-after-preflight', 'reserved-record', 'foreign-effective', 'foreign-community']) await scenario(fault);
+for (const fault of ['normal', 'source-after-preflight', 'reserved-record', 'foreign-effective', 'foreign-community', 'leaf-during-load', 'functional-current']) await scenario(fault);

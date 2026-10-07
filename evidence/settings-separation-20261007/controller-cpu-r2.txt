@@ -1,0 +1,1 @@
+PASS: actual emitted body/outer compile, shared Begin/Guard/Poll, durable ACK/first-action, fresh native/fixture forwarding, duplicate/deadline/pin/identity refusal; zero native IO
