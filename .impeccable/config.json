@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "styles.css"
+        ],
+        "createdAt": "2026-10-07T11:55:44.234Z",
+        "reason": "Codex: intentional core-plugin type indicator in .aigility-plugin-row.kind-core, paired with explicit CORE/COMMUNITY badges in createPluginRow; git blame dates the unchanged border to b848e3d on 2026-10-01. Preserve this functional distinction and the accepted 0.1.6 candidate."
+      }
+    ]
+  }
+}
