@@ -9,7 +9,7 @@
     "dev": 16777234,
     "ino": 237131121
   },
-  "sourceHelper": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Tasks (Obsidian)/aigility-obs/orchestration/release-simple-deploy.py",
+  "sourceHelper": "/Users/eme/Obsidian/ENSO/Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Tasks (Obsidian)/aigility-tasks/orchestration/release-simple-deploy.py",
   "sourceHelperSha": "5838a57ae5273380d231a984345bc95b6f00cc0cc0bb16bcbae781b1e3e0b608",
   "next": {
     "main.js": "bce4c84930af05a5d1b3e33abf97b60612f5415a82fe729aaa18b0fadb8dc2a9",

@@ -1691,7 +1691,7 @@
         "loaded": true
       },
       {
-        "id": "aigility-obs",
+        "id": "aigility-tasks",
         "version": "0.50.0-dev.2",
         "native": true,
         "loaded": true
@@ -2141,7 +2141,7 @@
       "community:advanced-exclude",
       "community:agility-links",
       "community:aigility-blocks",
-      "community:aigility-obs",
+      "community:aigility-tasks",
       "community:aigility-tables",
       "community:aigility-ui",
       "community:better-plugins-manager",
