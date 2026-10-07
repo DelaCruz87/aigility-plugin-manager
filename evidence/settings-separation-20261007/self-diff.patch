@@ -1,0 +1,18 @@
+diff --git a/src/integrated/runtime.ts b/src/integrated/runtime.ts
+index 4953832..ab52161 100644
+--- a/src/integrated/runtime.ts
++++ b/src/integrated/runtime.ts
+@@ -336,6 +336,13 @@ export class ManagerRuntime {
+     }
+ 
+     setEnabled(ref: PluginRef, enabled: boolean): Promise<void> {
++        if (!enabled && key(ref) === MANAGER_PROTECTED_KEY) {
++            // Explicit self-disable is a handoff to Obsidian. The native call
++            // can synchronously dispose this runtime; do not create a pending
++            // journal or save/render Manager state after it returns. Automatic
++            // transaction setters still enforce permanent self protection.
++            return this.enqueue('manual-self-disable', () => this.host.setEnabled(ref, false, { origin: 'manual-self-disable' }));
++        }
+         // Public toggles are explicit user actions. Transactions retain the
+         // automation/diagnosis gates and cannot opt into this manual route.
+         return this.enqueue(`set-enabled:${key(ref)}`, () => this.setEnabledInternal(ref, enabled, undefined, true));

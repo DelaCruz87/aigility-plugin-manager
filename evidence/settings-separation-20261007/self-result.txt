@@ -1,0 +1,4 @@
+PASS: self-disable lifecycle handoff, native re-enable, and bulk protection; paused=false
+PASS: self-disable lifecycle handoff, native re-enable, and bulk protection; paused=true
+(node:51302) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
