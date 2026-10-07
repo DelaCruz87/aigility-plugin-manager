@@ -1,0 +1,22 @@
+{
+  "status": "SETTLED",
+  "pending": false,
+  "token": "manager016-5c976e944195472c900267a81c5cb879",
+  "job": "manager016-enso-files-20261007",
+  "installedVersion": "0.1.6",
+  "nativeOFF": true,
+  "loadedVerified": false,
+  "artifacts": {
+    "main.js": "bf1d245660349e4f1f4578a38a4563eee15bd5a5833c12639468d75aff201223",
+    "manifest.json": "1d08012e04dfbd2edeaf5833813af8101afdb7438c9d220019ec39b97f7567c4",
+    "styles.css": "c5b8a3d5fd8250e3fd1156325164aaab83db70d0a68ff31cbc126be691cbf95a"
+  },
+  "copied": [
+    "main.js",
+    "manifest.json",
+    "styles.css"
+  ],
+  "protectedFileCount": 387,
+  "protectedDrift": [],
+  "at": "2026-10-07T14:18:34.958713+00:00"
+}

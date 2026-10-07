@@ -211,3 +211,9 @@ Controller de perfiles y runner180/120/60 publicados en f80cdac:40checks offline
 - [ ] Deploy aceptado y readback ENSO: necesita aceptación Sandbox; no incluye binding, Apply at start ni Resume por inferencia.
 
 2026-10-05T17:28:07.911Z, Codex: candidato 0.1.4 instalado/native/loaded en Sandbox9/9 tras una única recarga propia. State SHA31e5b0b9ae6a31d4374411883352ae10210c2459682b8dacb8d7fb5e285013c4, siete perfiles y 42 fixtures exactos. No hubo Resume ni Apply at start. El inventario previo observó ENSO10 con renderer crashed; ese evento no se atribuye al Manager y la recuperación está a cargo del supervisor. Las comprobaciones lifecycle/UI propuestas no se han ejecutado en host.
+
+## Manager 0.1.6 ENSO Files Delivery
+
+2026-10-07, Codex. Versión 0.1.6 instalada en ENSO mediante copia exclusiva de main.js, manifest.json y styles.css, con el perfil desactivado conservado. Token manager016-5c976e944195472c900267a81c5cb879; actor SETTLED 14:18:34.958713Z y ROOT RELEASE_VERIFIED 14:19:39.794070Z. Tres hashes exactos del candidato aceptado, backup privado durable, sin llamadas Obsidian, activación ni reload. Fuente, 395 pruebas y build existentes no se regeneraron.
+
+Los 387 archivos protegidos eran byteexactos al resultado. ROOT confirmó datos/perfiles/otros archivos y registró sólo workspace.json distinto después del resultado; fullRootConfigEquality=false queda preservado, sin atribución ni rollback. Installed 0.1.6 y persisted OFF son resultados confirmados; loadedVerified=false y runtime ENSO/mobile no evaluados en esta copia. Los checkpoints 0.1.3/0.1.4 anteriores son históricos y no acreditan el estado de esta entrega. Aceptación de la corrección: [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-separation-20261007/Acceptance016]].

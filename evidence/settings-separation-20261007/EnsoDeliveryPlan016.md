@@ -1,6 +1,6 @@
 # Manager 0.1.6 ENSO Delivery Plan
 
-2026-10-07, Codex. Preparación posterior a la aceptación Sandbox. ROOT mantiene HOLD mientras reparte tres Sandbox y coordina la migración Tasks. Este plan no constituye una ejecución ni permite reutilizar el grant Sandbox cerrado.
+2026-10-07, Codex. Plan y registro de la entrega 0.1.6. La ejecución final está cerrada en Current Delivery Closure. Ready Snapshot y Coordinator Hold son historia de preparación, no permisos actuales; no deben reutilizarse sus paquetes/grants.
 
 ## Scope
 
@@ -31,8 +31,8 @@ Se elige entrega de archivos con perfil OFF porque no necesita abrir ni recupera
 - [x] Candidato construido y aceptación Sandbox independiente publicada.
 - [x] Procedimiento acotado a tres archivos y conservación de perfil/datos.
 - [x] Baseline filesystem actual y paquete privado READY: Manager 0.1.5 OFF, 387 archivos protegidos.
-- [ ] Ventana ROOT: HOLD nuevo durante el renombrado humano de los tres Sandbox. READY previo histórico NO_START; necesita baseline/grant nuevos después del release.
-- [ ] Ejecución, readback y cierre independiente: no ejecutados.
+- [x] Ventana ROOT nueva tras cierre del renombrado: paquete x1d6e9yi, token manager016-5c976e944195472c900267a81c5cb879, permiso persistido y comprobado.
+- [x] Ejecución SETTLED 14:18:34.958713Z y cierre ROOT RELEASE_VERIFIED 14:19:39.794070Z. Instalado 0.1.6 OFF; sin aceptación runtime ENSO.
 
 ## Ready Snapshot
 
@@ -41,3 +41,9 @@ Se elige entrega de archivos con perfil OFF porque no necesita abrir ni recupera
 ## Coordinator Hold
 
 2026-10-07, Codex, instrucción ROOT recibida tras petición humana de renombrar los tres vaults a Sandbox-1, Sandbox-2 y Sandbox-3. ROOT asume el renombrado y suspende nuevos START/grants/lifecycle/UI. La preparación anterior queda histórica NO_START y no se revive. ENSO Manager permanece 0.1.5 OFF en la última lectura filesystem documentada; no hubo copia, activación ni aceptación runtime ENSO. Después del release, esta entrega necesitará snapshot actual de sus targets/configuración y un grant nuevo. No se deduce autorización de escritura de que la reserva anterior estuviera libre.
+
+## Current Delivery Closure
+
+2026-10-07, Codex. La copia final de los tres archivos de producto terminó SETTLED 14:18:34.958713Z y ROOT confirmó RELEASE_VERIFIED 14:19:39.794070Z, pendingWriter=false. Candidato y runner no se reconstruyeron. Se conservó el perfil OFF y no se llamó a Obsidian. Los 387 archivos protegidos coincidían en el resultado del actor; el readback ROOT posterior detectó sólo workspace.json distinto y conservó fullRootConfigEquality=false. Ese cambio se preservó, sin restauración ni atribución causal. Datos/perfiles y otros archivos protegidos iguales; loadedVerified=false.
+
+La preparación mycblm0i quedó NO_START porque ROOT no persistió el grant que había anunciado después de un preflight fallido. hre1wi4h tampoco recibió grant por cambio de workspace. wtbmy2w6 quedó NO_START_EXPIRED antes de ACK, confirmado por ausencia de control/first-action/result/backup. Finalmente ROOT acopló prepare y grant y el executor quedó idle para recibir el permiso sin una llamada larga de espera. Se ejecutó el paquete fresco x1d6e9yi una sola vez. Todos los paquetes anteriores quedan históricos, no reutilizables.

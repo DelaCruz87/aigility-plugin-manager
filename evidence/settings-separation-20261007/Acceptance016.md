@@ -31,7 +31,15 @@ El primer intento funcional falló porque enablePluginAndSave devuelve antes del
 - [x] Sandbox cargado 0.1.6 y revisión visual acotada.
 - [x] Toggles reales, self-disable, reactivación explícita y cleanup propio.
 - [x] Readback independiente y preservación de estado.
-- [ ] ENSO: ROOT mantiene HOLD de entregas durante el reparto de tres Sandbox y la migración Tasks. La observación filesystem previa encontró 0.1.5 y perfil OFF; no se escribió ni se activó ENSO. La próxima entrega necesita una baseline actual y coordinación del writer; no restaurará datos históricos.
+- [x] ENSO instalado 0.1.6, perfil OFF conservado. Copia exclusiva de main.js, manifest.json y styles.css, sin activación ni reload. SETTLED 2026-10-07T14:18:34.958713Z; cierre independiente RELEASE_VERIFIED 14:19:39.794070Z. No se acredita carga/runtime ENSO.
 - [ ] Siguiente arranque y mobile: fuera de la aceptación ejecutada. No se acredita runtime ENSO ni dispositivo a partir de Sandbox.
 
 Receipts editables: [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-separation-20261007/native-functional-final-result]], [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-separation-20261007/native-functional-final-root-closure]], [[Tasks/+Ecosistema/+Applications/+PKM/+Obsidian/+Obsidian Plugins/+AIgility Plugin Manager/plugin/evidence/settings-separation-20261007/native-visual-root-closure]].
+
+## ENSO Delivery Verification
+
+2026-10-07, Codex. Token manager016-5c976e944195472c900267a81c5cb879, paquete fresco x1d6e9yi, loadedSHA 053157f0a711ef32e6f384e3af957bf250ae909a61d41ea3643148f4efb77670. Backup privado durable y comprobaciones de identidad/preimages precedieron la copia. Los tres hashes instalados coinciden con el candidato aprobado. Al terminar el actor, los 387 archivos protegidos eran byteexactos. ROOT confirmó own3Exact=true, installedVersion=0.1.6 y persistedProfileOFF=true; loadedVerified=false porque esta unidad fue sólo filesystem.
+
+En la revisión posterior de ROOT sólo workspace.json tenía un hash distinto, con mtime posterior al resultado. fullRootConfigEquality=false se conserva expresamente; no se atribuye la causa ni se restaura el archivo. Los datos y perfiles de Manager y los demás archivos protegidos permanecen iguales en esa revisión. No hubo llamadas Obsidian, activación, reload, cambios de Sync ni acceso a dispositivos.
+
+Las preparaciones previas permanecen históricas NO_START: el primer grant anunciado no llegó a persistirse y el guard rechazó antes de ACK; otra baseline quedó antigua por workspace.json; el grant posterior caducó antes de ACK y ROOT lo cerró como NO_START_EXPIRED. Ninguno copió archivos. La ejecución final usó preparación y permiso nuevos, después de sus cierres. Recibos propios y cierres ROOT preservados en este bundle.

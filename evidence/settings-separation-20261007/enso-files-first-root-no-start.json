@@ -1,0 +1,9 @@
+{
+  "status": "NO_START",
+  "owner": "01a0f837-dda7-7b32-b55e-834f9a7d0028",
+  "at": "2026-10-07T14:07:58.361544+00:00",
+  "reason": "Root pregrant protected workspace hash drift. Erroneous message corrected. Begin rejected lease status before ACK.",
+  "controlAbsent": true,
+  "rootGrantAbsent": true,
+  "pendingWriter": false
+}

@@ -1,0 +1,29 @@
+{
+  "status": "NO_START_OBSERVED",
+  "at": "2026-10-07T14:05:01.497244+00:00",
+  "cause": "Authoritative lease still sandbox-rename RELEASE_VERIFIED; Manager grant file absent; runner refused before ACK",
+  "lease": {
+    "status": "RELEASE_VERIFIED",
+    "owner": "01a0f837-dda7-7b32-b55e-834f9a7d0028",
+    "executor": null,
+    "job": "sandbox-rename-20261007",
+    "token": "sandbox-rename-134827",
+    "pendingWriter": false
+  },
+  "absent": {
+    "root-grant.json": true,
+    "control.json": true,
+    "first-action.json": true,
+    "result.json": true,
+    "backup": true
+  },
+  "own3PreimagesPreserved": {
+    "main.js": true,
+    "manifest.json": true,
+    "styles.css": true
+  },
+  "protectedFileCount": 387,
+  "protectedDrift": [
+    "/Users/eme/Obsidian/ENSO/.obsidian/workspace.json"
+  ]
+}

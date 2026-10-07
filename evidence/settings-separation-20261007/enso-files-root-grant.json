@@ -1,0 +1,14 @@
+{
+  "status": "GRANTED",
+  "owner": "01a10c7c-6e4a-7ad0-8e52-5e0c9bb51484",
+  "executor": "01a10c7c-6e4a-7ad0-8e52-5e0c9bb51484",
+  "job": "manager016-enso-files-20261007",
+  "loadedSHA": "053157f0a711ef32e6f384e3af957bf250ae909a61d41ea3643148f4efb77670",
+  "packageDirectory": "/var/folders/gd/hvzhhtjs0794fpy1_27c0hg40000gn/T/manager016-enso-files-x1d6e9yi",
+  "token": "manager016-5c976e944195472c900267a81c5cb879",
+  "ackBy": "2026-10-07T14:21:22.271394+00:00",
+  "absoluteHardDeadline": "2026-10-07T14:22:22.271394+00:00",
+  "pendingWriter": true,
+  "grantedAt": "2026-10-07T14:18:22.271394+00:00",
+  "previousLeaseSha": "5ac82819c44a4be8f4eda7fe6701f12bf1adcd9a6a17f74d2fd34d82fba5b5ef"
+}

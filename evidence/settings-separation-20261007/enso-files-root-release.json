@@ -1,0 +1,21 @@
+{
+  "status": "RELEASE_VERIFIED",
+  "pendingWriter": false,
+  "at": "2026-10-07T14:19:39.794070+00:00",
+  "token": "manager016-5c976e944195472c900267a81c5cb879",
+  "own3Exact": true,
+  "installedVersion": "0.1.6",
+  "persistedProfileOFF": true,
+  "loadedVerified": false,
+  "actorProtected387UnchangedAtResult": true,
+  "rootProtectedDrift": [
+    {
+      "path": "/Users/eme/Obsidian/ENSO/.obsidian/workspace.json",
+      "before": "38117d90ed7da19e22f2a2ec235edeca7407113bb441e0e900067f1134144510",
+      "now": "9dd797fe63fe02eea4b4a95341c909fac26dfebc78492b1c0e1c5c673b4b5357",
+      "mtimeNs": 1791382768528697832
+    }
+  ],
+  "fullRootConfigEquality": false,
+  "resultSHA": "ab38eebed1b58142b27ca366bc9c70889e5c2573b26b24c263f540aaa8024906"
+}

@@ -1,0 +1,9 @@
+{
+  "status": "NO_START_EXPIRED",
+  "pendingWriter": false,
+  "at": "2026-10-07T14:12:55.464685+00:00",
+  "token": "manager016-71091fea295c4c4a82b9b2a8799f7662",
+  "controlAbsent": true,
+  "ownArtifactsUnchanged": true,
+  "reason": "No ACK before absolute ackBy; owner waited for coordinator and did not start."
+}

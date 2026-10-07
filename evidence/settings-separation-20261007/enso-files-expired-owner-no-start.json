@@ -1,0 +1,22 @@
+{
+  "status": "NO_START_OBSERVED",
+  "cause": "Expired grant rejected before ACK/control",
+  "at": "2026-10-07T14:13:36.072412+00:00",
+  "token": "manager016-71091fea295c4c4a82b9b2a8799f7662",
+  "ackBy": "2026-10-07T14:11:55.654899+00:00",
+  "absoluteHardDeadline": "2026-10-07T14:12:55.654899+00:00",
+  "absent": {
+    "control.json": true,
+    "first-action.json": true,
+    "result.json": true,
+    "backup": true
+  },
+  "own3PreimagesPreserved": {
+    "main.js": true,
+    "manifest.json": true,
+    "styles.css": true
+  },
+  "protectedDrift": [
+    "/Users/eme/Obsidian/ENSO/.obsidian/workspace.json"
+  ]
+}
